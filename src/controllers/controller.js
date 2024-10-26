@@ -1,5 +1,4 @@
-let {ser_send_otp,ser_block_user,ser_signout,ser_home,ser_insert,ser_validation,ser_registeruser,ser_showuser,ser_adminprofile,ser_showproduct,ser_addproduct,ser_deleteuser,ser_viewusercomodity,ser_userupdate,ser_userprofileupdate,ser_update_points,ser_update_points_form, ser_showproduct_admin,ser_buyproduct,ser_buyproduct_form,ser_add_balance,ser_add_balance_form,ser_update_product,ser_update_product_page,ser_product_delete,ser_changepass,ser_showt}=require("../servers/service");
-
+let {ser_tpseriesshow,ser_reseriesshow,ser_seriesshow,ser_tpshowmovie,ser_reshowmovie,ser_showmovie,ser_pcelebview,ser_btcelebview,ser_celebview,ser_awardview,ser_signout,ser_home,ser_insert,ser_validation,ser_registeruser,ser_adminprofile,ser_showproduct,ser_addproduct,ser_deleteuser,ser_viewusercomodity,ser_userupdate,ser_userprofileupdate,ser_update_points,ser_update_points_form, ser_showproduct_admin,ser_buyproduct,ser_buyproduct_form,ser_add_balance,ser_add_balance_form,ser_update_product,ser_update_product_page,ser_product_delete,ser_changepass,ser_showt}=require("../servers/service");
 
 exports.cont_home=async(req,rep)=>{
     let userdata=await ser_home(req,rep);
@@ -16,7 +15,7 @@ exports.cont_signin=async(req,rep)=>{
 
 exports.cont_adduser=async(req,rep)=>{
     rep.render("registeruser")
-}
+}   
 
 exports.cont_insert=async(req,rep)=>{
     await ser_insert(req,rep);
@@ -37,13 +36,54 @@ exports.cont_registeruser=async(req,rep)=>{
     rep.render("dashboard");
 }
 
-exports.cont_showuser=async(req,rep)=>{
-    let userdatashown= await ser_showuser(req,rep);
-    rep.render("viewuser",{user:userdatashown.userdata,searchdata:userdatashown.admindata,data:userdatashown.adminparentmail});
+exports.cont_tpshowmovie=async(req,rep)=>{
+    let userdatashown= await ser_tpshowmovie(req,rep);
+    rep.render("tpviewmovie",{user:userdatashown.userdata,searchdata:userdatashown.admindata,data:userdatashown.adminparentmail});
 }
 
-exports.cont_addproduct=async(req,rep)=>{
-    rep.render("addproduct")
+exports.cont_reshowmovie=async(req,rep)=>{
+    let userdatashown= await ser_reshowmovie(req,rep);
+    rep.render("reviewmovies",{user:userdatashown.userdata,searchdata:userdatashown.admindata,data:userdatashown.adminparentmail});
+}
+
+exports.cont_showmovie=async(req,rep)=>{
+    let userdatashown= await ser_showmovie(req,rep);
+    rep.render("viewmovie",{user:userdatashown.userdata,searchdata:userdatashown.admindata,data:userdatashown.adminparentmail});
+}
+
+exports.cont_tpseriesshow=async(req,rep)=>{
+    let userdatashown= await ser_tpseriesshow(req,rep);
+    rep.render("tpviewseries",{user:userdatashown.userdata,searchdata:userdatashown.admindata,data:userdatashown.adminparentmail});
+}
+
+exports.cont_reseriesshow=async(req,rep)=>{
+    let userdatashown= await ser_reseriesshow(req,rep);
+    rep.render("reviewseries",{user:userdatashown.userdata,searchdata:userdatashown.admindata,data:userdatashown.adminparentmail});
+}
+
+exports.cont_seriesshow=async(req,rep)=>{
+    let userdatashown= await ser_seriesshow(req,rep);
+    rep.render("viewseries",{user:userdatashown.userdata,searchdata:userdatashown.admindata,data:userdatashown.adminparentmail});
+}
+
+exports.cont_pcelebview=async(req,rep)=>{
+    let userdatashown= await ser_pcelebview(req,rep);
+    rep.render("pviewcelebs",{user:userdatashown.userdata,searchdata:userdatashown.admindata,data:userdatashown.adminparentmail});
+}
+
+exports.cont_btcelebview=async(req,rep)=>{
+    let userdatashown= await ser_btcelebview(req,rep);
+    rep.render("btviewcelebs",{user:userdatashown.userdata,searchdata:userdatashown.admindata,data:userdatashown.adminparentmail});
+}
+
+exports.cont_celebview=async(req,rep)=>{
+    let userdatashown= await ser_celebview(req,rep);
+    rep.render("viewceleb",{user:userdatashown.userdata,searchdata:userdatashown.admindata,data:userdatashown.adminparentmail});
+}
+
+exports.cont_awardview=async(req,rep)=>{
+    let userdatashown= await ser_awardview(req,rep);
+    rep.render("viewaward",{user:userdatashown.userdata,searchdata:userdatashown.admindata,data:userdatashown.adminparentmail});
 }
 
 exports.cont_insertproduct=async(req,rep)=>{   
@@ -167,10 +207,4 @@ exports.cont_signout=async(req,rep)=>{
 exports.cont_block_user=async(req,rep)=>{
     let block_user=await ser_block_user(req,rep);
     rep.redirect("userview");
-}
-
-exports.cont_send_otp=async(req,rep)=>{
-    await ser_send_otp(req,rep);
-    console.log("OTP send");
-    rep.status(200).send("OTP Send");
 }

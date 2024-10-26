@@ -139,7 +139,23 @@ exports.ser_registeruser=async (req,rep)=>{
     }
 }
 
-exports.ser_showuser=async(req,rep)=>{
+exports.ser_tpshowmovie=async(req,rep)=>{
+    let userdata=await recu.find({parentmail:rootmail},{});
+    let admindata=await recu.findOne({email:rootmail},{})
+    // console.log(admindata)
+    let adminparentmail=admindata.parentmail
+    // console.log(adminparentmail)
+    return ({userdata:userdata,admindata:admindata,adminparentmail:adminparentmail});
+}
+exports.ser_reshowmovie=async(req,rep)=>{
+    let userdata=await recu.find({parentmail:rootmail},{});
+    let admindata=await recu.findOne({email:rootmail},{})
+    // console.log(admindata)
+    let adminparentmail=admindata.parentmail
+    // console.log(adminparentmail)
+    return ({userdata:userdata,admindata:admindata,adminparentmail:adminparentmail});
+}
+exports.ser_showmovie=async(req,rep)=>{
     let userdata=await recu.find({parentmail:rootmail},{});
     let admindata=await recu.findOne({email:rootmail},{})
     // console.log(admindata)
@@ -148,39 +164,90 @@ exports.ser_showuser=async(req,rep)=>{
     return ({userdata:userdata,admindata:admindata,adminparentmail:adminparentmail});
 }
 
-exports.ser_addproduct=async (req,rep)=>{
-    let productname=req.body.productname;
-    let price=req.body.price;
-    let stock=req.body.stock;
+exports.ser_tpseriesshow=async(req,rep)=>{
+    let userdata=await recu.find({parentmail:rootmail},{});
+    let admindata=await recu.findOne({email:rootmail},{})
+    // console.log(admindata)
+    let adminparentmail=admindata.parentmail
+    // console.log(adminparentmail)
+    return ({userdata:userdata,admindata:admindata,adminparentmail:adminparentmail});
+}
+exports.ser_reseriesshow=async(req,rep)=>{
+    let userdata=await recu.find({parentmail:rootmail},{});
+    let admindata=await recu.findOne({email:rootmail},{})
+    // console.log(admindata)
+    let adminparentmail=admindata.parentmail
+    // console.log(adminparentmail)
+    return ({userdata:userdata,admindata:admindata,adminparentmail:adminparentmail});
+}
+exports.ser_seriesshow=async(req,rep)=>{
+    let userdata=await recu.find({parentmail:rootmail},{});
+    let admindata=await recu.findOne({email:rootmail},{})
+    // console.log(admindata)
+    let adminparentmail=admindata.parentmail
+    // console.log(adminparentmail)
+    return ({userdata:userdata,admindata:admindata,adminparentmail:adminparentmail});
+}
 
-    let re= new product({
-        productname:productname,price:price,quantityleft:stock,parentmail:rootmail
-    })
-    await re.save()
+exports.ser_pcelebview=async(req,rep)=>{
+    let userdata=await recu.find({parentmail:rootmail},{});
+    let admindata=await recu.findOne({email:rootmail},{})
+    // console.log(admindata)
+    let adminparentmail=admindata.parentmail
+    // console.log(adminparentmail)
+    return ({userdata:userdata,admindata:admindata,adminparentmail:adminparentmail});
+}
+exports.ser_btcelebview=async(req,rep)=>{
+    let userdata=await recu.find({parentmail:rootmail},{});
+    let admindata=await recu.findOne({email:rootmail},{})
+    // console.log(admindata)
+    let adminparentmail=admindata.parentmail
+    // console.log(adminparentmail)
+    return ({userdata:userdata,admindata:admindata,adminparentmail:adminparentmail});
+}
+exports.ser_celebview=async(req,rep)=>{
+    let userdata=await recu.find({parentmail:rootmail},{});
+    let admindata=await recu.findOne({email:rootmail},{})
+    // console.log(admindata)
+    let adminparentmail=admindata.parentmail
+    // console.log(adminparentmail)
+    return ({userdata:userdata,admindata:admindata,adminparentmail:adminparentmail});
+}
 
-    //to add product_id=_id generated default by mongodb
+exports.ser_awardview=async(req,rep)=>{
+    let userdata=await recu.find({parentmail:rootmail},{});
+    let admindata=await recu.findOne({email:rootmail},{})
+    // console.log(admindata)
+    let adminparentmail=admindata.parentmail
+    // console.log(adminparentmail)
+    return ({userdata:userdata,admindata:admindata,adminparentmail:adminparentmail});
+}
+
+// exports.ser_addproduct=async (req,rep)=>{
+//     let productname=req.body.productname;
+//     let price=req.body.price;
+//     let stock=req.body.stock;
+
+//     let re= new product({
+//         productname:productname,price:price,quantityleft:stock,parentmail:rootmail
+//     })
+//     await re.save()
+
+//     //to add product_id=_id generated default by mongodb
     
-    let productd=await product.find({productid:""},{});
-    let new_id;
+//     let productd=await product.find({productid:""},{});
+//     let new_id;
 
-    for (const i in productd) {
-        if (Object.hasOwnProperty.call(productd, i)) {
-            const e = productd[i];
-            new_id=e._id;
-        }
-    }
-    let product_id= await product.findOneAndUpdate({productid:""},{productid:new_id})
-    console.log("product has been inserted with product id"+" "+ new_id);
+//     for (const i in productd) {
+//         if (Object.hasOwnProperty.call(productd, i)) {
+//             const e = productd[i];
+//             new_id=e._id;
+//         }
+//     }
+//     let product_id= await product.findOneAndUpdate({productid:""},{productid:new_id})
+//     console.log("product has been inserted with product id"+" "+ new_id);
 
-}
-
-exports.ser_showproduct=async(req,rep)=>{
-    let productdata=await product.find({},{})
-    let user_data=await recu.findOne({email:rootmail},{})
-    // let parentdatashown=await recu.findOne({email:user_data.parentmail},{})
-
-    return({productdata:productdata,user_data_shown:user_data});
-}
+// }
 
 exports.ser_showproduct_admin=async(req,rep)=>{
     let productdata=await product.find({},{})
@@ -587,40 +654,4 @@ exports.ser_block_user=async(req,rep)=>{
         console.log("user id "+block_user+" has been unblocked by "+rootmail)
     }
 
-}
-
-exports.ser_send_otp=async(req,rep)=>{
-    async function email(){
-        const transporter = nodemailer.createTransport({
-            service:"gmail",
-            auth:{
-                    user:"aman1406gupta@gmail.com",
-                    pass:"mclt sxxb sjom veci",
-            },
-        });
-
-    function generateOTP() {
-            const digits = "0123456789";
-            let OTP = "";
-            for (let i = 0; i < 6; i++) {
-              OTP += digits[Math.floor(Math.random() * 10)];
-            }
-            return OTP;
-          }
-    
-          const otp = generateOTP();
-          console.log(otp);
-    
-        
-        const mailOptions={
-            from:"aman1406gupta@gmail.com",
-            to:"aman1406gupta@gmail.com",
-            subject:"hello Aman",
-            text:otp, 
-        };
-    
-        await transporter.sendMail(mailOptions);
-    };
-    
-    email();
 }

@@ -40,10 +40,49 @@
   /**
    * Sidebar toggle
    */
+  // if (select('.toggle-sidebar-btn')) {
+  //   on('click', '.toggle-sidebar-btn', function(e) {
+  //     select('body').classList.toggle('toggle-sidebar')
+  //   })
+  // }
   if (select('.toggle-sidebar-btn')) {
+    // Initial state check to set classes based on the sidenav being open
+    const sliders = document.querySelectorAll('.swiffy-slider:not(:first-child)');
+    if (select('body').classList.contains('toggle-sidebar')) {
+      // If the sidenav is open, set the appropriate classes
+      sliders.forEach(slider => {
+        slider.classList.remove('slider-item-show3');
+        slider.classList.add('slider-item-show4');
+      });
+    } else {
+      // If the sidenav is closed, set the classes accordingly
+      sliders.forEach(slider => {
+        slider.classList.remove('slider-item-show4');
+        slider.classList.add('slider-item-show3');
+      });
+    }
+  
     on('click', '.toggle-sidebar-btn', function(e) {
-      select('body').classList.toggle('toggle-sidebar')
-    })
+      select('body').classList.toggle('toggle-sidebar');
+  
+      // Get all .swiffy-slider elements except the first one
+      const sliders = document.querySelectorAll('.swiffy-slider:not(:first-child)');
+  
+      // Check if the sidebar is opened or closed
+      if (select('body').classList.contains('toggle-sidebar')) {
+        // When the sidebar is opened, change class from slider-item-show4 to slider-item-show3
+        sliders.forEach(slider => {
+          slider.classList.remove('slider-item-show3');
+          slider.classList.add('slider-item-show4');
+        });
+      } else {
+        // When the sidebar is closed, change back to slider-item-show4
+        sliders.forEach(slider => {
+          slider.classList.remove('slider-item-show4');
+          slider.classList.add('slider-item-show3');
+        });
+      }
+    });
   }
 
   /**

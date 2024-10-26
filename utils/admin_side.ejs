@@ -1,36 +1,11 @@
-<!-- ======= Sidebar ======= -->
 <aside id="sidebar" class="sidebar">
     <ul class="sidebar-nav" id="sidebar-nav">
       <li class="nav-item">
         <a class="nav-link" href="/home">
-          <i class="bi bi-grid"></i>
-          <span>Dashboard</span>
+          <i class="fa-solid fa-house " style="color: #044bd0;"></i>
+          <span>Home</span>
         </a>
       </li>
-      <!-- End Dashboard Nav -->
-  
-      <!-- <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="">
-          <i class="bi bi-menu-button-wide"></i><span>Services</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="components-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-          <li>
-            <a href="/add_admin_services_page">
-              <i class="bi bi-circle"></i><span>Add Services</span>
-            </a>
-          </li>
-          <li>
-            <a href="/reservice">
-              <i class="bi bi-circle"></i><span>View Services</span>
-            </a>
-          </li>
-  
-  
-  
-  
-        </ul>
-      </li> -->
-      <!-- End Components Nav -->
   
       <li class="nav-item">
         <a
@@ -39,7 +14,7 @@
           data-bs-toggle="collapse"
           href="#"
         >
-          <i class="bi bi-layout-text-window-reverse"></i><span>User Manager</span
+        <i class="fa-solid fa-video " style="color: #044bd0;"></i></i><span>Movies</span
           ><i class="bi bi-chevron-down ms-auto"></i>
         </a>
         <ul
@@ -48,13 +23,18 @@
           data-bs-parent="#sidebar-nav"
         >
           <li>
-            <a href="/register_user">
-              <i class="bi bi-circle"></i><span>Add User</span>
+            <a href="/tpmovieview">
+              <i class="bi bi-circle"></i><span>Top 50 rated Movies</span>
             </a>
           </li>
           <li>
-            <a href="/userview">
-              <i class="bi bi-circle"></i><span>View User</span>
+            <a href="/removieview">
+              <i class="bi bi-circle"></i><span>Recent Movies</span>
+            </a>
+          </li>
+          <li>
+            <a href="/movieview">
+              <i class="bi bi-circle"></i><span>View Movies</span>
             </a>
           </li>
         </ul>
@@ -67,7 +47,7 @@
           data-bs-toggle="collapse"
           href="#"
         >
-          <i class="bi bi-layout-text-window-reverse"></i><span>Mail Manager</span
+        <i class="fa-solid fa-tv " style="color: #044bd0;"></i><span>TV Shows</span
           ><i class="bi bi-chevron-down ms-auto"></i>
         </a>
         <ul
@@ -76,31 +56,18 @@
           data-bs-parent="#sidebar-nav"
         >
           <li>
-            <a href="/otp_genrate">
-              <i class="bi bi-circle"></i><span>verify user</span>
+            <a href="/tpseriesshow">
+              <i class="bi bi-circle"></i><span>Top 50 rated Tv shows</span>
             </a>
           </li>
-        </ul>
-      </li>
-
-      <li class="nav-item">
-        <a
-          class="nav-link collapsed"
-          data-bs-target="#tables-1"
-          data-bs-toggle="collapse"
-          href="#"
-        >
-          <i class="bi bi-layout-text-window-reverse"></i><span>Transaction History</span
-          ><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul
-          id="tables-1"
-          class="nav-content collapse"
-          data-bs-parent="#sidebar-nav"
-        >
           <li>
-            <a href="/show_t">
-              <i class="bi bi-circle"></i><span>Show Transactions</span>
+            <a href="/reseriesshow">
+              <i class="bi bi-circle"></i><span>Recent Tv shows</span>
+            </a>
+          </li>
+          <li>
+            <a href="/seriesshow">
+              <i class="bi bi-circle"></i><span>View Tv shows</span>
             </a>
           </li>
         </ul>
@@ -113,8 +80,7 @@
           data-bs-toggle="collapse"
           href="#"
         >
-          <i class="bi bi-layout-text-window-reverse"></i><span>Shop</span
-          ><i class="bi bi-chevron-down ms-auto"></i>
+        <i class="fa-solid fa-circle-user" style="color: #044bd0;"></i><span> Celebs</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
         <ul
           id="tables-nav-1"
@@ -122,46 +88,55 @@
           data-bs-parent="#sidebar-nav"
         >
           <li>
-            <a href="/product_admin">
-              <i class="bi bi-circle"></i><span>Show products</span>
+            <a href="/pcelebview">
+              <i class="bi bi-circle"></i><span>Most Popular Celebs</span>
             </a>
           </li>
   
           <li>
-            <a href="/addproduct">
-              <i class="bi bi-circle"></i><span>Add products</span>
+            <a href="/celebview">
+              <i class="bi bi-circle"></i><span>View Celebs</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="/btcelebview">
+              <i class="bi bi-circle"></i><span>Born Today</span>
             </a>
           </li>
   
         </ul>
       </li>
-  
-      <li class="nav-heading">Settings</li>
-  
+
       <li class="nav-item">
-        <a class="nav-link collapsed" href="/adminprofile">
-          <i class="bi bi-person"></i>
-          <span>Profile</span>
+        <a
+          class="nav-link collapsed"
+          data-bs-target="#tables-1"
+          data-bs-toggle="collapse"
+          href="#"
+        >
+        <i class="fa-solid fa-trophy " style="color: #044bd0;"></i><span>Awards</span
+          ><i class="bi bi-chevron-down ms-auto"></i>
         </a>
+        <ul
+          id="tables-1"
+          class="nav-content collapse"
+          data-bs-parent="#sidebar-nav"
+        >
+          <li>
+            <a href="/awardview">
+              <i class="bi bi-circle"></i><span>View Awards</span>
+            </a>
+          </li>
+        </ul>
       </li>
-      <!-- End Profile Page Nav -->
-  
-      <!-- <li class="nav-item">
-        <a class="nav-link collapsed" href="pages-faq.html">
-          <i class="bi bi-question-circle"></i>
-          <span>F.A.Q</span>
+      
+      <li class="nav-item">
+        <a>
+        <span style="color: white;">____________________________________</span>
         </a>
-      </li> -->
-      <!-- End F.A.Q Page Nav -->
+        
+      </li>
   
-      <!-- <li class="nav-item">
-        <a class="nav-link collapsed" href="/contact_us">
-          <i class="bi bi-file-earmark"></i>
-          <span>Contact Us</span>
-        </a>
-      </li> -->
-      <!-- End contact us Page Nav -->
     </ul>
   </aside>
-  <!-- End Sidebar-->
-  

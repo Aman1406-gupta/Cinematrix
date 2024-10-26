@@ -3,7 +3,7 @@ let router=express.Router();
 const user_auth=require("../../middelwares/authorisation.js")
 // const user_access=require("../../middelwares/access.js")
 
-let {cont_send_otp,cont_block_user,cont_signout,cont_home,cont_insert,cont_validation,cont_adduser,cont_registeruser,cont_signup,cont_signin,cont_showuser,cont_adminprofile,cont_addproduct,cont_showproduct,cont_insertproduct,cont_deleteuser,cont_viewusercomodity,cont_userupdate,cont_userprofileupdate,cont_update_points,cont_update_points_form,cont_showproduct_admin,cont_buyproduct,cont_buyproduct_form,cont_add_balance,cont_add_balance_form,cont_update_product,cont_update_product_page,cont_product_delete,cont_changepass,cont_change_pass,cont_showt}=require("../controllers/controller");
+let {cont_tpseriesshow,cont_reseriesshow,cont_seriesshow,cont_tpshowmovie,cont_reshowmovie,cont_showmovie,cont_pcelebview,cont_btcelebview,cont_celebview,cont_awardview,cont_block_user,cont_signout,cont_home,cont_insert,cont_validation,cont_adduser,cont_registeruser,cont_signup,cont_signin,cont_adminprofile,cont_showproduct,cont_insertproduct,cont_deleteuser,cont_viewusercomodity,cont_userupdate,cont_userprofileupdate,cont_update_points,cont_update_points_form,cont_showproduct_admin,cont_buyproduct,cont_buyproduct_form,cont_add_balance,cont_add_balance_form,cont_update_product,cont_update_product_page,cont_product_delete,cont_changepass,cont_change_pass,cont_showt}=require("../controllers/controller");
 
 //for sign in and signup and validation
 router.get("/home",cont_home);
@@ -26,14 +26,22 @@ router.post("/register_user_save",user_auth,cont_registeruser);
 router.post("/user_block",user_auth,cont_block_user);
 
 //toshow,delete,update_user profile and view user profile 
-router.get("/userview",user_auth,cont_showuser); 
+router.get("/tpmovieview",user_auth,cont_tpshowmovie); 
+router.get("/removieview",user_auth,cont_reshowmovie); 
+router.get("/movieview",user_auth,cont_showmovie); 
+router.get("/tpseriesshow",user_auth,cont_tpseriesshow);
+router.get("/reseriesshow",user_auth,cont_reseriesshow);
+router.get("/seriesshow",user_auth,cont_seriesshow);
+router.get("/pcelebview",user_auth,cont_pcelebview);  
+router.get("/btcelebview",user_auth,cont_btcelebview);  
+router.get("/celebview",user_auth,cont_celebview);  
+router.get("/awardview",user_auth,cont_awardview);  
 router.post("/delete_user",user_auth,cont_deleteuser); 
 router.post("/view_user_commodity",user_auth,cont_viewusercomodity); 
 router.post("/user_update_page",user_auth,cont_userupdate); 
 router.post("/update_service",user_auth,cont_userprofileupdate); 
 
 //to add,show,buy product,update,delete product and update product details 
-router.get("/addproduct",user_auth,cont_addproduct); 
 router.post("/insertproduct",user_auth,cont_insertproduct); 
 router.get("/product",user_auth,cont_showproduct); 
 router.get("/product_admin",user_auth,cont_showproduct_admin); 
@@ -52,6 +60,5 @@ router.get("/show_t",user_auth,cont_showt);
 
 //signout and send otp
 router.get("/signout",user_auth,cont_signout);
-router.get("/otp_genrate",user_auth,cont_send_otp);
 
 module.exports=router;
