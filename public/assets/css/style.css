@@ -317,10 +317,10 @@ filter{
 .nav-tabs-bordered .nav-link {
   margin-bottom: -2px;
   border: none;
-  color: #2c384e;
+  color: white;
 }
-.nav-tabs-bordered .nav-link:hover, .nav-tabs-bordered .nav-link:focus {
-  color: #4154f1;
+.nav-tabs-bordered .nav-link:hover, .nav-tabs-bordered .nav-link:focus  {
+  background-color: grey;
 }
 .nav-tabs-bordered .nav-link.active {
   background-color: #fff;
