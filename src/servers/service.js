@@ -1,5 +1,6 @@
 let bcrypt=require("bcrypt");
-const nodemailer= require("nodemailer");
+// const nodemailer= require("nodemailer");
+const db = require("../dbconnection"); 
 let recu=require("../model/user");
 let product=require("../model/product")
 let transactiondata=require("../model/transactiondata")
@@ -92,7 +93,7 @@ exports.ser_validation=async(req,rep)=>{
     catch(err){
         console.log(err);
         return{
-            message: error.message || "internal server error",
+            message: err.message || "internal server error",
             success: false
         };
     }
@@ -140,12 +141,17 @@ exports.ser_registeruser=async (req,rep)=>{
 }
 
 exports.ser_tpshowmovie=async(req,rep)=>{
-    let userdata=await recu.find({parentmail:rootmail},{});
+    const [rows]=await db.promise().query('SELECT * FROM Movie');
+    let userdata=rows;
+    console.log(userdata);
+    // let userdata=await db.query('SELECT * FROM Movie');
+    // let userdata=await recu.find({parentmail:rootmail},{});
     let admindata=await recu.findOne({email:rootmail},{})
     // console.log(admindata)
     let adminparentmail=admindata.parentmail
     // console.log(adminparentmail)
-    return ({userdata:userdata,admindata:admindata,adminparentmail:adminparentmail});
+    // return ({userdata:userdata,admindata:admindata,adminparentmail:adminparentmail});
+    rep.json ({userdata,admindata:admindata,adminparentmail:admin});
 }
 exports.ser_reshowmovie=async(req,rep)=>{
     let userdata=await recu.find({parentmail:rootmail},{});
