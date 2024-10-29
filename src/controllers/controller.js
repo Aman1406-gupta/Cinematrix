@@ -5,11 +5,11 @@ exports.cont_home=async(req,rep)=>{
     rep.render("dashboard",{data:userdata});
 }
 
-exports.cont_signup=async(req,rep)=>{
+exports.cont_signin=async(req,rep)=>{
     rep.render("adminlogin");
 }
 
-exports.cont_signin=async(req,rep)=>{
+exports.cont_signup=async(req,rep)=>{
     rep.render("register");
 }
 
@@ -17,13 +17,14 @@ exports.cont_adduser=async(req,rep)=>{
     rep.render("registeruser")
 }   
 
+
+///////////////////////
 exports.cont_insert=async(req,rep)=>{
     await ser_insert(req,rep);
 }
 
 exports.cont_validation=async(req,rep)=>{
     let data= await ser_validation(req,rep);
-    console.log(data.newdata);
     if(data){
         rep.render("dashboard",{data:data.newdata});
     }
@@ -31,6 +32,12 @@ exports.cont_validation=async(req,rep)=>{
         rep.render("adminlogin");
     }
 }
+
+exports.cont_adminprofile=async(req,rep)=>{
+    let admindata=await ser_adminprofile(req,rep);
+    rep.render("adminprofile",{data:admindata.admindatarec});
+}
+////////////////////////
 
 exports.cont_registeruser=async(req,rep)=>{
     await ser_registeruser(req,rep);
@@ -104,11 +111,6 @@ exports.cont_showproduct_admin=async(req,rep)=>{
     let parent_data_shown=productdatashown.parentdatashown
     productdatashown=productdatashown.productdata;
     rep.render("viewproduct_admin",{product:productdatashown,searchdata:parent_data_shown});
-}
-
-exports.cont_adminprofile=async(req,rep)=>{
-    let admindata=await ser_adminprofile(req,rep);
-    rep.render("adminprofile",{data:admindata});
 }
 
 exports.cont_deleteuser=async(req,rep)=>{

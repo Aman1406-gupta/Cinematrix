@@ -1,7 +1,6 @@
 let bcrypt=require("bcrypt");
 // const nodemailer= require("nodemailer");
 let recu=require("../model/user");
-// const {mysqldb,mongodb} = require("../dbconnection"); 
 const { mysqlConnection, mongo } = require('../dbconnection');
 let product=require("../model/product")
 let transactiondata=require("../model/transactiondata")
@@ -20,28 +19,53 @@ exports.ser_home=async(req,rep)=>{
     return(user);
 }
 
+
+////////////////////////////////
 exports.ser_insert=async (req,rep)=>{
     let name=req.body.name;
     let email=req.body.email;
-    let mobile=req.body.mobile;
+    let dob=req.body.dob;
+    let Nationality=req.body.nationality;
     let pass=req.body.pass;
     let hashpass=await bcrypt.hash(pass,10);
     let terms=req.body.terms;
 
-    let previousdata= await recu.findOne({email:email},{email:1})
-    
-    if(previousdata){
-        console.log("unable to create account, email already exist as user");
-        rep.redirect("/signin");
-    }
-    else{
-        let re= new recu({
-            name:name,email:email,mobile:mobile,pass:hashpass,terms:terms,amount_earned:1000,net_amount_genereted:1000
-        })
-        await re.save()
-        console.log("your account has been created");
-        rep.redirect("/signup");
-    }
+    console.log(req.body);
+
+    return new Promise((resolve, reject) => {
+        mysqlConnection.query('SELECT * FROM user WHERE email = ?', [email], (err, results) => {
+            if (err) {
+                console.error('Database query failed:', err);
+                return reject(new Error("Database query failed"));
+            }
+
+            const previousdata = results[0];
+
+            if(previousdata){
+                console.log("unable to create account, email already exist as user");
+                rep.redirect("/signup");
+            }
+            else{
+                mysqlConnection.query(
+                    'INSERT INTO user (name, email, pass, parentmail, dob, Nationality) values (?, ?, ?, ?, ?, ?)', [name, email, hashpass, '', dob, Nationality],
+                    (err, Result) => {
+                        if (err) {
+                            console.error('Token update failed:', err);
+                            return reject(new Error("Token update failed"));
+                        }
+
+                        if (Result.affectedRows === 0) {
+                            console.error('No rows updated');
+                            return reject(new Error("No rows updated"));
+                        }
+
+                        console.log('Your account has been created!');
+                        rep.redirect("/signin")
+                    }
+                );
+            }
+        });
+    });
 }
 
 exports.ser_validation = (req, rep) => {
@@ -103,6 +127,26 @@ exports.ser_validation = (req, rep) => {
         });
     });
 };
+
+exports.ser_adminprofile=async(req,rep)=>{
+    return new Promise((resolve, reject) => {
+        mysqlConnection.query('SELECT * FROM user WHERE email = ?', [rootmail], (err, results) => {
+            if (err) {
+                console.error('Database query failed:', err);
+                return reject(new Error("Database query failed"));
+            }
+
+            if (results.length === 0) {
+                console.log("Admin doesn't exist");
+                return reject(new Error("Admin doesn't exist"));
+            }
+
+            const admindatarec = results[0];
+            resolve( { admindatarec } );
+        });
+    });
+}
+//////////////////////////////
 
 exports.ser_registeruser=async (req,rep)=>{
     let name=req.body.name;
@@ -268,18 +312,6 @@ exports.ser_showproduct_admin=async(req,rep)=>{
     let parentdatashown=await recu.find({email:user_data.parentmail},{})
     parentdatashown=parentdatashown[0];
     return({productdata:productdata,parentdatashown:parentdatashown});
-}
-
-exports.ser_adminprofile=async(req,rep)=>{
-    let admindatarec=await recu.find({email:rootmail},{})
-    let admindata;
-    for (const i in admindatarec) {
-        if (Object.hasOwnProperty.call(admindatarec, i)) {
-            const e = admindatarec[i];
-            admindata=e;
-        }
-    }
-    return(admindata);
 }
 
 exports.ser_deleteuser=async(req,rep)=>{

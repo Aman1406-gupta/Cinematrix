@@ -7,12 +7,12 @@ let {cont_tpseriesshow,cont_reseriesshow,cont_seriesshow,cont_tpshowmovie,cont_r
 //for sign in and signup and validation
 router.get("/home",cont_home);
 router.get("/signin",cont_signin);
-router.post("/register_data_save",cont_insert);
-router.get("/signup",cont_signup);
 router.post("/login-data-validation",cont_validation);
+router.get("/signup",cont_signup);
+router.post("/register_data_save",cont_insert);
+router.get("/adminprofile",user_auth,cont_adminprofile);
 
 //to view profile and add balance and change password
-router.get("/adminprofile",user_auth,cont_adminprofile);
 router.get("/add_balance",user_auth,cont_add_balance);
 router.get("/add_balance_form",user_auth,cont_add_balance_form);
 router.post("/add_balance",user_auth,cont_add_balance);
