@@ -1,9 +1,4 @@
-let {ser_tpseriesshow,ser_reseriesshow,ser_seriesshow,ser_tpshowmovie,ser_reshowmovie,ser_showmovie,ser_pcelebview,ser_btcelebview,ser_celebview,ser_awardview,ser_signout,ser_home,ser_insert,ser_validation,ser_registeruser,ser_adminprofile,ser_showproduct,ser_addproduct,ser_deleteuser,ser_viewusercomodity,ser_userupdate,ser_userprofileupdate,ser_update_points,ser_update_points_form, ser_showproduct_admin,ser_buyproduct,ser_buyproduct_form,ser_add_balance,ser_add_balance_form,ser_update_product,ser_update_product_page,ser_product_delete,ser_changepass,ser_showt}=require("../servers/service");
-
-exports.cont_home=async(req,rep)=>{
-    let userdata=await ser_home(req,rep);
-    rep.render("dashboard",{data:userdata});
-}
+let {ser_deleteac,ser_tpseriesshow,ser_reseriesshow,ser_seriesshow,ser_tpshowmovie,ser_reshowmovie,ser_showmovie,ser_pcelebview,ser_btcelebview,ser_celebview,ser_awardview,ser_signout,ser_home,ser_insert,ser_validation,ser_registeruser,ser_adminprofile,ser_showproduct,ser_addproduct,ser_deleteuser,ser_viewusercomodity,ser_userupdate,ser_userprofileupdate,ser_update_points,ser_update_points_form, ser_showproduct_admin,ser_buyproduct,ser_buyproduct_form,ser_add_balance,ser_add_balance_form,ser_update_product,ser_update_product_page,ser_product_delete,ser_changepass,ser_showt}=require("../servers/service");
 
 exports.cont_signin=async(req,rep)=>{
     rep.render("adminlogin");
@@ -19,17 +14,27 @@ exports.cont_adduser=async(req,rep)=>{
 
 
 ///////////////////////
+exports.cont_home=async(req,rep)=>{
+    let userdata=await ser_home(req,rep);
+    rep.render("dashboard",{data:userdata.admindatarec});
+}
+
 exports.cont_insert=async(req,rep)=>{
     await ser_insert(req,rep);
 }
 
 exports.cont_validation=async(req,rep)=>{
-    let data= await ser_validation(req,rep);
-    if(data){
-        rep.render("dashboard",{data:data.newdata});
+    try {
+        let data= await ser_validation(req,rep);
+        if(data){
+            rep.render("dashboard",{data:data.newdata});
+        }
+        else{
+            rep.render("adminlogin");
+        }
     }
-    else{
-        rep.render("adminlogin");
+    catch {
+        rep.redirect('/signin');
     }
 }
 
@@ -37,6 +42,21 @@ exports.cont_adminprofile=async(req,rep)=>{
     let admindata=await ser_adminprofile(req,rep);
     rep.render("adminprofile",{data:admindata.admindatarec});
 }
+
+exports.cont_userprofileupdate=async(req,rep)=>{
+    let userupdateddatau=await ser_userprofileupdate(req,rep);
+}
+
+exports.cont_signout=async(req,rep)=>{
+    await ser_signout(req,rep); 
+    rep.redirect("/signin");
+}
+
+exports.cont_deleteac=async(req,rep)=>{
+    await ser_deleteac(req,rep); 
+    rep.redirect("/signin");
+}
+
 ////////////////////////
 
 exports.cont_registeruser=async(req,rep)=>{
@@ -128,14 +148,6 @@ exports.cont_userupdate=async(req,rep)=>{
     rep.render("updateservice",{data:userupdateddata.rootdata,searchdata:userupdateddata.datashown});
 }
 
-//some problem in rendering page after updation
-exports.cont_userprofileupdate=async(req,rep)=>{
-    let userupdateddatau=await ser_userprofileupdate(req,rep);
-    // let parentdata=userupdateddatau.parentmail
-    // let rootdata=userupdateddatau.rootdata
-    // rep.render("viewuser",{user:rootdata,searchdata:parentdata});
-}
-
 exports.cont_update_points_form=async(req,rep)=>{
     let userupdateddatauf=await ser_update_points_form(req,rep);
     rep.render("update_points_form",{data:userupdateddatauf})
@@ -200,11 +212,6 @@ exports.cont_changepass=async(req,rep)=>{
 exports.cont_showt=async(req,rep)=>{
     let showt=await ser_showt(req,rep);
     rep.render("transaction",{data:showt.data,tdata:showt.tdata})
-}
-
-exports.cont_signout=async(req,rep)=>{
-    await ser_signout(req,rep); 
-    rep.redirect("/signup");
 }
 
 exports.cont_block_user=async(req,rep)=>{

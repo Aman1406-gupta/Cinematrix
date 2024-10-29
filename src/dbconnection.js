@@ -22,10 +22,6 @@ mysqlConnection.connect((err) => {
 const connectToMongoDB = async () => {
     try {
         await mongoose.connect(process.env.dburl,
-            //  {
-            // useNewUrlParser: true,
-            // useUnifiedTopology: true,
-            // }
     );
         console.log('Connected to the MongoDB database');
     } catch (error) {

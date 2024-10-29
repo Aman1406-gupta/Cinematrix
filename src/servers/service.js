@@ -13,14 +13,28 @@ function update_amount(previous_amount,new_amount){
     return (amount);
 }
 
-
+////////////////////////////////
 exports.ser_home=async(req,rep)=>{
-    let user=await recu.findOne({email:rootmail},{});
-    return(user);
+    // let user=await recu.findOne({email:rootmail},{});
+    // return(user);
+    return new Promise((resolve, reject) => {
+        mysqlConnection.query('SELECT * FROM user WHERE email = ?', [rootmail], (err, results) => {
+            if (err) {
+                console.error('Database query failed:', err);
+                return reject(new Error("Database query failed"));
+            }
+
+            if (results.length === 0) {
+                console.log("Admin doesn't exist");
+                return reject(new Error("Admin doesn't exist"));
+            }
+
+            const admindatarec = results[0];
+            resolve( { admindatarec } );
+        });
+    });
 }
 
-
-////////////////////////////////
 exports.ser_insert=async (req,rep)=>{
     let name=req.body.name;
     let email=req.body.email;
@@ -145,6 +159,81 @@ exports.ser_adminprofile=async(req,rep)=>{
             resolve( { admindatarec } );
         });
     });
+}
+
+exports.ser_userprofileupdate=async(req,rep)=>{
+
+    let user_password=req.body.pass;
+    let user_name=req.body.name;
+    let hashpass=await bcrypt.hash(user_password,10);
+    console.log(req.body);
+    console.log(user_name);
+    console.log(user_password);
+    if (!user_password) {
+        rep.redirect('/adminprofile');
+    }
+
+    return new Promise((resolve, reject) => {
+        mysqlConnection.query('UPDATE user set pass = ?, name = ? where email = ?', [hashpass, user_name, rootmail], (err, results) => {
+            if (err) {
+                console.error('Database query failed:', err);
+                return reject(new Error("Database query failed"));
+            }
+
+            if (results.length === 0) {
+                console.log("Admin doesn't exist");
+                return reject(new Error("Admin doesn't exist"));
+            }
+            console.log('Details changed successfully');
+            rep.redirect('/adminprofile');
+        });
+    });
+}
+
+exports.ser_signout=async(req,rep)=>{
+    try{
+        rep.clearCookie("token");
+        return new Promise((resolve, reject) => {
+            mysqlConnection.query('UPDATE user set auth_key = NULL where email = ?', [rootmail], (err, results) => {
+                if (err) {
+                    console.error('Error in logging out!', err);
+                    return reject(new Error("Database query failed"));
+                }
+                if (results.length === 0) {
+                    console.log("Admin doesn't exist");
+                    return reject(new Error("Admin doesn't exist"));
+                }
+                console.log("You have been logged out successfully!")
+                resolve();
+            });
+        });
+    }
+    catch{
+        console.log("error in setting cookie null")
+    }
+}
+
+exports.ser_deleteac=async(req,rep)=>{
+    try{
+        rep.clearCookie("token");
+        return new Promise((resolve, reject) => {
+            mysqlConnection.query('DELETE from user where email = ?', [rootmail], (err, results) => {
+                if (err) {
+                    console.error('Error in deleting account!', err);
+                    return reject(new Error("Database query failed"));
+                }
+                if (results.length === 0) {
+                    console.log("Admin doesn't exist");
+                    return reject(new Error("Admin doesn't exist"));
+                }
+                console.log("Your account has been deleted successfully!")
+                resolve();
+            });
+        });
+    }
+    catch{
+        console.log("error in setting cookie null")
+    }
 }
 //////////////////////////////
 
@@ -347,26 +436,6 @@ exports.ser_userupdate=async(req,rep)=>{
     return({datashown:datashown,rootdata:rootdata});
 }
 
-exports.ser_userprofileupdate=async(req,rep)=>{
-    let user_password=req.body.password;
-    let v =await bcrypt.compare(user_password,user_id_for_update.pass)
-    let user_name=req.body.name;
-    let user_email=req.body.email;
-    let user_mobile=req.body.mobile;
-    let user_password_confirm=req.body.confirm_password;
-
-    if(user_password===user_password_confirm && v){
-        await recu.findOneAndUpdate({user_id:user_id_for_update.user_id},{name:user_name,email:user_email,mobile:user_mobile,password:user_password})
-        console.log("profile of user id "+user_id_for_update.user_id+" has been updated by "+rootmail)
-    }
-    else{
-       console.log("Confirm Password is not matching password")
-    }
-
-    let parentdata=await recu.findOne({email:rootmail},{})
-    // console.log(rootdata)
-    return({parentdata:parentdata,rootdata:rootdata});
-}
 
 exports.ser_update_points_form=async(req,rep)=>{
     let user_id=req.body.id;
@@ -629,23 +698,6 @@ exports.ser_showt=async(req,rep)=>{
     let showt=await transactiondata.find({$or:[{from:rootuser_id },{to:rootmail}]},{})
     // console.log(showt);
     return({data:root.parentmail,tdata:showt})
-}
-
-exports.ser_signout=async(req,rep)=>{
-    try{
-        rep.clearCookie("token");
-        let logout=await recu.findOneAndUpdate(
-            {email:rootmail},
-            {auth_key:null}
-        );
-        if(logout)
-        console.log("currently you are Log Out")
-        else
-        console.log("Error in Logout")
-    }
-    catch{
-        console.log("error in setting cookie null")
-    }
 }
 
 exports.ser_block_user=async(req,rep)=>{

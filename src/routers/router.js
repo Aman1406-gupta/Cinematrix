@@ -2,7 +2,7 @@ let express=require("express");
 let router=express.Router();
 const user_auth=require("../../middelwares/authorisation.js")
 
-let {cont_tpseriesshow,cont_reseriesshow,cont_seriesshow,cont_tpshowmovie,cont_reshowmovie,cont_showmovie,cont_pcelebview,cont_btcelebview,cont_celebview,cont_awardview,cont_block_user,cont_signout,cont_home,cont_insert,cont_validation,cont_adduser,cont_registeruser,cont_signup,cont_signin,cont_adminprofile,cont_showproduct,cont_insertproduct,cont_deleteuser,cont_viewusercomodity,cont_userupdate,cont_userprofileupdate,cont_update_points,cont_update_points_form,cont_showproduct_admin,cont_buyproduct,cont_buyproduct_form,cont_add_balance,cont_add_balance_form,cont_update_product,cont_update_product_page,cont_product_delete,cont_changepass,cont_change_pass,cont_showt}=require("../controllers/controller");
+let {cont_deleteac,cont_tpseriesshow,cont_reseriesshow,cont_seriesshow,cont_tpshowmovie,cont_reshowmovie,cont_showmovie,cont_pcelebview,cont_btcelebview,cont_celebview,cont_awardview,cont_block_user,cont_signout,cont_home,cont_insert,cont_validation,cont_adduser,cont_registeruser,cont_signup,cont_signin,cont_adminprofile,cont_showproduct,cont_insertproduct,cont_deleteuser,cont_viewusercomodity,cont_userupdate,cont_userprofileupdate,cont_update_points,cont_update_points_form,cont_showproduct_admin,cont_buyproduct,cont_buyproduct_form,cont_add_balance,cont_add_balance_form,cont_update_product,cont_update_product_page,cont_product_delete,cont_changepass,cont_change_pass,cont_showt}=require("../controllers/controller");
 
 //for sign in and signup and validation
 router.get("/home",cont_home);
@@ -11,9 +11,11 @@ router.post("/login-data-validation",cont_validation);
 router.get("/signup",cont_signup);
 router.post("/register_data_save",cont_insert);
 router.get("/adminprofile",user_auth,cont_adminprofile);
+router.post("/update_profile",user_auth,cont_userprofileupdate); 
+router.get("/signout",user_auth,cont_signout);
+router.get("/deleteac",user_auth,cont_deleteac);
 
 //to view profile and add balance and change password
-router.get("/add_balance",user_auth,cont_add_balance);
 router.get("/add_balance_form",user_auth,cont_add_balance_form);
 router.post("/add_balance",user_auth,cont_add_balance);
 router.get("/change_pass_page",user_auth,cont_change_pass)
@@ -38,7 +40,6 @@ router.get("/awardview",user_auth,cont_awardview);
 router.post("/delete_user",user_auth,cont_deleteuser); 
 router.post("/view_user_commodity",user_auth,cont_viewusercomodity); 
 router.post("/user_update_page",user_auth,cont_userupdate); 
-router.post("/update_service",user_auth,cont_userprofileupdate); 
 
 //to add,show,buy product,update,delete product and update product details 
 router.post("/insertproduct",user_auth,cont_insertproduct); 
@@ -58,6 +59,5 @@ router.post("/update_points",user_auth,cont_update_points);
 router.get("/show_t",user_auth,cont_showt);
 
 //signout and send otp
-router.get("/signout",user_auth,cont_signout);
 
 module.exports=router;

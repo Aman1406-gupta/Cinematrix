@@ -10,9 +10,7 @@ async function user_auth(req, rep, next) {
             const jwtSecretKey = process.env.SECRET_KEY; 
 
             const decode = jwt.verify(token, jwtSecretKey);
-
-            // let admin=await recu.findOne({_id:decode.id});
-            // const admin = await mysqldb.query('SELECT * FROM user WHERE id = ?', [decode.id]);
+            
             mysqlConnection.query(
                 ('SELECT * FROM user WHERE id = ?'), [decode.id],
                 (err, results) => {
