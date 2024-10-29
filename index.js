@@ -20,13 +20,13 @@ app.listen(process.env.app_port_no, () => {
     console.log('Server is running on port', process.env.app_port_no);
 });
 
-const queryMySQL = () => {
-    mysqlConnection.query(`Select * from movies where Movie_ID = 1`, (error, results) => {
-        if (error) {
-            console.log(error);
-        }
-        console.log(results);
-    });
-};
+// const queryMySQL = () => {
+//     mysqlConnection.query(`Select * from movies where Movie_ID = 1`, (error, results) => {
+//         if (error) {
+//             console.log(error);
+//         }
+//         console.log(results);
+//     });
+// };
 
-queryMySQL();
+// queryMySQL();

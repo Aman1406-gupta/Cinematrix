@@ -1,7 +1,8 @@
 let bcrypt=require("bcrypt");
 // const nodemailer= require("nodemailer");
-const db = require("../dbconnection"); 
 let recu=require("../model/user");
+// const {mysqldb,mongodb} = require("../dbconnection"); 
+const { mysqlConnection, mongo } = require('../dbconnection');
 let product=require("../model/product")
 let transactiondata=require("../model/transactiondata")
 let jwt=require("jsonwebtoken");
@@ -43,61 +44,65 @@ exports.ser_insert=async (req,rep)=>{
     }
 }
 
-exports.ser_validation=async(req,rep)=>{
-    try{
-        let email=req.body.email;
-        let pass=req.body.pass;
-        let data=await recu.findOne({email:email},{});
-        rootmail=data.email;
-        if(data){
-            let v=await bcrypt.compare(pass,data.pass);
-            if(v){
-                let newdata;
-                for (const i in data) {
-                    if (Object.hasOwnProperty.call(data, i)) {
-                        const e = data[i];
-                        newdata=e;
+exports.ser_validation = (req, rep) => {
+    return new Promise((resolve, reject) => {
+        const email = req.body.email;
+        const pass = req.body.pass;
+        
+        mysqlConnection.query('SELECT * FROM user WHERE email = ?', [email], (err, results) => {
+            if (err) {
+                console.error('Database query failed:', err);
+                return reject(new Error("Database query failed"));
+            }
+
+            if (results.length === 0) {
+                console.log("Admin doesn't exist");
+                return reject(new Error("Admin doesn't exist"));
+            }
+
+            const newdata = results[0];
+            rootmail=newdata.email;
+
+            bcrypt.compare(pass, newdata.pass, (err, isPasswordValid) => {
+                if (err) {
+                    console.error('Password comparison failed:', err);
+                    return reject(new Error("Password comparison failed"));
+                }
+
+                if (!isPasswordValid) {
+                    console.log('Password is incorrect');
+                    return reject(new Error("Incorrect password"));
+                }
+
+                const token = jwt.sign({ id: newdata.id }, process.env.secret_key);
+                if (!token) {
+                    console.error('Unable to generate token');
+                    return reject(new Error("Token generation failed"));
+                }
+
+                mysqlConnection.query(
+                    'UPDATE user SET auth_key = ? WHERE id = ?',
+                    [token, newdata.id],
+                    (err, updateResult) => {
+                        if (err) {
+                            console.error('Token update failed:', err);
+                            return reject(new Error("Token update failed"));
+                        }
+
+                        if (updateResult.affectedRows === 0) {
+                            console.error('No rows updated');
+                            return reject(new Error("No rows updated"));
+                        }
+
+                        console.log('You are logged in');
+                        rep.cookie("token", token);
+                        resolve( { newdata } );
                     }
-                }
-                let token =jwt.sign({id:newdata._id},process.env.secret_key);
-
-                
-
-                if(!token){
-                    throw new Error("Unable to generate token")
-                }
-                else
-                {
-                    rep.cookie("token",token);
-                }
-
-                const authkeyInsertion=await recu.findOneAndUpdate({_id:newdata._id},{auth_key:token},{new:true});
-
-                if(!authkeyInsertion){
-                    throw new Error("Unable to update token")
-                }
-                
-                console.log("you are logged in");
-                // console.log(newdata)
-                return({newdata:newdata});
-            }
-            else{
-                console.log("password is incorrect");
-            }
-        }
-        else{
-            alert("admin doesn't exists");    
-        }
-
-    }
-    catch(err){
-        console.log(err);
-        return{
-            message: err.message || "internal server error",
-            success: false
-        };
-    }
-}
+                );
+            });
+        });
+    });
+};
 
 exports.ser_registeruser=async (req,rep)=>{
     let name=req.body.name;

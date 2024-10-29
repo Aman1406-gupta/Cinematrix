@@ -23,6 +23,7 @@ exports.cont_insert=async(req,rep)=>{
 
 exports.cont_validation=async(req,rep)=>{
     let data= await ser_validation(req,rep);
+    console.log(data.newdata);
     if(data){
         rep.render("dashboard",{data:data.newdata});
     }

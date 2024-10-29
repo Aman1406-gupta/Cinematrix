@@ -37,19 +37,19 @@
   </head>
   <body style="background-color: black;">
     <%- include("../../utils/header") %> 
-    <% if(data.parentmail && data.parentmail!==""){ %>
+    <% if(data.parentmail && data.parentmail!==''){ %>
 
     <%- include("../../utils/side") %>
 
     <% } %>
 
-    <% if(data.parentmail==""){ %>
+    <% if(data.parentmail==''){ %>
 
     <%- include("../../utils/admin_side") %>
   
     <% } %>
 
-    <% if(data.parentmail==""){ %>
+    <% if(data.parentmail==''){ %>
 
     <%- include("../../utils/admin_side") %>
     
