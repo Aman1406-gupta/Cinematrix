@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+
+    <title>CINEMATRIX</title>
+    <meta content="" name="description" />
+    <meta content="" name="keywords" />
+
+    <link href="assets/img/favicon.png" rel="icon" />
+    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon" />
+    <link href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link
+      href="assets/vendor/bootstrap/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/swiffy-slider@1.6.0/dist/js/swiffy-slider.min.js" crossorigin="anonymous" defer></script>
+    <link href="https://cdn.jsdelivr.net/npm/swiffy-slider@1.6.0/dist/css/swiffy-slider.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link
+      href="assets/vendor/bootstrap-icons/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet" />
+    <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet" />
+    <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet" />
+    <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet" />
+    <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet" />
+
+    <link href="/style.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <%- include("../../utils/header")%> 
+    <% if(data && data!==""){ %>
+
+      <%- include("../../utils/admin_side") %>
+  
+      <% } %>
+  
+      <% if(data==""){ %>
+  
+      <%- include("../../utils/admin_side") %>
+    
+      <% } %>
+  
+      <% if(data==""){ %>
+  
+      <%- include("../../utils/admin_side") %>
+      
+      <% } %>
+
+    <main id="main" class="main" style="background-color:black">
+      <div class="pagetitle">
+        <nav>
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/home">Home</a></li>
+          </ol>
+        </nav>
+      </div>
+
+      <section class="section" style="color: white; background-color:black;">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="card" style="overflow-x: scroll;color: white; background-color:black;">
+              <div class="card-body" style="color: white; background-color:black; border-bottom: 2px solid gray; margin-bottom: 10px;" >
+                <div style="border-bottom: 2px solid gray; padding-bottom: 10px;">
+                  <h3 class="card-title" style="color: white;">Details of the TV Show:</h3>
+                  <h5 class="card-title" style="color: white;">Title: &nbsp;&nbsp;&nbsp;Breaking Bad</h5>
+                  <h5 class="card-title" style="color: white;">Rating: &nbsp;&nbsp;&nbsp; 9.5</h5>
+                  <h5 class="card-title" style="color: white;">Start date: &nbsp;&nbsp;&nbsp; 05-06-2014</h5>
+                  <h5 class="card-title" style="color: white;">End date: &nbsp;&nbsp;&nbsp; 09-08-2020</h5>
+                  <h5 class="card-title" style="color: white;">Number of ratings: &nbsp;&nbsp;&nbsp; 22,200,000</h5>
+                  <h5 class="card-title" style="color: white;">Number of seasons: &nbsp;&nbsp;&nbsp; 7</h5>
+                  <h5 class="card-title" style="color: white;">Number of episodes: &nbsp;&nbsp;&nbsp; 60</h5>
+                  <div style="display: flex; align-items: flex-start; color: white;">
+                    <h5 class="card-title" style="color: white;" style="flex: 0 0 auto; margin-right: 10px;">Description:</h5>
+                    <div class="ms-4" style="flex: 1;">
+                        <h5 class="card-title" style="color: white;">A chemistry teacher diagnosed with inoperable lung cancer turns to manufacturing and selling methamphetamine with a former student to secure his family's future.</h5>
+                    </div>
+                </div>            
+                  <h5 class="card-title" style="color: white;">Age rating: &nbsp;&nbsp;&nbsp; 16+</h5>
+                  <h5 class="card-title" style="color: white;">TV show trailer url: &nbsp;&nbsp;&nbsp; <a href="https://www.youtube.com/watch?v=HhesaQXLuRY" style="color: white;">https://www.youtube.com/watch?v=HhesaQXLuRY</a></h5>
+              </div>
+                <h5 class="card-title mb-4 mt-4" style="color: white;">Genres:</h5>
+<div style="max-height: 200px; overflow-y: auto; overflow-x: auto;">
+    <table class="table table-striped table-dark" style="color: white; border-collapse: collapse; width: 100%;">
+        <thead>
+            <tr style="border-bottom: 1px solid white;">
+                <th style="padding: 10px;">Company</th>
+                <th style="padding: 10px;">Contact</th>
+                <th style="padding: 10px;">Country</th>
+                <th style="padding: 10px;">City</th>
+                <th style="padding: 10px;">State</th>
+                <th style="padding: 10px;">Zip Code</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="padding: 10px;">Alfreds</td>
+                <td style="padding: 10px;">Maria Anders</td>
+                <td style="padding: 10px;">Germany</td>
+                <td style="padding: 10px;">Berlin</td>
+                <td style="padding: 10px;">Berlin</td>
+                <td style="padding: 10px;">10115</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Centro</td>
+                <td style="padding: 10px;">Francisco</td>
+                <td style="padding: 10px;">Mexico</td>
+                <td style="padding: 10px;">Mexico City</td>
+                <td style="padding: 10px;">CDMX</td>
+                <td style="padding: 10px;">01000</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">More Company</td>
+                <td style="padding: 10px;">More Contact</td>
+                <td style="padding: 10px;">USA</td>
+                <td style="padding: 10px;">New York</td>
+                <td style="padding: 10px;">NY</td>
+                <td style="padding: 10px;">10001</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Another Company</td>
+                <td style="padding: 10px;">Another Contact</td>
+                <td style="padding: 10px;">Canada</td>
+                <td style="padding: 10px;">Toronto</td>
+                <td style="padding: 10px;">ON</td>
+                <td style="padding: 10px;">M5H 2N2</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Yet Another</td>
+                <td style="padding: 10px;">Yet Another Contact</td>
+                <td style="padding: 10px;">UK</td>
+                <td style="padding: 10px;">London</td>
+                <td style="padding: 10px;">England</td>
+                <td style="padding: 10px;">E1 6AN</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Final Company</td>
+                <td style="padding: 10px;">Final Contact</td>
+                <td style="padding: 10px;">Australia</td>
+                <td style="padding: 10px;">Sydney</td>
+                <td style="padding: 10px;">NSW</td>
+                <td style="padding: 10px;">2000</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+                <h5 class="card-title mb-4 mt-4" style="color: white;">List of Episodes:</h5>
+                
+<div style="max-height: 200px; overflow-y: auto; overflow-x: auto;">
+    <table class="table table-striped table-dark" style="color: white; border-collapse: collapse; width: 100%;">
+        <thead>
+            <tr style="border-bottom: 1px solid white;">
+                <th style="padding: 10px;">Company</th>
+                <th style="padding: 10px;">Contact</th>
+                <th style="padding: 10px;">Country</th>
+                <th style="padding: 10px;">City</th>
+                <th style="padding: 10px;">State</th>
+                <th style="padding: 10px;">Zip Code</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="padding: 10px;">Alfreds</td>
+                <td style="padding: 10px;">Maria Anders</td>
+                <td style="padding: 10px;">Germany</td>
+                <td style="padding: 10px;">Berlin</td>
+                <td style="padding: 10px;">Berlin</td>
+                <td style="padding: 10px;">10115</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Centro</td>
+                <td style="padding: 10px;">Francisco</td>
+                <td style="padding: 10px;">Mexico</td>
+                <td style="padding: 10px;">Mexico City</td>
+                <td style="padding: 10px;">CDMX</td>
+                <td style="padding: 10px;">01000</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">More Company</td>
+                <td style="padding: 10px;">More Contact</td>
+                <td style="padding: 10px;">USA</td>
+                <td style="padding: 10px;">New York</td>
+                <td style="padding: 10px;">NY</td>
+                <td style="padding: 10px;">10001</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Another Company</td>
+                <td style="padding: 10px;">Another Contact</td>
+                <td style="padding: 10px;">Canada</td>
+                <td style="padding: 10px;">Toronto</td>
+                <td style="padding: 10px;">ON</td>
+                <td style="padding: 10px;">M5H 2N2</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Yet Another</td>
+                <td style="padding: 10px;">Yet Another Contact</td>
+                <td style="padding: 10px;">UK</td>
+                <td style="padding: 10px;">London</td>
+                <td style="padding: 10px;">England</td>
+                <td style="padding: 10px;">E1 6AN</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Final Company</td>
+                <td style="padding: 10px;">Final Contact</td>
+                <td style="padding: 10px;">Australia</td>
+                <td style="padding: 10px;">Sydney</td>
+                <td style="padding: 10px;">NSW</td>
+                <td style="padding: 10px;">2000</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+                <h5 class="card-title mb-4 mt-4" style="color: white;">Awards:</h5>
+                
+<div style="max-height: 200px; overflow-y: auto; overflow-x: auto;">
+    <table class="table table-striped table-dark" style="color: white; border-collapse: collapse; width: 100%;">
+        <thead>
+            <tr style="border-bottom: 1px solid white;">
+                <th style="padding: 10px;">Company</th>
+                <th style="padding: 10px;">Contact</th>
+                <th style="padding: 10px;">Country</th>
+                <th style="padding: 10px;">City</th>
+                <th style="padding: 10px;">State</th>
+                <th style="padding: 10px;">Zip Code</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="padding: 10px;">Alfreds</td>
+                <td style="padding: 10px;">Maria Anders</td>
+                <td style="padding: 10px;">Germany</td>
+                <td style="padding: 10px;">Berlin</td>
+                <td style="padding: 10px;">Berlin</td>
+                <td style="padding: 10px;">10115</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Centro</td>
+                <td style="padding: 10px;">Francisco</td>
+                <td style="padding: 10px;">Mexico</td>
+                <td style="padding: 10px;">Mexico City</td>
+                <td style="padding: 10px;">CDMX</td>
+                <td style="padding: 10px;">01000</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">More Company</td>
+                <td style="padding: 10px;">More Contact</td>
+                <td style="padding: 10px;">USA</td>
+                <td style="padding: 10px;">New York</td>
+                <td style="padding: 10px;">NY</td>
+                <td style="padding: 10px;">10001</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Another Company</td>
+                <td style="padding: 10px;">Another Contact</td>
+                <td style="padding: 10px;">Canada</td>
+                <td style="padding: 10px;">Toronto</td>
+                <td style="padding: 10px;">ON</td>
+                <td style="padding: 10px;">M5H 2N2</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Yet Another</td>
+                <td style="padding: 10px;">Yet Another Contact</td>
+                <td style="padding: 10px;">UK</td>
+                <td style="padding: 10px;">London</td>
+                <td style="padding: 10px;">England</td>
+                <td style="padding: 10px;">E1 6AN</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Final Company</td>
+                <td style="padding: 10px;">Final Contact</td>
+                <td style="padding: 10px;">Australia</td>
+                <td style="padding: 10px;">Sydney</td>
+                <td style="padding: 10px;">NSW</td>
+                <td style="padding: 10px;">2000</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+                <h5 class="card-title mb-4 mt-4" style="color: white;">Streaming Sites:</h5>
+                
+<div style="max-height: 200px; overflow-y: auto; overflow-x: auto;">
+    <table class="table table-striped table-dark" style="color: white; border-collapse: collapse; width: 100%;">
+        <thead>
+            <tr style="border-bottom: 1px solid white;">
+                <th style="padding: 10px;">Company</th>
+                <th style="padding: 10px;">Contact</th>
+                <th style="padding: 10px;">Country</th>
+                <th style="padding: 10px;">City</th>
+                <th style="padding: 10px;">State</th>
+                <th style="padding: 10px;">Zip Code</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="padding: 10px;">Alfreds</td>
+                <td style="padding: 10px;">Maria Anders</td>
+                <td style="padding: 10px;">Germany</td>
+                <td style="padding: 10px;">Berlin</td>
+                <td style="padding: 10px;">Berlin</td>
+                <td style="padding: 10px;">10115</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Centro</td>
+                <td style="padding: 10px;">Francisco</td>
+                <td style="padding: 10px;">Mexico</td>
+                <td style="padding: 10px;">Mexico City</td>
+                <td style="padding: 10px;">CDMX</td>
+                <td style="padding: 10px;">01000</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">More Company</td>
+                <td style="padding: 10px;">More Contact</td>
+                <td style="padding: 10px;">USA</td>
+                <td style="padding: 10px;">New York</td>
+                <td style="padding: 10px;">NY</td>
+                <td style="padding: 10px;">10001</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Another Company</td>
+                <td style="padding: 10px;">Another Contact</td>
+                <td style="padding: 10px;">Canada</td>
+                <td style="padding: 10px;">Toronto</td>
+                <td style="padding: 10px;">ON</td>
+                <td style="padding: 10px;">M5H 2N2</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Yet Another</td>
+                <td style="padding: 10px;">Yet Another Contact</td>
+                <td style="padding: 10px;">UK</td>
+                <td style="padding: 10px;">London</td>
+                <td style="padding: 10px;">England</td>
+                <td style="padding: 10px;">E1 6AN</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Final Company</td>
+                <td style="padding: 10px;">Final Contact</td>
+                <td style="padding: 10px;">Australia</td>
+                <td style="padding: 10px;">Sydney</td>
+                <td style="padding: 10px;">NSW</td>
+                <td style="padding: 10px;">2000</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+                <h5 class="card-title mb-4 mt-4" style="color: white;">Actors:</h5>
+                
+<div style="max-height: 200px; overflow-y: auto; overflow-x: auto;">
+    <table class="table table-striped table-dark" style="color: white; border-collapse: collapse; width: 100%;">
+        <thead>
+            <tr style="border-bottom: 1px solid white;">
+                <th style="padding: 10px;">Company</th>
+                <th style="padding: 10px;">Contact</th>
+                <th style="padding: 10px;">Country</th>
+                <th style="padding: 10px;">City</th>
+                <th style="padding: 10px;">State</th>
+                <th style="padding: 10px;">Zip Code</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="padding: 10px;">Alfreds</td>
+                <td style="padding: 10px;">Maria Anders</td>
+                <td style="padding: 10px;">Germany</td>
+                <td style="padding: 10px;">Berlin</td>
+                <td style="padding: 10px;">Berlin</td>
+                <td style="padding: 10px;">10115</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Centro</td>
+                <td style="padding: 10px;">Francisco</td>
+                <td style="padding: 10px;">Mexico</td>
+                <td style="padding: 10px;">Mexico City</td>
+                <td style="padding: 10px;">CDMX</td>
+                <td style="padding: 10px;">01000</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">More Company</td>
+                <td style="padding: 10px;">More Contact</td>
+                <td style="padding: 10px;">USA</td>
+                <td style="padding: 10px;">New York</td>
+                <td style="padding: 10px;">NY</td>
+                <td style="padding: 10px;">10001</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Another Company</td>
+                <td style="padding: 10px;">Another Contact</td>
+                <td style="padding: 10px;">Canada</td>
+                <td style="padding: 10px;">Toronto</td>
+                <td style="padding: 10px;">ON</td>
+                <td style="padding: 10px;">M5H 2N2</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Yet Another</td>
+                <td style="padding: 10px;">Yet Another Contact</td>
+                <td style="padding: 10px;">UK</td>
+                <td style="padding: 10px;">London</td>
+                <td style="padding: 10px;">England</td>
+                <td style="padding: 10px;">E1 6AN</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Final Company</td>
+                <td style="padding: 10px;">Final Contact</td>
+                <td style="padding: 10px;">Australia</td>
+                <td style="padding: 10px;">Sydney</td>
+                <td style="padding: 10px;">NSW</td>
+                <td style="padding: 10px;">2000</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+                <h5 class="card-title mb-4 mt-4" style="color: white;">Directors involved:</h5>
+                
+<div style="max-height: 200px; overflow-y: auto; overflow-x: auto;">
+    <table class="table table-striped table-dark" style="color: white; border-collapse: collapse; width: 100%;">
+        <thead>
+            <tr style="border-bottom: 1px solid white;">
+                <th style="padding: 10px;">Company</th>
+                <th style="padding: 10px;">Contact</th>
+                <th style="padding: 10px;">Country</th>
+                <th style="padding: 10px;">City</th>
+                <th style="padding: 10px;">State</th>
+                <th style="padding: 10px;">Zip Code</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="padding: 10px;">Alfreds</td>
+                <td style="padding: 10px;">Maria Anders</td>
+                <td style="padding: 10px;">Germany</td>
+                <td style="padding: 10px;">Berlin</td>
+                <td style="padding: 10px;">Berlin</td>
+                <td style="padding: 10px;">10115</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Centro</td>
+                <td style="padding: 10px;">Francisco</td>
+                <td style="padding: 10px;">Mexico</td>
+                <td style="padding: 10px;">Mexico City</td>
+                <td style="padding: 10px;">CDMX</td>
+                <td style="padding: 10px;">01000</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">More Company</td>
+                <td style="padding: 10px;">More Contact</td>
+                <td style="padding: 10px;">USA</td>
+                <td style="padding: 10px;">New York</td>
+                <td style="padding: 10px;">NY</td>
+                <td style="padding: 10px;">10001</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Another Company</td>
+                <td style="padding: 10px;">Another Contact</td>
+                <td style="padding: 10px;">Canada</td>
+                <td style="padding: 10px;">Toronto</td>
+                <td style="padding: 10px;">ON</td>
+                <td style="padding: 10px;">M5H 2N2</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Yet Another</td>
+                <td style="padding: 10px;">Yet Another Contact</td>
+                <td style="padding: 10px;">UK</td>
+                <td style="padding: 10px;">London</td>
+                <td style="padding: 10px;">England</td>
+                <td style="padding: 10px;">E1 6AN</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Final Company</td>
+                <td style="padding: 10px;">Final Contact</td>
+                <td style="padding: 10px;">Australia</td>
+                <td style="padding: 10px;">Sydney</td>
+                <td style="padding: 10px;">NSW</td>
+                <td style="padding: 10px;">2000</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+                <h5 class="card-title mb-4 mt-4" style="color: white;">Producers:</h5>
+                
+<div style="max-height: 200px; overflow-y: auto; overflow-x: auto;">
+    <table class="table table-striped table-dark" style="color: white; border-collapse: collapse; width: 100%;">
+        <thead>
+            <tr style="border-bottom: 1px solid white;">
+                <th style="padding: 10px;">Company</th>
+                <th style="padding: 10px;">Contact</th>
+                <th style="padding: 10px;">Country</th>
+                <th style="padding: 10px;">City</th>
+                <th style="padding: 10px;">State</th>
+                <th style="padding: 10px;">Zip Code</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="padding: 10px;">Alfreds</td>
+                <td style="padding: 10px;">Maria Anders</td>
+                <td style="padding: 10px;">Germany</td>
+                <td style="padding: 10px;">Berlin</td>
+                <td style="padding: 10px;">Berlin</td>
+                <td style="padding: 10px;">10115</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Centro</td>
+                <td style="padding: 10px;">Francisco</td>
+                <td style="padding: 10px;">Mexico</td>
+                <td style="padding: 10px;">Mexico City</td>
+                <td style="padding: 10px;">CDMX</td>
+                <td style="padding: 10px;">01000</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">More Company</td>
+                <td style="padding: 10px;">More Contact</td>
+                <td style="padding: 10px;">USA</td>
+                <td style="padding: 10px;">New York</td>
+                <td style="padding: 10px;">NY</td>
+                <td style="padding: 10px;">10001</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Another Company</td>
+                <td style="padding: 10px;">Another Contact</td>
+                <td style="padding: 10px;">Canada</td>
+                <td style="padding: 10px;">Toronto</td>
+                <td style="padding: 10px;">ON</td>
+                <td style="padding: 10px;">M5H 2N2</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Yet Another</td>
+                <td style="padding: 10px;">Yet Another Contact</td>
+                <td style="padding: 10px;">UK</td>
+                <td style="padding: 10px;">London</td>
+                <td style="padding: 10px;">England</td>
+                <td style="padding: 10px;">E1 6AN</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Final Company</td>
+                <td style="padding: 10px;">Final Contact</td>
+                <td style="padding: 10px;">Australia</td>
+                <td style="padding: 10px;">Sydney</td>
+                <td style="padding: 10px;">NSW</td>
+                <td style="padding: 10px;">2000</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+                <h5 class="card-title mb-4 mt-4" style="color: white;">Languages availabe in:</h5>
+                
+<div style="max-height: 200px; overflow-y: auto; overflow-x: auto;">
+    <table class="table table-striped table-dark" style="color: white; border-collapse: collapse; width: 100%;">
+        <thead>
+            <tr style="border-bottom: 1px solid white;">
+                <th style="padding: 10px;">Company</th>
+                <th style="padding: 10px;">Contact</th>
+                <th style="padding: 10px;">Country</th>
+                <th style="padding: 10px;">City</th>
+                <th style="padding: 10px;">State</th>
+                <th style="padding: 10px;">Zip Code</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="padding: 10px;">Alfreds</td>
+                <td style="padding: 10px;">Maria Anders</td>
+                <td style="padding: 10px;">Germany</td>
+                <td style="padding: 10px;">Berlin</td>
+                <td style="padding: 10px;">Berlin</td>
+                <td style="padding: 10px;">10115</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Centro</td>
+                <td style="padding: 10px;">Francisco</td>
+                <td style="padding: 10px;">Mexico</td>
+                <td style="padding: 10px;">Mexico City</td>
+                <td style="padding: 10px;">CDMX</td>
+                <td style="padding: 10px;">01000</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">More Company</td>
+                <td style="padding: 10px;">More Contact</td>
+                <td style="padding: 10px;">USA</td>
+                <td style="padding: 10px;">New York</td>
+                <td style="padding: 10px;">NY</td>
+                <td style="padding: 10px;">10001</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Another Company</td>
+                <td style="padding: 10px;">Another Contact</td>
+                <td style="padding: 10px;">Canada</td>
+                <td style="padding: 10px;">Toronto</td>
+                <td style="padding: 10px;">ON</td>
+                <td style="padding: 10px;">M5H 2N2</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Yet Another</td>
+                <td style="padding: 10px;">Yet Another Contact</td>
+                <td style="padding: 10px;">UK</td>
+                <td style="padding: 10px;">London</td>
+                <td style="padding: 10px;">England</td>
+                <td style="padding: 10px;">E1 6AN</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Final Company</td>
+                <td style="padding: 10px;">Final Contact</td>
+                <td style="padding: 10px;">Australia</td>
+                <td style="padding: 10px;">Sydney</td>
+                <td style="padding: 10px;">NSW</td>
+                <td style="padding: 10px;">2000</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<br>
+</div>
+<h5 class="card-title" style="color: white;">Reviews:</h5>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <%- include("../../utils/footer")%>
+
+    <a
+      href="#"
+      class="back-to-top d-flex align-items-center justify-content-center"
+      ><i class="bi bi-arrow-up-short"></i
+    ></a>
+    <script>
+      function confirmDelete() {
+        // Display a confirmation dialog
+        var result = confirm("Are you sure you want to delete this user?");
+
+        // If the user clicks OK, the form will be submitted. Otherwise, it won't.
+        return result;
+      }
+    </script>
+    <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/vendor/chart.js/chart.min.js"></script>
+    <script src="assets/vendor/echarts/echarts.min.js"></script>
+    <script src="assets/vendor/quill/quill.min.js"></script>
+    <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
+    <script src="assets/vendor/tinymce/tinymce.min.js"></script>
+    <script src="assets/vendor/php-email-form/validate.js"></script>
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>

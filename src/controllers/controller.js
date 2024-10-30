@@ -57,61 +57,61 @@ exports.cont_deleteac=async(req,rep)=>{
     rep.redirect("/signin");
 }
 
+exports.cont_tpshowmovie=async(req,rep)=>{
+    let moviedatashown= await ser_tpshowmovie(req,rep);
+    rep.render("tpviewmovie",{moviedata:moviedatashown.moviedata,data:moviedatashown.newdata.parentmail});
+}
+
+exports.cont_showmovie=async(req,rep)=>{
+    let moviedatashown= await ser_showmovie(req,rep);
+    rep.render("viewmovie",{moviedata:moviedatashown.moviedata,data:moviedatashown.newdata.parentmail});
+}
+
+exports.cont_reshowmovie=async(req,rep)=>{
+    let moviedatashown= await ser_reshowmovie(req,rep);
+    rep.render("reviewmovies",{moviedata:moviedatashown.moviedata,data:moviedatashown.newdata.parentmail});
+}
+
+exports.cont_tpseriesshow=async(req,rep)=>{
+    let seriesdatashown= await ser_tpseriesshow(req,rep);
+    rep.render("tpviewseries",{seriesdata:seriesdatashown.seriesdata,data:seriesdatashown.newdata.parentmail});
+}
+
+exports.cont_reseriesshow=async(req,rep)=>{
+    let seriesdatashown= await ser_reseriesshow(req,rep);
+    rep.render("reviewseries",{seriesdata:seriesdatashown.seriesdata,data:seriesdatashown.newdata.parentmail});
+}
+
+exports.cont_seriesshow=async(req,rep)=>{
+    let seriesdatashown= await ser_seriesshow(req,rep);
+    rep.render("viewseries",{seriesdata:seriesdatashown.seriesdata,data:seriesdatashown.newdata.parentmail});
+}
+
+exports.cont_celebview=async(req,rep)=>{
+    let celebdatashown= await ser_celebview(req,rep);
+    rep.render("viewceleb",{celebdata:celebdatashown.celebdata,data:celebdatashown.newdata.parentmail});
+}
+
+exports.cont_pcelebview=async(req,rep)=>{
+    let pcelebdatashown= await ser_pcelebview(req,rep);
+    rep.render("pviewcelebs",{celebdata:pcelebdatashown.celebdata,data:pcelebdatashown.newdata.parentmail});
+}
+
+exports.cont_btcelebview=async(req,rep)=>{
+    let btcelebdatashown= await ser_btcelebview(req,rep);
+    rep.render("btviewcelebs",{celebdata:btcelebdatashown.celebdata,data:btcelebdatashown.newdata.parentmail});
+}
+
+exports.cont_awardview=async(req,rep)=>{
+    let awarddatashown= await ser_awardview(req,rep);
+    rep.render("viewaward",{awarddata:awarddatashown.awarddata,data:awarddatashown.newdata.parentmail});
+}
+
 ////////////////////////
 
 exports.cont_registeruser=async(req,rep)=>{
     await ser_registeruser(req,rep);
     rep.render("dashboard");
-}
-
-exports.cont_tpshowmovie=async(req,rep)=>{
-    let userdatashown= await ser_tpshowmovie(req,rep);
-    rep.render("tpviewmovie",{user:userdatashown.userdata,searchdata:userdatashown.admindata,data:userdatashown.adminparentmail});
-}
-
-exports.cont_reshowmovie=async(req,rep)=>{
-    let userdatashown= await ser_reshowmovie(req,rep);
-    rep.render("reviewmovies",{user:userdatashown.userdata,searchdata:userdatashown.admindata,data:userdatashown.adminparentmail});
-}
-
-exports.cont_showmovie=async(req,rep)=>{
-    let userdatashown= await ser_showmovie(req,rep);
-    rep.render("viewmovie",{user:userdatashown.userdata,searchdata:userdatashown.admindata,data:userdatashown.adminparentmail});
-}
-
-exports.cont_tpseriesshow=async(req,rep)=>{
-    let userdatashown= await ser_tpseriesshow(req,rep);
-    rep.render("tpviewseries",{user:userdatashown.userdata,searchdata:userdatashown.admindata,data:userdatashown.adminparentmail});
-}
-
-exports.cont_reseriesshow=async(req,rep)=>{
-    let userdatashown= await ser_reseriesshow(req,rep);
-    rep.render("reviewseries",{user:userdatashown.userdata,searchdata:userdatashown.admindata,data:userdatashown.adminparentmail});
-}
-
-exports.cont_seriesshow=async(req,rep)=>{
-    let userdatashown= await ser_seriesshow(req,rep);
-    rep.render("viewseries",{user:userdatashown.userdata,searchdata:userdatashown.admindata,data:userdatashown.adminparentmail});
-}
-
-exports.cont_pcelebview=async(req,rep)=>{
-    let userdatashown= await ser_pcelebview(req,rep);
-    rep.render("pviewcelebs",{user:userdatashown.userdata,searchdata:userdatashown.admindata,data:userdatashown.adminparentmail});
-}
-
-exports.cont_btcelebview=async(req,rep)=>{
-    let userdatashown= await ser_btcelebview(req,rep);
-    rep.render("btviewcelebs",{user:userdatashown.userdata,searchdata:userdatashown.admindata,data:userdatashown.adminparentmail});
-}
-
-exports.cont_celebview=async(req,rep)=>{
-    let userdatashown= await ser_celebview(req,rep);
-    rep.render("viewceleb",{user:userdatashown.userdata,searchdata:userdatashown.admindata,data:userdatashown.adminparentmail});
-}
-
-exports.cont_awardview=async(req,rep)=>{
-    let userdatashown= await ser_awardview(req,rep);
-    rep.render("viewaward",{user:userdatashown.userdata,searchdata:userdatashown.admindata,data:userdatashown.adminparentmail});
 }
 
 exports.cont_insertproduct=async(req,rep)=>{   

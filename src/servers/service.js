@@ -7,6 +7,7 @@ let transactiondata=require("../model/transactiondata")
 let jwt=require("jsonwebtoken");
 require("dotenv").config();
 let rootmail;
+let newdata;
 
 function update_amount(previous_amount,new_amount){
     let amount=previous_amount+(new_amount*0.25);
@@ -14,9 +15,8 @@ function update_amount(previous_amount,new_amount){
 }
 
 ////////////////////////////////
+
 exports.ser_home=async(req,rep)=>{
-    // let user=await recu.findOne({email:rootmail},{});
-    // return(user);
     return new Promise((resolve, reject) => {
         mysqlConnection.query('SELECT * FROM user WHERE email = ?', [rootmail], (err, results) => {
             if (err) {
@@ -98,7 +98,8 @@ exports.ser_validation = (req, rep) => {
                 return reject(new Error("Admin doesn't exist"));
             }
 
-            const newdata = results[0];
+            // const newdata = results[0];
+            newdata = results[0];   
             rootmail=newdata.email;
 
             bcrypt.compare(pass, newdata.pass, (err, isPasswordValid) => {
@@ -235,6 +236,197 @@ exports.ser_deleteac=async(req,rep)=>{
         console.log("error in setting cookie null")
     }
 }
+
+exports.ser_showmovie=async(req,rep)=>{
+    //write queries for filter
+    return new Promise((resolve, reject) => {
+        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies;', (err, results) => {
+            if (err) {
+                console.error('Database query failed:', err);
+                return reject(new Error("Database query failed"));
+            }
+
+            if (results.length === 0) {
+                console.log("Movies don't exist");
+                return reject(new Error("Movies don't exist"));
+            }
+            const moviedata = results;
+            resolve( { moviedata, newdata } );
+        });
+    });
+}
+
+exports.ser_tpshowmovie=async(req,rep)=>{
+    // have to change query
+    return new Promise((resolve, reject) => {
+        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies limit 20;', (err, results) => {
+            if (err) {
+                console.error('Database query failed:', err);
+                return reject(new Error("Database query failed"));
+            }
+
+            if (results.length === 0) {
+                console.log("Movies don't exist");
+                return reject(new Error("Movies don't exist"));
+            }
+            const moviedata = results;
+            resolve( { moviedata, newdata } );
+        });
+    });
+}
+
+exports.ser_reshowmovie=async(req,rep)=>{
+    // have to change query
+    return new Promise((resolve, reject) => {
+        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies limit 20;', (err, results) => {
+            if (err) {
+                console.error('Database query failed:', err);
+                return reject(new Error("Database query failed"));
+            }
+
+            if (results.length === 0) {
+                console.log("Movies don't exist");
+                return reject(new Error("Movies don't exist"));
+            }
+            const moviedata = results;
+            resolve( { moviedata, newdata } );
+        });
+    });
+}
+
+exports.ser_seriesshow=async(req,rep)=>{
+    //write queries for filter
+    return new Promise((resolve, reject) => {
+        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies;', (err, results) => {
+            if (err) {
+                console.error('Database query failed:', err);
+                return reject(new Error("Database query failed"));
+            }
+
+            if (results.length === 0) {
+                console.log("Series don't exist");
+                return reject(new Error("Series don't exist"));
+            }
+            const seriesdata = results;
+            resolve( { seriesdata, newdata } );
+        });
+    });
+}
+
+exports.ser_tpseriesshow=async(req,rep)=>{
+    //change queries
+    return new Promise((resolve, reject) => {
+        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies limit 20;', (err, results) => {
+            if (err) {
+                console.error('Database query failed:', err);
+                return reject(new Error("Database query failed"));
+            }
+
+            if (results.length === 0) {
+                console.log("Series don't exist");
+                return reject(new Error("Series don't exist"));
+            }
+            const seriesdata = results;
+            resolve( { seriesdata, newdata } );
+        });
+    });
+}
+
+exports.ser_reseriesshow=async(req,rep)=>{
+    //change queries
+    return new Promise((resolve, reject) => {
+        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies limit 20;', (err, results) => {
+            if (err) {
+                console.error('Database query failed:', err);
+                return reject(new Error("Database query failed"));
+            }
+
+            if (results.length === 0) {
+                console.log("Series don't exist");
+                return reject(new Error("Series don't exist"));
+            }
+            const seriesdata = results;
+            resolve( { seriesdata, newdata } );
+        });
+    });
+}
+
+exports.ser_celebview=async(req,rep)=>{
+    //write queries for filter
+    return new Promise((resolve, reject) => {
+        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies;', (err, results) => {
+            if (err) {
+                console.error('Database query failed:', err);
+                return reject(new Error("Database query failed"));
+            }
+
+            if (results.length === 0) {
+                console.log("Celebs don't exist");
+                return reject(new Error("Celebs don't exist"));
+            }
+            const celebdata = results;
+            resolve( { celebdata, newdata } );
+        });
+    });
+}
+
+exports.ser_pcelebview=async(req,rep)=>{
+    //write queries for filter
+    return new Promise((resolve, reject) => {
+        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies limit 20;', (err, results) => {
+            if (err) {
+                console.error('Database query failed:', err);
+                return reject(new Error("Database query failed"));
+            }
+
+            if (results.length === 0) {
+                console.log("Celebs don't exist");
+                return reject(new Error("Celebs don't exist"));
+            }
+            const celebdata = results;
+            resolve( { celebdata, newdata } );
+        });
+    });
+}
+
+exports.ser_btcelebview=async(req,rep)=>{
+    //change query
+    return new Promise((resolve, reject) => {
+        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies limit 20;', (err, results) => {
+            if (err) {
+                console.error('Database query failed:', err);
+                return reject(new Error("Database query failed"));
+            }
+
+            if (results.length === 0) {
+                console.log("Celebs don't exist");
+                return reject(new Error("Celebs don't exist"));
+            }
+            const celebdata = results;
+            resolve( { celebdata, newdata } );
+        });
+    });
+}
+
+exports.ser_awardview=async(req,rep)=>{
+    //change query
+    return new Promise((resolve, reject) => {
+        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies limit 20;', (err, results) => {
+            if (err) {
+                console.error('Database query failed:', err);
+                return reject(new Error("Database query failed"));
+            }
+
+            if (results.length === 0) {
+                console.log("Awards don't exist");
+                return reject(new Error("Awards don't exist"));
+            }
+            const awarddata = results;
+            resolve( { awarddata, newdata } );
+        });
+    });
+}
+
 //////////////////////////////
 
 exports.ser_registeruser=async (req,rep)=>{
@@ -276,95 +468,6 @@ exports.ser_registeruser=async (req,rep)=>{
             let amount_earned=recu.findOneAndUpdate({email:userd.email},{amount_earned:1000})
         }
     }
-}
-
-exports.ser_tpshowmovie=async(req,rep)=>{
-    const [rows]=await db.promise().query('SELECT * FROM Movie');
-    let userdata=rows;
-    console.log(userdata);
-    // let userdata=await db.query('SELECT * FROM Movie');
-    // let userdata=await recu.find({parentmail:rootmail},{});
-    let admindata=await recu.findOne({email:rootmail},{})
-    // console.log(admindata)
-    let adminparentmail=admindata.parentmail
-    // console.log(adminparentmail)
-    // return ({userdata:userdata,admindata:admindata,adminparentmail:adminparentmail});
-    rep.json ({userdata,admindata:admindata,adminparentmail:admin});
-}
-exports.ser_reshowmovie=async(req,rep)=>{
-    let userdata=await recu.find({parentmail:rootmail},{});
-    let admindata=await recu.findOne({email:rootmail},{})
-    // console.log(admindata)
-    let adminparentmail=admindata.parentmail
-    // console.log(adminparentmail)
-    return ({userdata:userdata,admindata:admindata,adminparentmail:adminparentmail});
-}
-exports.ser_showmovie=async(req,rep)=>{
-    let userdata=await recu.find({parentmail:rootmail},{});
-    let admindata=await recu.findOne({email:rootmail},{})
-    // console.log(admindata)
-    let adminparentmail=admindata.parentmail
-    // console.log(adminparentmail)
-    return ({userdata:userdata,admindata:admindata,adminparentmail:adminparentmail});
-}
-
-exports.ser_tpseriesshow=async(req,rep)=>{
-    let userdata=await recu.find({parentmail:rootmail},{});
-    let admindata=await recu.findOne({email:rootmail},{})
-    // console.log(admindata)
-    let adminparentmail=admindata.parentmail
-    // console.log(adminparentmail)
-    return ({userdata:userdata,admindata:admindata,adminparentmail:adminparentmail});
-}
-exports.ser_reseriesshow=async(req,rep)=>{
-    let userdata=await recu.find({parentmail:rootmail},{});
-    let admindata=await recu.findOne({email:rootmail},{})
-    // console.log(admindata)
-    let adminparentmail=admindata.parentmail
-    // console.log(adminparentmail)
-    return ({userdata:userdata,admindata:admindata,adminparentmail:adminparentmail});
-}
-exports.ser_seriesshow=async(req,rep)=>{
-    let userdata=await recu.find({parentmail:rootmail},{});
-    let admindata=await recu.findOne({email:rootmail},{})
-    // console.log(admindata)
-    let adminparentmail=admindata.parentmail
-    // console.log(adminparentmail)
-    return ({userdata:userdata,admindata:admindata,adminparentmail:adminparentmail});
-}
-
-exports.ser_pcelebview=async(req,rep)=>{
-    let userdata=await recu.find({parentmail:rootmail},{});
-    let admindata=await recu.findOne({email:rootmail},{})
-    // console.log(admindata)
-    let adminparentmail=admindata.parentmail
-    // console.log(adminparentmail)
-    return ({userdata:userdata,admindata:admindata,adminparentmail:adminparentmail});
-}
-exports.ser_btcelebview=async(req,rep)=>{
-    let userdata=await recu.find({parentmail:rootmail},{});
-    let admindata=await recu.findOne({email:rootmail},{})
-    // console.log(admindata)
-    let adminparentmail=admindata.parentmail
-    // console.log(adminparentmail)
-    return ({userdata:userdata,admindata:admindata,adminparentmail:adminparentmail});
-}
-exports.ser_celebview=async(req,rep)=>{
-    let userdata=await recu.find({parentmail:rootmail},{});
-    let admindata=await recu.findOne({email:rootmail},{})
-    // console.log(admindata)
-    let adminparentmail=admindata.parentmail
-    // console.log(adminparentmail)
-    return ({userdata:userdata,admindata:admindata,adminparentmail:adminparentmail});
-}
-
-exports.ser_awardview=async(req,rep)=>{
-    let userdata=await recu.find({parentmail:rootmail},{});
-    let admindata=await recu.findOne({email:rootmail},{})
-    // console.log(admindata)
-    let adminparentmail=admindata.parentmail
-    // console.log(adminparentmail)
-    return ({userdata:userdata,admindata:admindata,adminparentmail:adminparentmail});
 }
 
 // exports.ser_addproduct=async (req,rep)=>{
@@ -435,7 +538,6 @@ exports.ser_userupdate=async(req,rep)=>{
     // console.log(rootdata)
     return({datashown:datashown,rootdata:rootdata});
 }
-
 
 exports.ser_update_points_form=async(req,rep)=>{
     let user_id=req.body.id;

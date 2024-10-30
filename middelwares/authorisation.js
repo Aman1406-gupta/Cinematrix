@@ -20,7 +20,7 @@ async function user_auth(req, rep, next) {
             
                     if (results.length === 0) {
                         console.log("Please Login First");
-                        return rep.redirect('/signup');
+                        return rep.redirect('/signin');
                     }
             
                     const admin = results[0];
@@ -34,7 +34,7 @@ async function user_auth(req, rep, next) {
             );            
 
         } else {
-            rep.redirect("/signup");
+            rep.redirect("/signin");
             console.log("Please login first");
         }
     } catch (err) {

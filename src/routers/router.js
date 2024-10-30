@@ -14,6 +14,16 @@ router.get("/adminprofile",user_auth,cont_adminprofile);
 router.post("/update_profile",user_auth,cont_userprofileupdate); 
 router.get("/signout",user_auth,cont_signout);
 router.get("/deleteac",user_auth,cont_deleteac);
+router.get("/movieview",user_auth,cont_showmovie); 
+router.get("/tpmovieview",user_auth,cont_tpshowmovie); 
+router.get("/removieview",user_auth,cont_reshowmovie); 
+router.get("/seriesshow",user_auth,cont_seriesshow);
+router.get("/tpseriesshow",user_auth,cont_tpseriesshow);
+router.get("/reseriesshow",user_auth,cont_reseriesshow);
+router.get("/celebview",user_auth,cont_celebview);  
+router.get("/pcelebview",user_auth,cont_pcelebview);  
+router.get("/btcelebview",user_auth,cont_btcelebview);  
+router.get("/awardview",user_auth,cont_awardview);  
 
 //to view profile and add balance and change password
 router.get("/add_balance_form",user_auth,cont_add_balance_form);
@@ -27,16 +37,6 @@ router.post("/register_user_save",user_auth,cont_registeruser);
 router.post("/user_block",user_auth,cont_block_user);
 
 //toshow,delete,update_user profile and view user profile 
-router.get("/tpmovieview",user_auth,cont_tpshowmovie); 
-router.get("/removieview",user_auth,cont_reshowmovie); 
-router.get("/movieview",user_auth,cont_showmovie); 
-router.get("/tpseriesshow",user_auth,cont_tpseriesshow);
-router.get("/reseriesshow",user_auth,cont_reseriesshow);
-router.get("/seriesshow",user_auth,cont_seriesshow);
-router.get("/pcelebview",user_auth,cont_pcelebview);  
-router.get("/btcelebview",user_auth,cont_btcelebview);  
-router.get("/celebview",user_auth,cont_celebview);  
-router.get("/awardview",user_auth,cont_awardview);  
 router.post("/delete_user",user_auth,cont_deleteuser); 
 router.post("/view_user_commodity",user_auth,cont_viewusercomodity); 
 router.post("/user_update_page",user_auth,cont_userupdate); 
