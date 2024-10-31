@@ -37,24 +37,19 @@
   </head>
 
   <body>
-    <%- include("../../utils/header")%> 
-    <% if(data && data!==""){ %>
+    <%- include("../../utils/header") %> 
 
-      <%- include("../../utils/admin_side") %>
+    <% if(data.User_Role=='Admin'){ %>
+
+    <%- include("../../utils/admin_side") %>
   
-      <% } %>
-  
-      <% if(data==""){ %>
-  
-      <%- include("../../utils/admin_side") %>
+    <% } %>
+
+    <% if(data.User_Role=='User'){ %>
+
+    <%- include("../../utils/side") %>
     
-      <% } %>
-  
-      <% if(data==""){ %>
-  
-      <%- include("../../utils/admin_side") %>
-      
-      <% } %>
+    <% } %>
 
     <main id="main" class="main" style="background-color:black">
       <div class="pagetitle">
@@ -79,6 +74,7 @@
                         <th scope="col">Name</th>
                         <th scope="col">Gender</th>
                         <th scope="col">Age</th>
+                        <th scope="col">Birth Date</th>
                         <th scope="col"></th>
                         <th scope="col"></th>
                       </tr>
@@ -89,14 +85,16 @@
                         <%let i=1; %> <% for (let dataobj of celebdata){ %>
                           <tr>
                             <th scope="row"><%=i%></th>
-                            <td><%=dataobj.Title%></td>
-                            <td><%=dataobj.Release_Year%></td>
-                            <td><%=dataobj.Release_Year%></td>
+                            <td><%=dataobj.Celebrity_Name%></td>
+                            <td><%=dataobj.Person_Gender%></td>
+                            <td><%=dataobj.Age%></td>
+                            <td><%=dataobj.Person_DOB%></td>
                             <td>
                               <form
                                 class="filter"
-                                action="/view_celeb_details/<%=dataobj.Movie_ID%>"
+                                action="/view_celeb_details/<%=dataobj.Person_ID%>"
                                 method="get"
+                                style="display:flex; justify-content: flex-end"
                               >
                                 <input
                                   type="submit"
@@ -109,8 +107,9 @@
                             <td>
                               <form
                                 class="filter"
-                                action="/delete_celeb/<%=dataobj.Movie_ID%>"
+                                action="/delete_celeb/<%=dataobj.Person_ID%>"
                                 method="get"
+                                style="display:flex; justify-content: flex-start"
                                 onsubmit="return confirmDelete();"
                               >
                                 <input
@@ -143,10 +142,7 @@
     ></a>
     <script>
       function confirmDelete() {
-        // Display a confirmation dialog
         var result = confirm("Are you sure you want to delete this user?");
-
-        // If the user clicks OK, the form will be submitted. Otherwise, it won't.
         return result;
       }
     </script>

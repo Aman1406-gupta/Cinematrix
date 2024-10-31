@@ -37,24 +37,19 @@
   </head>
 
   <body>
-    <%- include("../../utils/header")%> 
-    <% if(data && data!==""){ %>
+    <%- include("../../utils/header") %> 
 
-      <%- include("../../utils/admin_side") %>
+    <% if(data.User_Role=='Admin'){ %>
+
+    <%- include("../../utils/admin_side") %>
   
-      <% } %>
-  
-      <% if(data==""){ %>
-  
-      <%- include("../../utils/admin_side") %>
+    <% } %>
+
+    <% if(data.User_Role=='User'){ %>
+
+    <%- include("../../utils/side") %>
     
-      <% } %>
-  
-      <% if(data==""){ %>
-  
-      <%- include("../../utils/admin_side") %>
-      
-      <% } %>
+    <% } %>
 
     <main id="main" class="main" style="background-color:black">
       <div class="pagetitle">
@@ -75,7 +70,7 @@
                   <table class="table table-striped table-dark text-nowrap table-responsive" style="color: white; background-color:black;">
                     <thead>
                       <tr>
-                        <th scope="col no-wrap">S No.</th>
+                        <th scope="col no-wrap">S.No.</th>
                         <th scope="col no-wrap">Title</th>
                         <th scope="col no-wrap">Release Year</th>
                         <th scope="col no-wrap">Rating</th>
@@ -102,8 +97,6 @@
                               >
                                 <input
                                   type="submit"
-                                  id="<%=dataobj.Movie_ID%>"
-                                  name="movieid"
                                   class="btn btn-info"
                                   value="View Details"
                                 />
@@ -119,8 +112,6 @@
                               >
                                 <input
                                   type="submit"
-                                  id="<%=dataobj.Movie_ID%>"
-                                  name="movieid"
                                   class="btn btn-danger"
                                   value="Delete"
                                 />
@@ -149,10 +140,7 @@
     ></a>
     <script>
       function confirmDelete() {
-        // Display a confirmation dialog
         var result = confirm("Are you sure you want to delete this user?");
-
-        // If the user clicks OK, the form will be submitted. Otherwise, it won't.
         return result;
       }
     </script>

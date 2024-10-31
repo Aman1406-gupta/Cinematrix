@@ -39,24 +39,19 @@
 
 <body>
 
-  <%- include("../../utils/header")%> 
-    <% if(data && data!==""){ %>
+  <%- include("../../utils/header") %> 
 
-      <%- include("../../utils/admin_side") %>
+    <% if(data.User_Role=='Admin'){ %>
+
+    <%- include("../../utils/admin_side") %>
   
-      <% } %>
-  
-      <% if(data==""){ %>
-  
-      <%- include("../../utils/admin_side") %>
+    <% } %>
+
+    <% if(data.User_Role=='User'){ %>
+
+    <%- include("../../utils/side") %>
     
-      <% } %>
-  
-      <% if(data==""){ %>
-  
-      <%- include("../../utils/admin_side") %>
-      
-      <% } %>
+    <% } %>
       
     <main id="main" class="main" style="background-color:black">
       <div class="pagetitle">
@@ -74,7 +69,7 @@
           <div class="card" style="color:white ;background-color:black;">
             <div class="card-body profile-card pt-4 d-flex flex-column align-items-center" >
 
-              <h2 style="color: white;"><%=data.name%></h2>
+              <h2 style="color: white;"><%=data.Username%></h2>
               <!-- <h3>Admin</h3> -->
               <!-- <div class="social-links mt-2">
                 <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
@@ -109,22 +104,22 @@
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label" style="color:white">Username</div>
-                    <div class="col-lg-9 col-md-8" style="color:white"><%=data.name %></div>
+                    <div class="col-lg-9 col-md-8" style="color:white"><%=data.Username %></div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label" style="color:white">E-mail</div>
-                    <div class="col-lg-9 col-md-8"><%=data.email %></div>
+                    <div class="col-lg-9 col-md-8"><%=data.User_Mail %></div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label" style="color:white">D.O.B</div>
-                    <div class="col-lg-9 col-md-8"><%=data.dob %></div>
+                    <div class="col-lg-9 col-md-8"><%=data.User_DOB %></div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label" style="color:white">Nationality</div>
-                    <div class="col-lg-9 col-md-8"><%=data.Nationality %></div>
+                    <div class="col-lg-9 col-md-8"><%=data.User_Country %></div>
                   </div>
 
                 </div>
@@ -138,8 +133,8 @@
                     <div class="row mb-3">
                       <label for="fullName" class="col-md-4 col-lg-3 col-form-label" style="color:white">Username</label>
                       <div class="col-md-8 col-lg-9">
-                        <!-- <input name="name" type="text" class="form-control" id="fullName" value=<%=data.name?data.name:""%> > -->
-                        <input name="name" type="text" class="form-control" id="fullName" value="<%=data.name?data.name:''%>">
+                        <!-- <input name="name" type="text" class="form-control" id="fullName" value=<%=data.Username?data.Username:""%> > -->
+                        <input name="name" type="text" class="form-control" id="fullName" value="<%=data.Username?data.Username:''%>">
                       </div>
                     </div>
 

@@ -18,7 +18,7 @@ function update_amount(previous_amount,new_amount){
 
 exports.ser_home=async(req,rep)=>{
     return new Promise((resolve, reject) => {
-        mysqlConnection.query('SELECT * FROM user WHERE email = ?', [rootmail], (err, results) => {
+        mysqlConnection.query('SELECT * FROM Users WHERE User_Mail = ?', [rootmail], (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
@@ -43,11 +43,10 @@ exports.ser_insert=async (req,rep)=>{
     let pass=req.body.pass;
     let hashpass=await bcrypt.hash(pass,10);
     let terms=req.body.terms;
-
-    console.log(req.body);
+    let watchlisturl = `/watchlist/${name.replace(/\s+/g, '_').toLowerCase()}`;
 
     return new Promise((resolve, reject) => {
-        mysqlConnection.query('SELECT * FROM user WHERE email = ?', [email], (err, results) => {
+        mysqlConnection.query('SELECT * FROM Users WHERE User_Mail = ?', [email], (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
@@ -61,7 +60,7 @@ exports.ser_insert=async (req,rep)=>{
             }
             else{
                 mysqlConnection.query(
-                    'INSERT INTO user (name, email, pass, parentmail, dob, Nationality) values (?, ?, ?, ?, ?, ?)', [name, email, hashpass, '', dob, Nationality],
+                    'INSERT INTO Users (Username, User_Mail, User_Password_Encrypted, User_Role, User_DOB, User_Country, Watchlist_URL) values (?, ?, ?, "User", ?, ?, ?)', [name, email, hashpass, dob, Nationality, watchlisturl],
                     (err, Result) => {
                         if (err) {
                             console.error('Token update failed:', err);
@@ -87,7 +86,7 @@ exports.ser_validation = (req, rep) => {
         const email = req.body.email;
         const pass = req.body.pass;
         
-        mysqlConnection.query('SELECT * FROM user WHERE email = ?', [email], (err, results) => {
+        mysqlConnection.query('SELECT * FROM Users WHERE User_Mail = ?', [email], (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
@@ -100,9 +99,9 @@ exports.ser_validation = (req, rep) => {
 
             // const newdata = results[0];
             newdata = results[0];   
-            rootmail=newdata.email;
+            rootmail=newdata.User_Mail;
 
-            bcrypt.compare(pass, newdata.pass, (err, isPasswordValid) => {
+            bcrypt.compare(pass, newdata.User_Password_Encrypted, (err, isPasswordValid) => {
                 if (err) {
                     console.error('Password comparison failed:', err);
                     return reject(new Error("Password comparison failed"));
@@ -113,15 +112,15 @@ exports.ser_validation = (req, rep) => {
                     return reject(new Error("Incorrect password"));
                 }
 
-                const token = jwt.sign({ id: newdata.id }, process.env.secret_key);
+                const token = jwt.sign({ id: newdata.User_ID }, process.env.secret_key);
                 if (!token) {
                     console.error('Unable to generate token');
                     return reject(new Error("Token generation failed"));
                 }
 
                 mysqlConnection.query(
-                    'UPDATE user SET auth_key = ? WHERE id = ?',
-                    [token, newdata.id],
+                    'UPDATE Users SET User_Authentication_Key = ? WHERE User_ID = ?',
+                    [token, newdata.User_ID],
                     (err, updateResult) => {
                         if (err) {
                             console.error('Token update failed:', err);
@@ -145,7 +144,7 @@ exports.ser_validation = (req, rep) => {
 
 exports.ser_adminprofile=async(req,rep)=>{
     return new Promise((resolve, reject) => {
-        mysqlConnection.query('SELECT * FROM user WHERE email = ?', [rootmail], (err, results) => {
+        mysqlConnection.query('SELECT * FROM Users WHERE User_Mail = ?', [rootmail], (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
@@ -167,15 +166,12 @@ exports.ser_userprofileupdate=async(req,rep)=>{
     let user_password=req.body.pass;
     let user_name=req.body.name;
     let hashpass=await bcrypt.hash(user_password,10);
-    console.log(req.body);
-    console.log(user_name);
-    console.log(user_password);
     if (!user_password) {
         rep.redirect('/adminprofile');
     }
 
     return new Promise((resolve, reject) => {
-        mysqlConnection.query('UPDATE user set pass = ?, name = ? where email = ?', [hashpass, user_name, rootmail], (err, results) => {
+        mysqlConnection.query('UPDATE Users set User_Password_Encrypted = ?, Username = ? where User_Mail = ?', [hashpass, user_name, rootmail], (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
@@ -195,7 +191,7 @@ exports.ser_signout=async(req,rep)=>{
     try{
         rep.clearCookie("token");
         return new Promise((resolve, reject) => {
-            mysqlConnection.query('UPDATE user set auth_key = NULL where email = ?', [rootmail], (err, results) => {
+            mysqlConnection.query('UPDATE Users set User_Authentication_Key = NULL where User_Mail = ?', [rootmail], (err, results) => {
                 if (err) {
                     console.error('Error in logging out!', err);
                     return reject(new Error("Database query failed"));
@@ -218,7 +214,7 @@ exports.ser_deleteac=async(req,rep)=>{
     try{
         rep.clearCookie("token");
         return new Promise((resolve, reject) => {
-            mysqlConnection.query('DELETE from user where email = ?', [rootmail], (err, results) => {
+            mysqlConnection.query('DELETE from Users where User_Mail = ?', [rootmail], (err, results) => {
                 if (err) {
                     console.error('Error in deleting account!', err);
                     return reject(new Error("Database query failed"));
@@ -257,9 +253,8 @@ exports.ser_showmovie=async(req,rep)=>{
 }
 
 exports.ser_tpshowmovie=async(req,rep)=>{
-    // have to change query
     return new Promise((resolve, reject) => {
-        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies limit 20;', (err, results) => {
+        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) Release_Year, Movie_Rating, Num_Ratings_Movies FROM Movies ORDER BY Movie_Rating DESC LIMIT 20;', (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
@@ -276,9 +271,8 @@ exports.ser_tpshowmovie=async(req,rep)=>{
 }
 
 exports.ser_reshowmovie=async(req,rep)=>{
-    // have to change query
     return new Promise((resolve, reject) => {
-        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies limit 20;', (err, results) => {
+        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) Release_Year, Movie_Rating, Num_Ratings_Movies FROM Movies ORDER BY Release_Date DESC LIMIT 20;', (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
@@ -314,9 +308,8 @@ exports.ser_seriesshow=async(req,rep)=>{
 }
 
 exports.ser_tpseriesshow=async(req,rep)=>{
-    //change queries
     return new Promise((resolve, reject) => {
-        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies limit 20;', (err, results) => {
+        mysqlConnection.query('SELECT S.Show_ID, S.Title, N.Number_Of_Seasons, YEAR(S.Start_Date) Release_Year, S.TVShow_Rating, S.Num_Ratings_TV FROM TV_Shows S JOIN (SELECT  Show_ID, COUNT(DISTINCT(Season_Number)) Number_Of_Seasons FROM Episodes GROUP BY Show_ID) N ON N.Show_ID = S.Show_ID ORDER BY S.TVShow_Rating DESC LIMIT 20;', (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
@@ -333,9 +326,8 @@ exports.ser_tpseriesshow=async(req,rep)=>{
 }
 
 exports.ser_reseriesshow=async(req,rep)=>{
-    //change queries
     return new Promise((resolve, reject) => {
-        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies limit 20;', (err, results) => {
+        mysqlConnection.query('SELECT S.Show_ID, S.Title, N.Number_Of_Seasons, YEAR(S.Start_Date) Release_Year, S.TVShow_Rating, S.Num_Ratings_TV FROM TV_Shows S JOIN (SELECT  Show_ID, COUNT(DISTINCT(Season_Number)) Number_Of_Seasons FROM Episodes GROUP BY Show_ID) N ON N.Show_ID = S.Show_ID ORDER BY S.Start_Date DESC LIMIT 20;', (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
@@ -371,9 +363,8 @@ exports.ser_celebview=async(req,rep)=>{
 }
 
 exports.ser_pcelebview=async(req,rep)=>{
-    //write queries for filter
     return new Promise((resolve, reject) => {
-        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies limit 20;', (err, results) => {
+        mysqlConnection.query('SELECT Person_ID, CONCAT(Person_First_Name," ",Person_Last_Name) Celebrity_Name, Person_Gender, FLOOR(DATEDIFF(CURDATE(), Person_DOB) / 365.25) Age FROM People ORDER BY Person_DOB DESC LIMIT 20;', (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
@@ -390,9 +381,8 @@ exports.ser_pcelebview=async(req,rep)=>{
 }
 
 exports.ser_btcelebview=async(req,rep)=>{
-    //change query
     return new Promise((resolve, reject) => {
-        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies limit 20;', (err, results) => {
+        mysqlConnection.query('SELECT Person_ID, CONCAT(Person_First_Name, " ", Person_Last_Name) Celebrity_Name, Person_Gender, FLOOR(DATEDIFF(CURDATE(), Person_DOB) / 365.25) Age, DATE_FORMAT(Person_DOB, "%Y-%m-%d") Person_DOB FROM People WHERE MONTH(Person_DOB) = MONTH(CURDATE()) AND DAY(Person_DOB) = DAY(CURDATE());', (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));

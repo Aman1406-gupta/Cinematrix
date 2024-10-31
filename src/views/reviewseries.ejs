@@ -37,24 +37,19 @@
   </head>
 
   <body>
-    <%- include("../../utils/header")%> 
-    <% if(data && data!==""){ %>
+    <%- include("../../utils/header") %> 
 
-      <%- include("../../utils/admin_side") %>
+    <% if(data.User_Role=='Admin'){ %>
+
+    <%- include("../../utils/admin_side") %>
   
-      <% } %>
-  
-      <% if(data==""){ %>
-  
-      <%- include("../../utils/admin_side") %>
+    <% } %>
+
+    <% if(data.User_Role=='User'){ %>
+
+    <%- include("../../utils/side") %>
     
-      <% } %>
-  
-      <% if(data==""){ %>
-  
-      <%- include("../../utils/admin_side") %>
-      
-      <% } %>
+    <% } %>
 
     <main id="main" class="main" style="background-color:black">
       <div class="pagetitle">
@@ -75,7 +70,7 @@
                   <table class="table table-striped table-dark text-nowrap table-responsive" style="color: white; background-color:black;">
                     <thead>
                       <tr>
-                        <th scope="col">S No.</th>
+                        <th scope="col">S.No.</th>
                         <th scope="col">Title</th>
                         <th scope="col">No of Seasons</th>
                         <th scope="col">Release Year</th>
@@ -92,14 +87,14 @@
                           <tr>
                             <th scope="row"><%=i%></th>
                             <td><%=dataobj.Title%></td>
-                            <td><%=dataobj.Release_Year%></td>
+                            <td><%=dataobj.Number_Of_Seasons%></td>
                             <td><%=dataobj.Release_Year%></td>
                             <td><%=dataobj.Movie_Rating%></td>
-                            <td><%=dataobj.Num_Ratings_Movies%></td>
+                            <td><%=dataobj.Num_Ratings_TV%></td>
                             <td>
                               <form
                                 class="filter"
-                                action="/view_tvshow_details/<%=dataobj.Movie_ID%>"
+                                action="/view_tvshow_details/<%=dataobj.Show_ID%>"
                                 method="get"
                               >
                                 <input
@@ -113,7 +108,7 @@
                             <td>
                               <form
                                 class="filter"
-                                action="/delete_tvshow/<%=dataobj.Movie_ID%>"
+                                action="/delete_tvshow/<%=dataobj.Show_ID%>"
                                 method="get"
                                 onsubmit="return confirmDelete();"
                               >
@@ -147,10 +142,7 @@
     ></a>
     <script>
       function confirmDelete() {
-        // Display a confirmation dialog
         var result = confirm("Are you sure you want to delete this user?");
-
-        // If the user clicks OK, the form will be submitted. Otherwise, it won't.
         return result;
       }
     </script>

@@ -12,7 +12,7 @@ async function user_auth(req, rep, next) {
             const decode = jwt.verify(token, jwtSecretKey);
             
             mysqlConnection.query(
-                ('SELECT * FROM user WHERE id = ?'), [decode.id],
+                ('SELECT * FROM Users WHERE User_ID = ?'), [decode.id],
                 (err, results) => {
                     if (err) {
                         console.error('Database query failed:', err);

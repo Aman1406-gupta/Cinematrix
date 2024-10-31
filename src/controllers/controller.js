@@ -1,5 +1,12 @@
 let {ser_view_award_details,ser_view_celeb_details,ser_view_tvshow_details, ser_view_movie_details,ser_deleteac,ser_tpseriesshow,ser_reseriesshow,ser_seriesshow,ser_tpshowmovie,ser_reshowmovie,ser_showmovie,ser_pcelebview,ser_btcelebview,ser_celebview,ser_awardview,ser_signout,ser_home,ser_insert,ser_validation,ser_registeruser,ser_adminprofile,ser_showproduct,ser_addproduct,ser_deleteuser,ser_viewusercomodity,ser_userupdate,ser_userprofileupdate,ser_update_points,ser_update_points_form, ser_showproduct_admin,ser_buyproduct,ser_buyproduct_form,ser_add_balance,ser_add_balance_form,ser_update_product,ser_update_product_page,ser_product_delete,ser_changepass,ser_showt}=require("../servers/service");
 
+
+exports.cont_adduser=async(req,rep)=>{
+    rep.render("registeruser")
+}   
+
+
+///////////////////////
 exports.cont_signin=async(req,rep)=>{
     rep.render("adminlogin");
 }
@@ -8,12 +15,6 @@ exports.cont_signup=async(req,rep)=>{
     rep.render("register");
 }
 
-exports.cont_adduser=async(req,rep)=>{
-    rep.render("registeruser")
-}   
-
-
-///////////////////////
 exports.cont_home=async(req,rep)=>{
     let userdata=await ser_home(req,rep);
     rep.render("dashboard",{data:userdata.admindatarec});
@@ -59,27 +60,27 @@ exports.cont_deleteac=async(req,rep)=>{
 
 exports.cont_tpshowmovie=async(req,rep)=>{
     let moviedatashown= await ser_tpshowmovie(req,rep);
-    rep.render("tpviewmovie",{moviedata:moviedatashown.moviedata,data:moviedatashown.newdata.parentmail});
+    rep.render("tpviewmovie",{moviedata:moviedatashown.moviedata,data:moviedatashown.newdata});
 }
 
 exports.cont_showmovie=async(req,rep)=>{
     let moviedatashown= await ser_showmovie(req,rep);
-    rep.render("viewmovie",{moviedata:moviedatashown.moviedata,data:moviedatashown.newdata.parentmail});
+    rep.render("viewmovie",{moviedata:moviedatashown.moviedata,data:moviedatashown.newdata.User_Role});
 }
 
 exports.cont_reshowmovie=async(req,rep)=>{
     let moviedatashown= await ser_reshowmovie(req,rep);
-    rep.render("reviewmovies",{moviedata:moviedatashown.moviedata,data:moviedatashown.newdata.parentmail});
+    rep.render("reviewmovies",{moviedata:moviedatashown.moviedata,data:moviedatashown.newdata});
 }
 
 exports.cont_tpseriesshow=async(req,rep)=>{
     let seriesdatashown= await ser_tpseriesshow(req,rep);
-    rep.render("tpviewseries",{seriesdata:seriesdatashown.seriesdata,data:seriesdatashown.newdata.parentmail});
+    rep.render("tpviewseries",{seriesdata:seriesdatashown.seriesdata,data:seriesdatashown.newdata});
 }
 
 exports.cont_reseriesshow=async(req,rep)=>{
     let seriesdatashown= await ser_reseriesshow(req,rep);
-    rep.render("reviewseries",{seriesdata:seriesdatashown.seriesdata,data:seriesdatashown.newdata.parentmail});
+    rep.render("reviewseries",{seriesdata:seriesdatashown.seriesdata,data:seriesdatashown.newdata});
 }
 
 exports.cont_seriesshow=async(req,rep)=>{
@@ -94,12 +95,12 @@ exports.cont_celebview=async(req,rep)=>{
 
 exports.cont_pcelebview=async(req,rep)=>{
     let pcelebdatashown= await ser_pcelebview(req,rep);
-    rep.render("pviewcelebs",{celebdata:pcelebdatashown.celebdata,data:pcelebdatashown.newdata.parentmail});
+    rep.render("pviewcelebs",{celebdata:pcelebdatashown.celebdata,data:pcelebdatashown.newdata});
 }
 
 exports.cont_btcelebview=async(req,rep)=>{
     let btcelebdatashown= await ser_btcelebview(req,rep);
-    rep.render("btviewcelebs",{celebdata:btcelebdatashown.celebdata,data:btcelebdatashown.newdata.parentmail});
+    rep.render("btviewcelebs",{celebdata:btcelebdatashown.celebdata,data:btcelebdatashown.newdata});
 }
 
 exports.cont_awardview=async(req,rep)=>{

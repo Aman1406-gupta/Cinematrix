@@ -12,18 +12,18 @@ router.get("/signup",cont_signup);
 router.post("/register_data_save",cont_insert);
 router.get("/adminprofile",user_auth,cont_adminprofile);
 router.post("/update_profile",user_auth,cont_userprofileupdate); 
-router.get("/signout",user_auth,cont_signout);
-router.get("/deleteac",user_auth,cont_deleteac);
-router.get("/movieview",user_auth,cont_showmovie); 
+router.get("/signout",user_auth,cont_signout); 
+router.get("/deleteac",user_auth,cont_deleteac); 
+router.get("/movieview",user_auth,cont_showmovie); // 
 router.get("/tpmovieview",user_auth,cont_tpshowmovie); 
 router.get("/removieview",user_auth,cont_reshowmovie); 
-router.get("/seriesshow",user_auth,cont_seriesshow);
+router.get("/seriesshow",user_auth,cont_seriesshow); //
 router.get("/tpseriesshow",user_auth,cont_tpseriesshow);
 router.get("/reseriesshow",user_auth,cont_reseriesshow);
-router.get("/celebview",user_auth,cont_celebview);  
+router.get("/celebview",user_auth,cont_celebview);  //
 router.get("/pcelebview",user_auth,cont_pcelebview);  
 router.get("/btcelebview",user_auth,cont_btcelebview);  
-router.get("/awardview",user_auth,cont_awardview);  
+router.get("/awardview",user_auth,cont_awardview);  //
 router.get("/view_movie_details/:movieid",user_auth,cont_view_movie_details); 
 router.get("/view_tvshow_details/:tvshowid",user_auth,cont_view_tvshow_details); 
 router.get("/view_celeb_details/:celebid",user_auth,cont_view_celeb_details); 

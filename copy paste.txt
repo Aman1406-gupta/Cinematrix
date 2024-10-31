@@ -1,0 +1,13 @@
+<%- include("../../utils/header") %> 
+
+    <% if(data.User_Role=='Admin'){ %>
+
+    <%- include("../../utils/admin_side") %>
+  
+    <% } %>
+
+    <% if(data.User_Role=='User'){ %>
+
+    <%- include("../../utils/side") %>
+    
+    <% } %>
