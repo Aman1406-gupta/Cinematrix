@@ -1,4 +1,4 @@
-let {ser_deleteac,ser_tpseriesshow,ser_reseriesshow,ser_seriesshow,ser_tpshowmovie,ser_reshowmovie,ser_showmovie,ser_pcelebview,ser_btcelebview,ser_celebview,ser_awardview,ser_signout,ser_home,ser_insert,ser_validation,ser_registeruser,ser_adminprofile,ser_showproduct,ser_addproduct,ser_deleteuser,ser_viewusercomodity,ser_userupdate,ser_userprofileupdate,ser_update_points,ser_update_points_form, ser_showproduct_admin,ser_buyproduct,ser_buyproduct_form,ser_add_balance,ser_add_balance_form,ser_update_product,ser_update_product_page,ser_product_delete,ser_changepass,ser_showt}=require("../servers/service");
+let {ser_view_award_details,ser_view_celeb_details,ser_view_tvshow_details, ser_view_movie_details,ser_deleteac,ser_tpseriesshow,ser_reseriesshow,ser_seriesshow,ser_tpshowmovie,ser_reshowmovie,ser_showmovie,ser_pcelebview,ser_btcelebview,ser_celebview,ser_awardview,ser_signout,ser_home,ser_insert,ser_validation,ser_registeruser,ser_adminprofile,ser_showproduct,ser_addproduct,ser_deleteuser,ser_viewusercomodity,ser_userupdate,ser_userprofileupdate,ser_update_points,ser_update_points_form, ser_showproduct_admin,ser_buyproduct,ser_buyproduct_form,ser_add_balance,ser_add_balance_form,ser_update_product,ser_update_product_page,ser_product_delete,ser_changepass,ser_showt}=require("../servers/service");
 
 exports.cont_signin=async(req,rep)=>{
     rep.render("adminlogin");
@@ -107,6 +107,30 @@ exports.cont_awardview=async(req,rep)=>{
     rep.render("viewaward",{awarddata:awarddatashown.awarddata,data:awarddatashown.newdata.parentmail});
 }
 
+exports.cont_view_movie_details=async(req,rep)=>{
+    let movieid=req.params.movieid;
+    let moviedetailsshown= await ser_view_movie_details(movieid,rep);
+    rep.render("viewmoviedetails",{moviedetails:moviedetailsshown.moviedetails,data:moviedetailsshown.newdata.parentmail});
+}
+
+exports.cont_view_tvshow_details=async(req,rep)=>{
+    let tvshowid=req.params.tvshowid;
+    let tvshowdetailsshown= await ser_view_tvshow_details(tvshowid,rep);
+    rep.render("viewtvshowdetails",{tvshowdetails:tvshowdetailsshown.tvshowdetails,data:tvshowdetailsshown.newdata.parentmail});
+}
+
+exports.cont_view_celeb_details=async(req,rep)=>{
+    let celebid=req.params.celebid;
+    let celebdetailsshown= await ser_view_celeb_details(celebid,rep);
+    rep.render("viewcelebdetails",{celebdetails:celebdetailsshown.celebdetails,data:celebdetailsshown.newdata.parentmail});
+}
+
+exports.cont_view_award_details=async(req,rep)=>{
+    let awardid=req.params.awardid;
+    let awarddetailsshown= await ser_view_award_details(awardid,rep);
+    rep.render("viewawarddetails",{awarddetails:awarddetailsshown.awarddetails,data:awarddetailsshown.newdata.parentmail});
+}
+
 ////////////////////////
 
 exports.cont_registeruser=async(req,rep)=>{
@@ -184,14 +208,6 @@ exports.cont_update_product_page=async(req,rep)=>{
     let productdata=product_info.productdata
     let rootdata=product_info.rootdata
     rep.render("update_product",{data:rootdata,productdata:productdata});
-}
-
-//some problem in rendering page after updation
-exports.cont_update_product=async(req,rep)=>{
-    let product_info=await ser_update_product(req,rep);
-    // let parentdata=userupdateddatau.parentmail
-    // let rootdata=userupdateddatau.rootdata
-    // rep.render("viewuser",{user:rootdata,searchdata:parentdata});
 }
 
 exports.cont_product_delete=async(req,rep)=>{

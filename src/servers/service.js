@@ -427,6 +427,78 @@ exports.ser_awardview=async(req,rep)=>{
     });
 }
 
+exports.ser_view_movie_details=async(movieid,rep)=>{
+    return new Promise((resolve, reject) => {
+        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies;', (err, results) => {
+            if (err) {
+                console.error('Database query failed:', err);
+                return reject(new Error("Database query failed"));
+            }
+
+            if (results.length === 0) {
+                console.log("Movie doesn't exist");
+                return reject(new Error("Movie doesn't exist"));
+            }
+            const moviedetails = results;
+            resolve( { moviedetails, newdata } );
+        });
+    });
+}
+
+exports.ser_view_tvshow_details=async(tvshowid,rep)=>{
+    return new Promise((resolve, reject) => {
+        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies;', (err, results) => {
+            if (err) {
+                console.error('Database query failed:', err);
+                return reject(new Error("Database query failed"));
+            }
+
+            if (results.length === 0) {
+                console.log("tvshow doesn't exist");
+                return reject(new Error("tvshow doesn't exist"));
+            }
+            const tvshowdata = results;
+            resolve( { tvshowdata, newdata } );
+        });
+    });
+}
+
+exports.ser_view_celeb_details=async(celebid,rep)=>{
+    return new Promise((resolve, reject) => {
+        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies;', (err, results) => {
+            if (err) {
+                console.error('Database query failed:', err);
+                return reject(new Error("Database query failed"));
+            }
+
+            if (results.length === 0) {
+                console.log("celeb don't exist");
+                return reject(new Error("celeb don't exist"));
+            }
+            const celebdata = results;
+            resolve( { celebdata, newdata } );
+        });
+    });
+}
+
+exports.ser_view_award_details=async(awardid,rep)=>{
+    return new Promise((resolve, reject) => {
+        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies;', (err, results) => {
+            if (err) {
+                console.error('Database query failed:', err);
+                return reject(new Error("Database query failed"));
+            }
+
+            if (results.length === 0) {
+                console.log("award don't exist");
+                return reject(new Error("award don't exist"));
+            }
+            const awarddata = results;
+            resolve( { awarddata, newdata } );
+        });
+    });
+}
+
 //////////////////////////////
 
 exports.ser_registeruser=async (req,rep)=>{
@@ -727,20 +799,6 @@ exports.ser_add_balance=async(req,rep)=>{
     else{
         console.log("password is incorrect");
     }
-}
-
-let another_rootdata;
-let another_productdata;
-exports.ser_update_product_page=async(req,rep)=>{
-    let productid=req.body.id;
-    let productdata=await product.findOne({productid:productid},{})
-    // console.log(productdata)
-
-    another_productdata=productdata;
-
-    another_rootdata=await recu.findOne({email:rootmail},{})
-    // console.log(another_rootdata)
-    return({productdata:productdata,rootdata:another_rootdata});
 }
 
 exports.ser_update_product=async(req,rep)=>{

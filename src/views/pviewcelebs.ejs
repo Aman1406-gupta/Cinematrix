@@ -95,13 +95,11 @@
                             <td>
                               <form
                                 class="filter"
-                                action="/view_user_commodity"
-                                method="post"
+                                action="/view_celeb_details/<%=dataobj.Movie_ID%>"
+                                method="get"
                               >
                                 <input
                                   type="submit"
-                                  id="<%=dataobj.Movie_ID%> have to change id ----------" 
-                                  name="seriesid "
                                   class="btn btn-info"
                                   value="View Details"
                                 />
@@ -111,14 +109,12 @@
                             <td>
                               <form
                                 class="filter"
-                                action="/delete_user"
-                                method="post"
+                                action="/delete_celeb/<%=dataobj.Movie_ID%>"
+                                method="get"
                                 onsubmit="return confirmDelete();"
                               >
                                 <input
                                   type="submit"
-                                  id="<%=dataobj.Movie_ID%>  have to change id ----------"
-                                  name="seriesid"
                                   class="btn btn-danger"
                                   value="Delete"
                                 />

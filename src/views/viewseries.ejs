@@ -170,8 +170,8 @@
                             <td>
                               <form
                                 class="filter"
-                                action="/view_user_commodity"
-                                method="post"
+                                action="/view_tvshow_details/<%=dataobj.Movie_ID%>"
+                                method="get"
                               >
                                 <input
                                   type="submit"
@@ -186,8 +186,8 @@
                             <td>
                               <form
                                 class="filter"
-                                action="/delete_user"
-                                method="post"
+                                action="/delete_tvshow/<%=dataobj.Movie_ID%>"
+                                method="get"
                                 onsubmit="return confirmDelete();"
                               >
                                 <input

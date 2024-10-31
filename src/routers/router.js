@@ -2,7 +2,7 @@ let express=require("express");
 let router=express.Router();
 const user_auth=require("../../middelwares/authorisation.js")
 
-let {cont_deleteac,cont_tpseriesshow,cont_reseriesshow,cont_seriesshow,cont_tpshowmovie,cont_reshowmovie,cont_showmovie,cont_pcelebview,cont_btcelebview,cont_celebview,cont_awardview,cont_block_user,cont_signout,cont_home,cont_insert,cont_validation,cont_adduser,cont_registeruser,cont_signup,cont_signin,cont_adminprofile,cont_showproduct,cont_insertproduct,cont_deleteuser,cont_viewusercomodity,cont_userupdate,cont_userprofileupdate,cont_update_points,cont_update_points_form,cont_showproduct_admin,cont_buyproduct,cont_buyproduct_form,cont_add_balance,cont_add_balance_form,cont_update_product,cont_update_product_page,cont_product_delete,cont_changepass,cont_change_pass,cont_showt}=require("../controllers/controller");
+let {cont_view_award_details,cont_view_celeb_details,cont_view_tvshow_details,cont_view_movie_details,cont_deleteac,cont_tpseriesshow,cont_reseriesshow,cont_seriesshow,cont_tpshowmovie,cont_reshowmovie,cont_showmovie,cont_pcelebview,cont_btcelebview,cont_celebview,cont_awardview,cont_block_user,cont_signout,cont_home,cont_insert,cont_validation,cont_adduser,cont_registeruser,cont_signup,cont_signin,cont_adminprofile,cont_showproduct,cont_insertproduct,cont_deleteuser,cont_viewusercomodity,cont_userupdate,cont_userprofileupdate,cont_update_points,cont_update_points_form,cont_showproduct_admin,cont_buyproduct,cont_buyproduct_form,cont_add_balance,cont_add_balance_form,cont_update_product,cont_update_product_page,cont_product_delete,cont_changepass,cont_change_pass,cont_showt}=require("../controllers/controller");
 
 //for sign in and signup and validation
 router.get("/home",cont_home);
@@ -24,8 +24,12 @@ router.get("/celebview",user_auth,cont_celebview);
 router.get("/pcelebview",user_auth,cont_pcelebview);  
 router.get("/btcelebview",user_auth,cont_btcelebview);  
 router.get("/awardview",user_auth,cont_awardview);  
+router.get("/view_movie_details/:movieid",user_auth,cont_view_movie_details); 
+router.get("/view_tvshow_details/:tvshowid",user_auth,cont_view_tvshow_details); 
+router.get("/view_celeb_details/:celebid",user_auth,cont_view_celeb_details); 
+router.get("/view_award_details/:awardid",user_auth,cont_view_award_details); 
 
-//to view profile and add balance and change password
+// to view profile and add balance and change password
 router.get("/add_balance_form",user_auth,cont_add_balance_form);
 router.post("/add_balance",user_auth,cont_add_balance);
 router.get("/change_pass_page",user_auth,cont_change_pass)
@@ -38,7 +42,6 @@ router.post("/user_block",user_auth,cont_block_user);
 
 //toshow,delete,update_user profile and view user profile 
 router.post("/delete_user",user_auth,cont_deleteuser); 
-router.post("/view_user_commodity",user_auth,cont_viewusercomodity); 
 router.post("/user_update_page",user_auth,cont_userupdate); 
 
 //to add,show,buy product,update,delete product and update product details 
@@ -48,7 +51,6 @@ router.get("/product_admin",user_auth,cont_showproduct_admin);
 router.post("/buy_product_form",user_auth,cont_buyproduct_form); 
 router.post("/buy_product",user_auth,cont_buyproduct);
 router.post("/user_update_page_product",user_auth,cont_update_product_page);
-router.post("/update_product",user_auth,cont_update_product);
 router.post("/product_delete",user_auth,cont_product_delete);
 
 //to distibute amount earned (giving 25% to user_logined and 75% is distibuted among in parents in same way)
@@ -58,6 +60,6 @@ router.post("/update_points",user_auth,cont_update_points);
 //To show transactions
 router.get("/show_t",user_auth,cont_showt);
 
-//signout and send otp
+// signout and send otp
 
 module.exports=router;
