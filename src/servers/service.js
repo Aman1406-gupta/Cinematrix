@@ -387,13 +387,12 @@ exports.ser_btcelebview=async(req,rep)=>{
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
             }
-
+            let message = {message: ""};
             if (results.length === 0) {
-                console.log("Celebs don't exist");
-                return reject(new Error("Celebs don't exist"));
+                message = {message: "No celebrities were born today"};
             }
             const celebdata = results;
-            resolve( { celebdata, newdata } );
+            resolve( { celebdata, message, newdata } );
         });
     });
 }
@@ -419,20 +418,40 @@ exports.ser_awardview=async(req,rep)=>{
 
 exports.ser_view_movie_details=async(movieid,rep)=>{
     return new Promise((resolve, reject) => {
-        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies;', (err, results) => {
+        mysqlConnection.query(`
+            SELECT Movie_ID, Description, Title, Movie_Rating, DATE_FORMAT(Release_Date, "%Y-%m-%d") Release_Date, Num_Ratings_Movies, Budget, Revenue, Duration, Movie_Trailer_URL, Age_Rating_Name FROM Movies JOIN age_ratings ON Movies.Age_Rating_ID = age_ratings.Age_Rating_ID where Movie_ID=?;
+            SELECT G.Genre_Name FROM Genres G JOIN movieIsOfGenre MIG ON G.Genre_ID = MIG.Genre_ID WHERE MIG.Movie_ID = ?;
+            SELECT L.Language_Name FROM movieAvailableIn MA JOIN Languages L ON MA.Language_ID = L.Language_ID WHERE MA.Movie_ID = ?;
+            SELECT A.Award_Name, A.Award_Category, MA.Year_Of_Awarding FROM movieAwarded MA JOIN Awards A ON MA.Award_ID = A.Award_ID WHERE MA.Movie_ID = ?;
+            SELECT MA.Actor_ID, CONCAT(A.Person_First_Name, ' ', A.Person_Last_Name) AS Actor_Name, MA.Character_Name, MA.Role_Type FROM movieActedBy MA JOIN Actor AC ON MA.Actor_ID = AC.Actor_ID JOIN People A ON MA.Actor_ID = A.Person_ID WHERE MA.Movie_ID = ?;
+            SELECT MD.Director_ID, CONCAT(P.Person_First_Name, ' ', P.Person_Last_Name) AS Director_Name, D.Directorial_Style FROM movieDirectedBy MD JOIN Director D ON MD.Director_ID = D.Director_ID JOIN People P ON MD.Director_ID = P.Person_ID WHERE MD.Movie_ID = ?;
+            SELECT PR.Producer_ID, CONCAT(P.Person_First_Name, ' ', P.Person_Last_Name) AS Producer_Name, PR.Production_Methodology FROM movieProducedBy MP JOIN Producer PR ON MP.Producer_ID = PR.Producer_ID JOIN People P ON MP.Producer_ID = P.Person_ID WHERE MP.Movie_ID = ?;
+            SELECT * FROM (SELECT MS.Movie_ID, S.Site_Name, S.Site_URL, S.Subscription_Starting_Price FROM Streaming_Sites S JOIN movieStreamsHere MS ON S.Site_ID = MS.Site_ID) INTERMEDIATE WHERE Movie_ID = ?;
+            SELECT M.Movie_ID, M.Title AS Prequel_Title, YEAR(M.Release_Date) Release_Year, M.Movie_Rating, M.Num_Ratings_Movies FROM moviePrequel MP JOIN Movies M ON MP.Prequel_ID = M.Movie_ID WHERE MP.Movie_ID = ?;
+            SELECT M.Movie_ID, M.Title AS Sequel_Title, YEAR(M.Release_Date) Release_Year, M.Movie_Rating, M.Num_Ratings_Movies FROM movieSequel MS JOIN Movies M ON MS.Sequel_ID = M.Movie_ID WHERE MS.Movie_ID = ?;
+                `, [movieid, movieid, movieid, movieid, movieid, movieid, movieid, movieid, movieid, movieid], (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
             }
 
-            if (results.length === 0) {
+            if (results[0].length === 0) {
                 console.log("Movie doesn't exist");
                 return reject(new Error("Movie doesn't exist"));
             }
-            const moviedetails = results;
-            resolve( { moviedetails, newdata } );
+            const moviedetails = results[0][0];
+            const genredetails = results[1];
+            const languagedetails = results[2];
+            const awarddetails = results[3];
+            const actordetails = results[4];
+            const directordetails = results[5];
+            const producerdetails = results[6];
+            const streamdetails = results[7];
+            const prequeldetails = results[8];
+            const sequeldetails = results[9];
+            resolve( { moviedetails,genredetails,languagedetails,awarddetails,actordetails,directordetails,producerdetails,streamdetails,prequeldetails,sequeldetails,newdata } );
         });
-    });
+    });    
 }
 
 exports.ser_view_tvshow_details=async(tvshowid,rep)=>{

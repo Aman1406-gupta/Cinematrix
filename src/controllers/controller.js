@@ -100,7 +100,7 @@ exports.cont_pcelebview=async(req,rep)=>{
 
 exports.cont_btcelebview=async(req,rep)=>{
     let btcelebdatashown= await ser_btcelebview(req,rep);
-    rep.render("btviewcelebs",{celebdata:btcelebdatashown.celebdata,data:btcelebdatashown.newdata});
+    rep.render("btviewcelebs",{celebdata:btcelebdatashown.celebdata,message:btcelebdatashown.message,data:btcelebdatashown.newdata});
 }
 
 exports.cont_awardview=async(req,rep)=>{
@@ -109,27 +109,27 @@ exports.cont_awardview=async(req,rep)=>{
 }
 
 exports.cont_view_movie_details=async(req,rep)=>{
-    let movieid=req.params.movieid;
+    let movieid=req.params.movieid; 
     let moviedetailsshown= await ser_view_movie_details(movieid,rep);
-    rep.render("viewmoviedetails",{moviedetails:moviedetailsshown.moviedetails,data:moviedetailsshown.newdata.parentmail});
+    rep.render("viewmoviedetails",{moviedetails:moviedetailsshown.moviedetails,genredetails:moviedetailsshown.genredetails,actordetails:moviedetailsshown.actordetails,directordetails:moviedetailsshown.directordetails,producerdetails:moviedetailsshown.producerdetails,streamdetails:moviedetailsshown.streamdetails,prequeldetails:moviedetailsshown.prequeldetails,sequeldetails:moviedetailsshown.sequeldetails,languagedetails:moviedetailsshown.languagedetails,awarddetails:moviedetailsshown.awarddetails,data:moviedetailsshown.newdata});
 }
 
 exports.cont_view_tvshow_details=async(req,rep)=>{
     let tvshowid=req.params.tvshowid;
     let tvshowdetailsshown= await ser_view_tvshow_details(tvshowid,rep);
-    rep.render("viewtvshowdetails",{tvshowdetails:tvshowdetailsshown.tvshowdetails,data:tvshowdetailsshown.newdata.parentmail});
+    rep.render("viewtvshowdetails",{tvshowdetails:tvshowdetailsshown.tvshowdetails,data:tvshowdetailsshown.newdata});
 }
 
 exports.cont_view_celeb_details=async(req,rep)=>{
     let celebid=req.params.celebid;
     let celebdetailsshown= await ser_view_celeb_details(celebid,rep);
-    rep.render("viewcelebdetails",{celebdetails:celebdetailsshown.celebdetails,data:celebdetailsshown.newdata.parentmail});
+    rep.render("viewcelebdetails",{celebdetails:celebdetailsshown.celebdetails,data:celebdetailsshown.newdata});
 }
 
 exports.cont_view_award_details=async(req,rep)=>{
     let awardid=req.params.awardid;
     let awarddetailsshown= await ser_view_award_details(awardid,rep);
-    rep.render("viewawarddetails",{awarddetails:awarddetailsshown.awarddetails,data:awarddetailsshown.newdata.parentmail});
+    rep.render("viewawarddetails",{awarddetails:awarddetailsshown.awarddetails,data:awarddetailsshown.newdata});
 }
 
 ////////////////////////
