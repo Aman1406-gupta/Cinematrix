@@ -397,25 +397,6 @@ exports.ser_btcelebview=async(req,rep)=>{
     });
 }
 
-exports.ser_awardview=async(req,rep)=>{
-    //change query
-    return new Promise((resolve, reject) => {
-        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies limit 20;', (err, results) => {
-            if (err) {
-                console.error('Database query failed:', err);
-                return reject(new Error("Database query failed"));
-            }
-
-            if (results.length === 0) {
-                console.log("Awards don't exist");
-                return reject(new Error("Awards don't exist"));
-            }
-            const awarddata = results;
-            resolve( { awarddata, newdata } );
-        });
-    });
-}
-
 exports.ser_view_movie_details=async(movieid,rep)=>{
     return new Promise((resolve, reject) => {
         mysqlConnection.query(`
@@ -456,57 +437,145 @@ exports.ser_view_movie_details=async(movieid,rep)=>{
 
 exports.ser_view_tvshow_details=async(tvshowid,rep)=>{
     return new Promise((resolve, reject) => {
-        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies;', (err, results) => {
+        mysqlConnection.query(`SELECT Show_ID, Title, DATE_FORMAT(Start_Date, "%Y-%m-%d") Start_Date, DATE_FORMAT(End_Date, "%Y-%m-%d") End_Date, TVShow_Rating, Num_Ratings_TV, Description, TVShow_Trailer_URL, Age_Rating_Name FROM TV_Shows JOIN age_ratings on tv_shows.Age_Rating_ID = age_ratings.Age_Rating_ID where Show_ID = ?;
+                               SELECT E.Show_ID, COUNT(DISTINCT E.Season_Number) AS Number_of_Seasons, COUNT(*) AS Number_of_Episodes FROM Episodes E WHERE E.Show_ID = ? GROUP BY E.Show_ID;    
+                               SELECT Show_ID, Season_Number, Episode_Number, Title, DATE_FORMAT(Release_Date, "%Y-%m-%d") Release_Date, Episode_Rating, Num_Ratings_Ep FROM Episodes WHERE Show_ID = ? ORDER BY Season_Number ASC;
+                               SELECT G.Genre_Name FROM showisofgenre SG JOIN Genres G ON SG.Genre_ID = G.Genre_ID WHERE SG.Show_ID = ?;
+                               SELECT AC.Actor_ID, CONCAT(A.Person_First_Name, ' ', A.Person_Last_Name) AS Actor_Name, SA.Character_Name, SA.Role_Type FROM showActedBy SA JOIN Actor AC ON SA.Actor_ID = AC.Actor_ID JOIN People A ON SA.Actor_ID = A.Person_ID WHERE SA.Show_ID = ?;
+                               SELECT D.Director_ID, CONCAT(P.Person_First_Name, ' ', P.Person_Last_Name) AS Director_Name, D.Directorial_Style FROM showDirectedBy SD JOIN Director D ON SD.Director_ID = D.Director_ID JOIN People P ON SD.Director_ID = P.Person_ID WHERE SD.Show_ID = ?;
+                               SELECT PR.Producer_ID, CONCAT(P.Person_First_Name, ' ', P.Person_Last_Name) AS Producer_Name, PR.Production_Methodology FROM showProducedBy SP JOIN Producer PR ON SP.Producer_ID = PR.Producer_ID JOIN People P ON SP.Producer_ID = P.Person_ID WHERE SP.Show_ID = ?;
+                               SELECT A.Award_Name, A.Award_Category, SA.Year_Of_Awarding FROM showAwarded SA JOIN Awards A ON SA.Award_ID = A.Award_ID WHERE SA.Show_ID = ?;
+                               SELECT L.Language_Name FROM showAvailableIn SA JOIN Languages L ON SA.Language_ID = L.Language_ID WHERE SA.Show_ID = ?;
+                               SELECT * FROM (SELECT SS.Show_ID, S.Site_Name, S.Site_URL, S.Subscription_Starting_Price FROM Streaming_Sites S JOIN showstreamshere SS ON S.Site_ID = SS.Site_ID) INTERMEDIATE WHERE Show_ID = ?;
+                              `,[tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid], (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
             }
 
-            if (results.length === 0) {
+            if (results[0].length === 0) {
                 console.log("tvshow doesn't exist");
                 return reject(new Error("tvshow doesn't exist"));
             }
-            const tvshowdata = results;
-            resolve( { tvshowdata, newdata } );
+            const tvshowdetails = results[0][0];
+            const seaandepdata=results[1][0];
+            const episodedetails=results[2];
+            const genredetails=results[3];
+            const actordetails=results[4];
+            const directordetails=results[5];
+            const producerdetails=results[6];
+            const awarddetails=results[7];
+            const languagedetails=results[8];
+            const streamdetails=results[9];
+            resolve( { tvshowdetails,seaandepdata,episodedetails,genredetails,actordetails,directordetails,producerdetails,awarddetails,languagedetails,streamdetails,newdata } );
+        });
+    });
+}
+
+exports.ser_view_episode_details=async(tvshowid,sno,eno,rep)=>{
+    return new Promise((resolve, reject) => {
+        mysqlConnection.query(`SELECT E.Show_ID, E.Episode_Number, E.Season_Number, E.Title, E.Duration, DATE_FORMAT(E.Release_Date, "%Y-%m-%d") Release_Date, E.Num_Ratings_Ep, E.Episode_Rating, E.Description, T.Title Show_Title FROM Episodes E JOIN TV_Shows T ON E.Show_ID = T.Show_ID WHERE E.Show_ID = ? AND Season_Number = ? AND Episode_Number = ?;
+                               SELECT P.Person_ID, CONCAT(P.Person_First_Name, ' ', P.Person_Last_Name) AS Actor_Name, EA.Character_Name, EA.Role_Type FROM episodeActedBy EA JOIN Actor AC ON EA.Actor_ID = AC.Actor_ID JOIN People P ON EA.Actor_ID = P.Person_ID WHERE EA.Show_ID = ? AND EA.Season_Number = ? AND EA.Episode_Number = ?;
+                               SELECT P.Person_ID, CONCAT(P.Person_First_Name, ' ', P.Person_Last_Name) AS Director_Name, D.Directorial_Style FROM episodeDirectedBy ED JOIN Director D ON ED.Director_ID = D.Director_ID JOIN People P ON ED.Director_ID = P.Person_ID WHERE ED.Show_ID = ? AND ED.Season_Number = ? AND ED.Episode_Number = ?;
+                               SELECT P.Person_ID, CONCAT(P.Person_First_Name, ' ', P.Person_Last_Name) AS Producer_Name, PR.Production_Methodology FROM episodeProducedBy EP JOIN Producer PR ON EP.Producer_ID = PR.Producer_ID JOIN People P ON EP.Producer_ID = P.Person_ID WHERE EP.Show_ID = ? AND EP.Season_Number = ? AND EP.Episode_Number = ?;
+                              `,[tvshowid,sno,eno,tvshowid,sno,eno,tvshowid,sno,eno,tvshowid,sno,eno,], (err, results) => {
+            if (err) {
+                console.error('Database query failed:', err);
+                return reject(new Error("Database query failed"));
+            }
+
+            if (results[0].length === 0) {
+                console.log("Episode doesn't exist");
+                return reject(new Error("Episode doesn't exist"));
+            }
+            const epdetails = results[0][0];    
+            const actordetails=results[1];
+            const directordetails=results[2];
+            const producerdetails=results[3];
+            resolve( { epdetails,actordetails,directordetails,producerdetails,newdata } );
         });
     });
 }
 
 exports.ser_view_celeb_details=async(celebid,rep)=>{
     return new Promise((resolve, reject) => {
-        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies;', (err, results) => {
+        mysqlConnection.query(`
+                                SELECT CONCAT(Person_First_Name, ' ', Person_Last_Name) AS Name, DATE_FORMAT(Person_DOB, "%Y-%m-%d") AS DOB, Person_Gender AS Gender, FLOOR(DATEDIFF(CURDATE(), Person_DOB) / 365.25) AS Age, Person_Nationality AS Nationality FROM People P WHERE Person_ID = ?;
+                                SELECT Directorial_Style FROM Director WHERE Director_ID = ?;
+                                SELECT Role_Range FROM Actor WHERE Actor_ID = ?;
+                                SELECT Production_Methodology FROM Producer WHERE Producer_ID = ?;
+                                SELECT a.Award_Name, a.Award_Category, pa.Year_Of_Awarding FROM personAwarded pa JOIN Awards a ON pa.Award_ID = a.Award_ID WHERE pa.Person_ID = ?;
+                                SELECT COUNT(*) Num_Count FROM (SELECT Movie_ID FROM movieDirectedBy WHERE Director_ID = ? UNION ALL SELECT Show_ID FROM showDirectedBy WHERE Director_ID = ?) INTERMEDIATE;
+                                SELECT COUNT(*) Num_Count FROM (SELECT Movie_ID FROM movieActedBy WHERE Actor_ID = ? UNION ALL SELECT Show_ID FROM showActedBy WHERE Actor_ID = ?) INTERMEDIATE;
+                                SELECT COUNT(*) Num_Count FROM (SELECT Movie_ID FROM movieProducedBy WHERE Producer_ID = ? UNION ALL SELECT Show_ID FROM showProducedBy WHERE Producer_ID = ?) INTERMEDIATE;
+                                SELECT m.Title AS Movie_Title, m.Num_Ratings_Movies AS Number_of_Ratings FROM Movies m JOIN movieActedBy ma ON m.Movie_ID = ma.Movie_ID WHERE ma.Actor_ID = ? ORDER BY m.Num_Ratings_Movies DESC LIMIT 1;
+                                SELECT m.Title AS Movie_Title, m.Num_Ratings_Movies AS Number_of_Ratings FROM Movies m JOIN movieProducedBy mp ON m.Movie_ID = mp.Movie_ID WHERE mp.Producer_ID = ? ORDER BY m.Num_Ratings_Movies DESC LIMIT 1;
+                                SELECT m.Title AS Movie_Title, m.Num_Ratings_Movies AS Number_of_Ratings FROM Movies m JOIN movieDirectedBy md ON m.Movie_ID = md.Movie_ID WHERE md.Director_ID = ? ORDER BY m.Num_Ratings_Movies DESC LIMIT 1;
+                              `,[celebid,celebid,celebid,celebid,celebid,celebid,celebid,celebid,celebid,celebid,celebid,celebid,celebid,celebid], (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
             }
 
-            if (results.length === 0) {
+            if (results[0].length === 0) {
                 console.log("celeb don't exist");
                 return reject(new Error("celeb don't exist"));
             }
-            const celebdata = results;
-            resolve( { celebdata, newdata } );
+            const celebdata = results[0][0];
+            const ds = results[1];
+            const rr = results[2];
+            const pm = results[3];
+            const awarddetails = results[4];
+            const dnum = results[5];
+            const anum = results[6];
+            const pnum = results[7];
+            const afam = results[8];
+            const pfam = results[9];
+            const dfam = results[10];
+            resolve( { celebdata,ds,rr,pm,awarddetails,dnum,anum,pnum,afam,pfam,dfam,newdata } );
         });
     });
 }
 
-exports.ser_view_award_details=async(awardid,rep)=>{
+exports.ser_awardac=async(req,rep)=>{
+    //change query
     return new Promise((resolve, reject) => {
-        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies;', (err, results) => {
+        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies limit 20;', (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
             }
 
             if (results.length === 0) {
-                console.log("award don't exist");
-                return reject(new Error("award don't exist"));
+                console.log("Awards don't exist");
+                return reject(new Error("Awards don't exist"));
             }
             const awarddata = results;
             resolve( { awarddata, newdata } );
         });
     });
 }
+
+exports.ser_awardem=async(req,rep)=>{
+    //change query
+    return new Promise((resolve, reject) => {
+        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies limit 20;', (err, results) => {
+            if (err) {
+                console.error('Database query failed:', err);
+                return reject(new Error("Database query failed"));
+            }
+
+            if (results.length === 0) {
+                console.log("Awards don't exist");
+                return reject(new Error("Awards don't exist"));
+            }
+            const awarddata = results;
+            resolve( { awarddata, newdata } );
+        });
+    });
+}
+
+
 
 //////////////////////////////
 

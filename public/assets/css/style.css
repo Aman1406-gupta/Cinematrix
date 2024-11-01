@@ -1105,3 +1105,8 @@ h1{
 .scrollbarclass::-webkit-scrollbar-corner {
   background-color: #2c2c2c;  
 }
+
+.userrole {
+  color: lightgray !important;
+  text-shadow: 0.051rem 0.051rem darkgray;
+}

@@ -67,24 +67,69 @@
               <div class="card-body" style="color: white; background-color:black; border-bottom: 2px solid gray; margin-bottom: 10px;" >
                 <div style="border-bottom: 2px solid gray; padding-bottom: 10px;">
                     <div style="display: flex; justify-content: center; width: 100%; border-bottom: 2px solid gray;">
-                        <h3 class="card-title pb-4" style="color: white; font-size: 1.5rem; ">Details of the Movie</h3>
+                        <h3 class="card-title pb-4" style="color: white; font-size: 1.5rem">Details of the TV Show</h3>
                     </div>
-                    <h5 class="card-title" style="color: white;">Title: &nbsp;&nbsp;&nbsp; <%= moviedetails.Title%></h5>
-                    <h5 class="card-title" style="color: white;">Rating: &nbsp;&nbsp;&nbsp; <%= moviedetails.Movie_Rating%></h5>
-                    <h5 class="card-title" style="color: white;">Number of Ratings: &nbsp;&nbsp;&nbsp; <%= moviedetails.Num_Ratings_Movies%></h5>
-                    <h5 class="card-title" style="color: white;">Duration: &nbsp;&nbsp;&nbsp; <%= moviedetails.Duration%></h5>
-                    <h5 class="card-title" style="color: white;">Release Date: &nbsp;&nbsp;&nbsp; <%= moviedetails.Release_Date%></h5>
-                    <h5 class="card-title" style="color: white;">Budget: &nbsp;&nbsp;&nbsp; $<%= " "+moviedetails.Budget%></h5>
-                    <h5 class="card-title" style="color: white;">Revenue: &nbsp;&nbsp;&nbsp; $<%= " "+moviedetails.Revenue%></h5>
+                    <h5 class="card-title" style="color: white;">Title: &nbsp;&nbsp;&nbsp; <%= tvshowdetails.Title%></h5>
+                    <h5 class="card-title" style="color: white;">No. of Seasons: &nbsp;&nbsp;&nbsp; <%= seaandepdata.Number_of_Seasons%></h5>
+                    <h5 class="card-title" style="color: white;">No. of Episodes: &nbsp;&nbsp;&nbsp; <%= seaandepdata.Number_of_Episodes%></h5>
+                    <h5 class="card-title" style="color: white;">Rating: &nbsp;&nbsp;&nbsp; <%= tvshowdetails.TVShow_Rating%></h5>
+                    <h5 class="card-title" style="color: white;">Number of Ratings: &nbsp;&nbsp;&nbsp; <%= tvshowdetails.Num_Ratings_TV%></h5>
+                    <h5 class="card-title" style="color: white;">Start Date: &nbsp;&nbsp;&nbsp; <%= tvshowdetails.Start_Date%></h5>
+                    <h5 class="card-title" style="color: white;">End Date: &nbsp;&nbsp;&nbsp; <%= tvshowdetails.End_Date%></h5>
                     <div style="display: flex; align-items: flex-start; color: white;">
                         <h5 class="card-title" style="color: white;" style="flex: 0 0 auto; margin-right: 10px;">Description:</h5>
                         <div class="ms-4" style="flex: 1;">
-                            <h5 class="card-title" style="color: white;"> <%= moviedetails.Description%></h5>
+                            <h5 class="card-title" style="color: white;"> <%= tvshowdetails.Description%></h5>
                         </div>
                 </div>              
-                  <h5 class="card-title" style="color: white;">Age rating: &nbsp;&nbsp;&nbsp; <%= moviedetails.Age_Rating_Name%></h5>
-                  <h5 class="card-title" style="color: white;">Movie Trailer URL: &nbsp;&nbsp;&nbsp; <a href="<%= moviedetails.Movie_Trailer_URL%>" style="text-decoration: underline; color: white;"><%= moviedetails.Movie_Trailer_URL%></a></h5>
-              </div>
+                <h5 class="card-title" style="color: white;">Age rating: &nbsp;&nbsp;&nbsp; <%= tvshowdetails.Age_Rating_Name%></h5>
+                <h5 class="card-title" style="color: white;">TV Show Trailer URL: &nbsp;&nbsp;&nbsp; <a href="<%= tvshowdetails.TVShow_Trailer_URL%>" style="text-decoration: underline; color: white;"><%= tvshowdetails.TVShow_Trailer_URL%></a></h5>
+            </div>
+                <h5 class="card-title mb-4 mt-4" style="color: white;">Episode Details: &nbsp;&nbsp;&nbsp;</h5>
+                <div class="scrollbarclass" style="max-height: 200px; overflow-y: auto; overflow-x: auto;">
+                    <table class="table table-striped table-dark text-nowrap" style="color: white; border-collapse: collapse; width: 100%;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid white;">
+                                <th style="padding: 10px;">S.No.</th>
+                                <th style="padding: 10px;">Season Number</th>
+                                <th style="padding: 10px;">Episode Number</th>
+                                <th style="padding: 10px;">Title</th>
+                                <th style="padding: 10px;">Release Date</th>
+                                <th style="padding: 10px;">Episode Rating</th>
+                                <th style="padding: 10px;">No. of Episode Ratings</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <%let i=1; %> <% for (let dataobj of episodedetails){ %>
+                                <tr>
+                                    <th scope="row"><%=i%></th>
+                                    <td><%=dataobj.Season_Number%></td>
+                                    <td><%=dataobj.Episode_Number%></td>
+                                    <td><%=dataobj.Title%></td>
+                                    <td><%=dataobj.Release_Date%></td>
+                                    <td><%=dataobj.Episode_Rating%></td>
+                                    <td><%=dataobj.Num_Ratings_Ep%></td>
+                                    <td>
+                                        <form
+                                          class="filter"
+                                          action="/view_episode_details/<%= tvshowdetails.Show_ID%>/<%=dataobj.Season_Number%>/<%=dataobj.Episode_Number%>"
+                                          method="get"
+                                          style="display:flex; justify-content: flex-end"
+                                        >
+                                          <input
+                                            type="submit"
+                                            class="btn btn-info"
+                                            value="View Details"
+                                          />
+                                        </form>
+                                      </td>
+                                </tr>
+                                <% i=i+1; }%>
+                            </tbody>
+                        </table>
+                    </div>
+
                 <h5 class="card-title mb-4 mt-4" style="color: white;">Genres: &nbsp;&nbsp;&nbsp; 
                     <% let totalGenres = genredetails.length; %>
                     <% for (let i = 0; i < totalGenres; i++) { %>
@@ -101,7 +146,7 @@
                     
                 <h5 class="card-title mb-4 mt-4" style="color: white;">Awards: &nbsp;&nbsp;&nbsp; 
                     <%if(awarddetails.length == 0) { %>
-                        <span class="card-title" style="color: white; font-size:1.15rem; font-weight: 450">This movie has no Awards</span>
+                        <span class="card-title" style="color: white; font-size:1.15rem; font-weight: 450">This Tv Show has no Awards</span>
                     <% } %>
                 </h5>
                 <% if(awarddetails.length != 0){ %>
@@ -116,14 +161,14 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <%let i=1; %> <% for (let dataobj of awarddetails){ %>
+                            <%let j=1; %> <% for (let dataobj of awarddetails){ %>
                                 <tr>
-                                    <th scope="row"><%=i%></th>
+                                    <th scope="row"><%=j%></th>
                                     <td><%=dataobj.Award_Name%></td>
                                     <td><%=dataobj.Award_Category%></td>
                                     <td><%=dataobj.Year_Of_Awarding%></td>
                                 </tr>
-                                <% i=i+1; }%>
+                                <% j=j+1; }%>
                             </tbody>
                         </table>
                     </div>
@@ -142,9 +187,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <%let j=1; %> <% for (let dataobj of actordetails){ %>
+                            <%let k=1; %> <% for (let dataobj of actordetails){ %>
                                 <tr>
-                                  <th scope="row"><%=j%></th>
+                                  <th scope="row"><%=k%></th>
                                   <td><%=dataobj.Actor_Name%></td>
                                   <td><%=dataobj.Character_Name%></td>
                                   <td><%=dataobj.Role_Type%></td>
@@ -163,7 +208,7 @@
                                     </form>
                                   </td>
                                 </tr>
-                                <% j=j+1; }%>
+                                <% k=k+1; }%>
                         </tbody>
                     </table>
                 </div>
@@ -180,9 +225,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <%let k=1; %> <% for (let dataobj of directordetails){ %>
+                            <%let l=1; %> <% for (let dataobj of directordetails){ %>
                                 <tr>
-                                  <th scope="row"><%=k%></th>
+                                  <th scope="row"><%=l%></th>
                                   <td><%=dataobj.Director_Name%></td>
                                   <td><%=dataobj.Directorial_Style%></td>
                                   <td>
@@ -200,7 +245,7 @@
                                     </form>
                                   </td>
                                 </tr>
-                                <% k=k+1; }%>
+                                <% l=l+1; }%>
                         </tbody>
                     </table>
                 </div>
@@ -217,9 +262,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <%let l=1; %> <% for (let dataobj of producerdetails){ %>
+                            <%let m=1; %> <% for (let dataobj of producerdetails){ %>
                                 <tr>
-                                  <th scope="row"><%=l%></th>
+                                  <th scope="row"><%=m%></th>
                                   <td><%=dataobj.Producer_Name%></td>
                                   <td><%=dataobj.Production_Methodology%></td>
                                   <td>
@@ -237,7 +282,7 @@
                                     </form>
                                   </td>
                                 </tr>
-                                <% l=l+1; }%>
+                                <% m=m+1; }%>
                         </tbody>
                     </table>
                 </div>
@@ -254,116 +299,19 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <%let m=1; %> <% for (let dataobj of streamdetails){ %>
+                            <%let n=1; %> <% for (let dataobj of streamdetails){ %>
                                 <tr>
-                                  <th scope="row"><%=m%></th>
+                                  <th scope="row"><%=n%></th>
                                   <td><%=dataobj.Site_Name%></td>
                                   <td><a href="<%=dataobj.Site_URL%>" style="text-decoration: underline; color:white;"><%=dataobj.Site_URL%></a></td>
                                   <td>$<%=' '+dataobj.Subscription_Starting_Price%></td>
-                                </tr>
-                                <% m=m+1; }%>
-                        </tbody>
-                    </table>
-                </div>
-
-
-                <h5 class="card-title mb-4 mt-4" style="color: white;">Movie Prequel: &nbsp;&nbsp;&nbsp; 
-                    <%if(prequeldetails.length == 0) { %>
-                        <span class="card-title" style="color: white; font-size:1.15rem; font-weight: 450">This movie has no Prequel</span>
-                    <% } %>
-                </h5>
-                <% if(prequeldetails.length != 0){ %>
-                <div class="scrollbarclass" style="max-height: 200px; overflow-y: auto; overflow-x: auto;">
-                    <table class="table table-striped table-dark text-nowrap" style="color: white; border-collapse: collapse; width: 100%;">
-                        <thead>
-                            <tr>
-                                <th scope="col">S.No.</th>
-                                <th scope="col">Title</th>
-                                <th scope="col">Release Year</th>
-                                <th scope="col">Rating</th>
-                                <th scope="col">No. of Ratings</th>
-                                <th scope="col"></th>
-                              </tr>
-                        </thead>
-                        <tbody>
-                            <%let n=1; %> <% for (let dataobj of prequeldetails){ %>
-                                <tr>
-                                    <th scope="row"><%=n%></th>
-                                    <td><%=dataobj.Prequel_Title%></td>
-                                    <td><%=dataobj.Release_Year%></td>
-                                    <td><%=dataobj.Movie_Rating%></td>
-                                    <td><%=dataobj.Num_Ratings_Movies%></td>
-                                    <td>
-                                      <form
-                                        class="filter"
-                                        action="/view_movie_details/<%=dataobj.Movie_ID%>"
-                                        method="get"
-                                        style="display:flex; justify-content: flex-end"
-                                      >
-                                        <input
-                                          type="submit"
-                                          class="btn btn-info"
-                                          value="View Details"
-                                        />
-                                      </form>
-                                    </td>
                                 </tr>
                                 <% n=n+1; }%>
                         </tbody>
                     </table>
                 </div>
-                <% } %>
-                <h5 class="card-title mb-4 mt-4" style="color: white;">Movie Sequel: &nbsp;&nbsp;&nbsp; 
-                    <%if(sequeldetails.length == 0) { %>
-                        <span class="card-title" style="color: white; font-size:1.15rem; font-weight: 450">This movie has no Sequel</span>
-                    <% } %>
-                </h5>
-                <%if(sequeldetails.length != 0) { %>
-                <div class="scrollbarclass" style="max-height: 200px; overflow-y: auto; overflow-x: auto;">
-                    <table class="table table-striped table-dark text-nowrap" style="color: white; border-collapse: collapse; width: 100%;">
-                        <thead>
-                            <tr>
-                                <th scope="col">S.No.</th>
-                                <th scope="col">Title</th>
-                                <th scope="col">Release Year</th>
-                                <th scope="col">Rating</th>
-                                <th scope="col">No. of Ratings</th>
-                                <th scope="col"></th>
-                              </tr>
-                        </thead>
-                        <tbody>
-                            <%let o=1; %> <% for (let dataobj of sequeldetails){ %>
-                                <tr>
-                                    <th scope="row"><%=o%></th>
-                                    <td><%=dataobj.Sequel_Title%></td>
-                                    <td><%=dataobj.Release_Year%></td>
-                                    <td><%=dataobj.Movie_Rating%></td>
-                                    <td><%=dataobj.Num_Ratings_Movies%></td>
-                                    <td>
-                                      <form
-                                        class="filter"
-                                        action="/view_movie_details/<%=dataobj.Movie_ID%>"
-                                        method="get"
-                                        style="display:flex; justify-content: flex-end"
-                                      >
-                                        <input
-                                          type="submit"
-                                          class="btn btn-info"
-                                          value="View Details"
-                                        />
-                                      </form>
-                                    </td>
-                                </tr>
-                                <% o=o+1; }%>
-                        </tbody>
-                    </table>
-                </div>
-                <% } %>
-
-<br>
-</div>
-<h5 class="card-title" style="color: white;">Reviews:</h5>
             </div>
+            <h5 class="card-title" style="color: white;">Reviews:</h5>
           </div>
         </div>
       </section>

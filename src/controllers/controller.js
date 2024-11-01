@@ -1,4 +1,4 @@
-let {ser_view_award_details,ser_view_celeb_details,ser_view_tvshow_details, ser_view_movie_details,ser_deleteac,ser_tpseriesshow,ser_reseriesshow,ser_seriesshow,ser_tpshowmovie,ser_reshowmovie,ser_showmovie,ser_pcelebview,ser_btcelebview,ser_celebview,ser_awardview,ser_signout,ser_home,ser_insert,ser_validation,ser_registeruser,ser_adminprofile,ser_showproduct,ser_addproduct,ser_deleteuser,ser_viewusercomodity,ser_userupdate,ser_userprofileupdate,ser_update_points,ser_update_points_form, ser_showproduct_admin,ser_buyproduct,ser_buyproduct_form,ser_add_balance,ser_add_balance_form,ser_update_product,ser_update_product_page,ser_product_delete,ser_changepass,ser_showt}=require("../servers/service");
+let {ser_view_episode_details,ser_view_celeb_details,ser_view_tvshow_details, ser_view_movie_details,ser_deleteac,ser_tpseriesshow,ser_reseriesshow,ser_seriesshow,ser_tpshowmovie,ser_reshowmovie,ser_showmovie,ser_pcelebview,ser_btcelebview,ser_celebview,ser_awardac,ser_awardem,ser_signout,ser_home,ser_insert,ser_validation,ser_registeruser,ser_adminprofile,ser_showproduct,ser_addproduct,ser_deleteuser,ser_viewusercomodity,ser_userupdate,ser_userprofileupdate,ser_update_points,ser_update_points_form, ser_showproduct_admin,ser_buyproduct,ser_buyproduct_form,ser_add_balance,ser_add_balance_form,ser_update_product,ser_update_product_page,ser_product_delete,ser_changepass,ser_showt}=require("../servers/service");
 
 
 exports.cont_adduser=async(req,rep)=>{
@@ -103,11 +103,6 @@ exports.cont_btcelebview=async(req,rep)=>{
     rep.render("btviewcelebs",{celebdata:btcelebdatashown.celebdata,message:btcelebdatashown.message,data:btcelebdatashown.newdata});
 }
 
-exports.cont_awardview=async(req,rep)=>{
-    let awarddatashown= await ser_awardview(req,rep);
-    rep.render("viewaward",{awarddata:awarddatashown.awarddata,data:awarddatashown.newdata.parentmail});
-}
-
 exports.cont_view_movie_details=async(req,rep)=>{
     let movieid=req.params.movieid; 
     let moviedetailsshown= await ser_view_movie_details(movieid,rep);
@@ -117,19 +112,31 @@ exports.cont_view_movie_details=async(req,rep)=>{
 exports.cont_view_tvshow_details=async(req,rep)=>{
     let tvshowid=req.params.tvshowid;
     let tvshowdetailsshown= await ser_view_tvshow_details(tvshowid,rep);
-    rep.render("viewtvshowdetails",{tvshowdetails:tvshowdetailsshown.tvshowdetails,data:tvshowdetailsshown.newdata});
+    rep.render("viewtvshowdetails",{tvshowdetails:tvshowdetailsshown.tvshowdetails,seaandepdata:tvshowdetailsshown.seaandepdata,episodedetails:tvshowdetailsshown.episodedetails,genredetails:tvshowdetailsshown.genredetails,actordetails:tvshowdetailsshown.actordetails,directordetails:tvshowdetailsshown.directordetails,producerdetails:tvshowdetailsshown.producerdetails,streamdetails:tvshowdetailsshown.streamdetails,languagedetails:tvshowdetailsshown.languagedetails,awarddetails:tvshowdetailsshown.awarddetails,data:tvshowdetailsshown.newdata});
+}
+
+exports.cont_view_episode_details=async(req,rep)=>{
+    let tvshowid=req.params.tvshowid;
+    let sno=req.params.sno;
+    let eno=req.params.eno;
+    let epdetailsshown= await ser_view_episode_details(tvshowid,sno,eno,rep);
+    rep.render("viewepisodedetails",{epdetails:epdetailsshown.epdetails,actordetails:epdetailsshown.actordetails,directordetails:epdetailsshown.directordetails,producerdetails:epdetailsshown.producerdetails,data:epdetailsshown.newdata});
 }
 
 exports.cont_view_celeb_details=async(req,rep)=>{
     let celebid=req.params.celebid;
     let celebdetailsshown= await ser_view_celeb_details(celebid,rep);
-    rep.render("viewcelebdetails",{celebdetails:celebdetailsshown.celebdetails,data:celebdetailsshown.newdata});
+    rep.render("viewcelebdetails",{celebdetails:celebdetailsshown.celebdata,ds:celebdetailsshown.ds,rr:celebdetailsshown.rr,pm:celebdetailsshown.pm,awarddetails:celebdetailsshown.awarddetails,dnum:celebdetailsshown.dnum,anum:celebdetailsshown.anum,pnum:celebdetailsshown.pnum,afam:celebdetailsshown.afam,pfam:celebdetailsshown.pfam,dfam:celebdetailsshown.dfam,data:celebdetailsshown.newdata});
 }
 
-exports.cont_view_award_details=async(req,rep)=>{
-    let awardid=req.params.awardid;
-    let awarddetailsshown= await ser_view_award_details(awardid,rep);
-    rep.render("viewawarddetails",{awarddetails:awarddetailsshown.awarddetails,data:awarddetailsshown.newdata});
+exports.cont_awardac=async(req,rep)=>{
+    let awarddatashown= await ser_awardac(req,rep);
+    rep.render("viewaward",{awarddata:awarddatashown.awarddata,data:awarddatashown.newdata.parentmail});
+}
+
+exports.cont_awardem=async(req,rep)=>{
+    let awarddatashown= await ser_awardem(req,rep);
+    rep.render("viewaward",{awarddata:awarddatashown.awarddata,data:awarddatashown.newdata.parentmail});
 }
 
 ////////////////////////
