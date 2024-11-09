@@ -37,24 +37,20 @@
   </head>
 
   <body>
-    <%- include("../../utils/header")%> 
-    <% if(data && data!==""){ %>
+    <%- include("../../utils/header") %> 
 
-      <%- include("../../utils/admin_side") %>
+    <% if(data.User_Role=='Admin'){ %>
+
+    <%- include("../../utils/admin_side") %>
   
-      <% } %>
-  
-      <% if(data==""){ %>
-  
-      <%- include("../../utils/admin_side") %>
+    <% } %>
+
+    <% if(data.User_Role=='User'){ %>
+
+    <%- include("../../utils/side") %>
     
-      <% } %>
-  
-      <% if(data==""){ %>
-  
-      <%- include("../../utils/admin_side") %>
-      
-      <% } %>
+    <% } %>
+
 
     <main id="main" class="main" style="background-color:black">
       <div class="pagetitle">
@@ -71,60 +67,97 @@
           <form
             class="row g-3 needs-validation"
             novalidate
+            id="filterform"
             action="/filtermovie"
             method="post"
+            onsubmit="return setDefaultValues(event)"
           >
             <div class="col-md-4">
-              <label for="validationCustom02" class="form-label">Movie</label>
-              <input type="text" class="form-control" id="validationCustom02"
-              name="filtername" placeholder="Search by Movie">
-              <div class="valid-feedback">Looks good!</div>
+              <label for="validationCustom02" class="form-label">Title</label>
+              <input type="text" class="form-control"
+              name="filtertitle" id="filtertitle" placeholder="Search by Title">
             </div>
 
             <div class="col-md-4">
-              <label for="validationCustom02" class="form-label">Age rating</label>
-              <input type="text" class="form-control" id="validationCustom02"
-              name="filterage" placeholder="Search by Age rating">
-              <div class="valid-feedback">Looks good!</div>
+              <label for="validationCustom02" class="form-label">Age Rating</label>
+              <select name="filterage" id="filterage" class="form-control" aria-placeholder="Search By Age Rating">
+                <option value="%%" selected>Select Age Rating</option>
+                <option value="G">G</option>
+                <option value="NC-17">NC-17</option>
+                <option value="PG">PG</option>
+                <option value="PG-13">PG-13</option>
+                <option value="R">R</option>
+              </select>
             </div>
 
             <div class="col-md-4">
               <label for="validationCustom02" class="form-label">Genre</label>
-              <input type="text" class="form-control" id="validationCustom02"
-              name="filtergenre" placeholder="Search by Genre">
-              <div class="valid-feedback">Looks good!</div>
+              <select name="filtergenre" id="filtergenre" class="form-control" aria-placeholder="Search By Genre">
+                <option value="%%" selected>Select Genre</option>
+                <option value="Action">Action</option>
+                <option value="Adventure">Adventure</option>
+                <option value="Animation">Animation</option>
+                <option value="Comedy">Comedy</option>
+                <option value="Documentary">Documentary</option>
+                <option value="Drama">Drama</option>
+                <option value="Fantasy">Fantasy</option>
+                <option value="Horror">Horror</option>
+                <option value="Mystery">Mystery</option>
+                <option value="Romance">Romance</option>
+                <option value="Sci-Fi">Sci-Fi</option>
+                <option value="Thriller">Thriller</option>
+              </select>
             </div>
 
             <div class="col-md-4">
               <label for="validationCustom01" class="form-label">Language</label>
-              <input type="text" class="form-control" id="validationCustom01"
-              name="filterlanguage" placeholder="Search by Language">
-              <div class="valid-feedback">Looks good!</div>
+              <select name="filterlanguage" id="filterlanguage" class="form-control" aria-placeholder="Search By Language">
+                <option value="%%" selected>Select Language</option>
+                <option value="English">English</option>
+                <option value="French">French</option>
+                <option value="German">German</option>
+                <option value="Hindi">Hindi</option>
+                <option value="Japanese">Japanese</option>
+                <option value="Mandarin">Mandarin</option>
+                <option value="Spanish">Spanish</option>
+              </select>
             </div>
 
             <div class="col-md-4">
-              <label for="validationCustom01" class="form-label">Release Date</label>
-              <input type="text" class="form-control" id="validationCustom01"
-              name="filterdate" placeholder="Search by Release Date">
-              <div class="valid-feedback">Looks good!</div>
+              <label for="validationCustom01" class="form-label">Released After</label>
+              <input type="text" class="form-control"
+              name="filteryear" id="filteryear" placeholder="Search by Year">
             </div>
 
             <div class="col-md-4">
-              <label for="validationCustom01" class="form-label">Award</label>
-              <input type="text" class="form-control" id="validationCustom01"
-              name="filteraward" placeholder="Search by Award">
-              <div class="valid-feedback">Looks good!</div>
+              <label for="validationCustom01" class="form-label">Award Category</label>
+              <select name="filterawardcat" id="filterawardcat" class="form-control" aria-placeholder="Search By Award Category">
+                <option value='IS NOT NULL OR AW.Award_Name IS NULL)' selected>Select Award Category</option>
+                <option value="Best Animated Feature">Best Animated Feature</option>
+                <option value="Best Direction">Best Direction</option>
+                <option value="Best Picture">Best Picture</option>
+              </select>
             </div>
 
             <div class="col-md-4">
-              <label for="validationCustom01" class="form-label">Revenue</label>
-              <input type="text" class="form-control" id="validationCustom01"
-              name="filterrevenue" placeholder="Search by Revenue">
-              <div class="valid-feedback">Looks good!</div>
+              <label for="validationCustom01" class="form-label">Minimum Revenue</label>
+              <input type="text" class="form-control"
+              name="filterminrevenue" id="filterminrevenue" placeholder="Search by Minimum Revenue">
+            </div>
+
+            <div class="col-md-4">
+              <label for="validationCustom01" class="form-label">Order By Rating</label>
+              <select name="filterorder" id="filterorder" class="form-control" aria-placeholder="Select Order">
+                <option value=" " selected>Select Order</option>
+                <option value="ORDER BY Movie_Rating ASC">Ascending</option>
+                <option value="ORDER BY Movie_Rating DESC">Descending</option>
+              </select>
             </div>
             
             <div class="col-12">
-              <button class="btn btn-primary" type="submit">Filter</button>
+              <a href="#tablefocus">
+                <button class="btn btn-primary" type="submit">Filter</button>
+              </a>
             </div>
           </form>
         </div>
@@ -136,7 +169,7 @@
             <div class="card" style="color: white; background-color:black;">
               <div class="card-body" style="color: white; background-color:black;">
                 <h5 class="card-title" style="color: white;">Movies</h5>
-                <div class="scrollbarclass" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
+                <div class="scrollbarclass" id="tablefocus" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
                   <table class="table table-striped table-dark text-nowrap table-responsive" style="color: white; background-color:black;">
                     <thead>
                       <tr>
@@ -146,7 +179,9 @@
                         <th scope="col no-wrap">Rating</th>
                         <th scope="col no-wrap">No. of Ratings</th>
                         <th scope="col"></th>
-                        <th scope="col"></th>
+                        <% if(data.User_Role=='Admin'){ %>
+                          <th scope="col"></th>
+                          <% } %>
                       </tr>
                     </thead>
   
@@ -165,28 +200,29 @@
                                 action="/view_movie_details/<%=dataobj.Movie_ID%>"
                                 method="get"
                               >
-                                <input
-                                  type="submit"
-                                  class="btn btn-info"
-                                  value="View Details"
-                                />
+                              <input
+                                type="submit"
+                                class="btn btn-info"
+                                value="View Details"
+                              />
                               </form>
                             </td>
-    
-                            <td>
-                              <form
-                                class="filter"
-                                action="/delete_movie/<%=dataobj.Movie_ID%>"
-                                method="get"
-                                onsubmit="return confirmDelete();"
-                              >
-                                <input
-                                  type="submit"
-                                  class="btn btn-danger"
-                                  value="Delete"
-                                />
-                              </form>
-                            </td>
+                            <% if(data.User_Role=='Admin'){ %>
+                              <td>
+                                <form
+                                  class="filter"
+                                  action="/delete_movie/<%=dataobj.Movie_ID%>"
+                                  method="get"
+                                  onsubmit="return confirmDelete();"
+                                >
+                                  <input
+                                    type="submit"
+                                    class="btn btn-danger"
+                                    value="Delete"
+                                  />
+                                </form>
+                              </td>
+                              <% } %>
     
                           </tr>
                           <% i=i+1; }%>
@@ -208,12 +244,7 @@
       class="back-to-top d-flex align-items-center justify-content-center"
       ><i class="bi bi-arrow-up-short"></i
     ></a>
-    <script>
-      function confirmDelete() {
-        var result = confirm("Are you sure you want to delete this user?");
-        return result;
-      }
-    </script>
+
     <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
     <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="assets/vendor/chart.js/chart.min.js"></script>
@@ -223,5 +254,44 @@
     <script src="assets/vendor/tinymce/tinymce.min.js"></script>
     <script src="assets/vendor/php-email-form/validate.js"></script>
     <script src="assets/js/main.js"></script>
+    <script>
+      function confirmDelete() {
+        var result = confirm("Are you sure you want to delete this user?");
+        return result;
+      }
+      
+      function setDefaultValues(event){
+        event.preventDefault();
+        const movietitle = document.getElementById("filtertitle");
+        const agerating = document.getElementById("filterage");
+        const genre = document.getElementById("filtergenre");
+        const language = document.getElementById("filterlanguage");
+        const year = document.getElementById("filteryear");
+        const awardcat = document.getElementById("filterawardcat");
+        const minrevenue = document.getElementById("filterminrevenue");
+        const order = document.getElementById("filterorder");
+        console.log(movietitle.value, agerating.value, genre.value, language.value, year.value, awardcat.value, minrevenue.value, order.value);
+        if (movietitle.value === "") {
+          movietitle.value = "%%%";
+        }
+        else {
+          movietitle.value = "%%" + movietitle.value + "%";
+        } 
+        if (year.value === "") {
+          year.value = "0000";
+        }
+        if (minrevenue.value === "") {
+          minrevenue.value = "0";
+        }
+        console.log(movietitle.value, agerating.value, genre.value, language.value, year.value, awardcat.value, minrevenue.value, order.value);
+        document.getElementById("filterform").submit();
+
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) { 
+                location.reload(); 
+            }
+        });
+      }
+    </script>
   </body>
 </html>

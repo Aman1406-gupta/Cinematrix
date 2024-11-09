@@ -1,4 +1,4 @@
-let {ser_view_episode_details,ser_view_celeb_details,ser_view_tvshow_details, ser_view_movie_details,ser_deleteac,ser_tpseriesshow,ser_reseriesshow,ser_seriesshow,ser_tpshowmovie,ser_reshowmovie,ser_showmovie,ser_pcelebview,ser_btcelebview,ser_celebview,ser_awardac,ser_awardem,ser_signout,ser_home,ser_insert,ser_validation,ser_registeruser,ser_adminprofile,ser_showproduct,ser_addproduct,ser_deleteuser,ser_viewusercomodity,ser_userupdate,ser_userprofileupdate,ser_update_points,ser_update_points_form, ser_showproduct_admin,ser_buyproduct,ser_buyproduct_form,ser_add_balance,ser_add_balance_form,ser_update_product,ser_update_product_page,ser_product_delete,ser_changepass,ser_showt}=require("../servers/service");
+let {ser_filtermovie,ser_view_episode_details,ser_view_celeb_details,ser_view_tvshow_details, ser_view_movie_details,ser_deleteac,ser_tpseriesshow,ser_reseriesshow,ser_seriesshow,ser_tpshowmovie,ser_reshowmovie,ser_showmovie,ser_pcelebview,ser_btcelebview,ser_celebview,ser_awardac,ser_awardem,ser_signout,ser_home,ser_insert,ser_validation,ser_registeruser,ser_adminprofile,ser_showproduct,ser_addproduct,ser_deleteuser,ser_viewusercomodity,ser_userupdate,ser_userprofileupdate,ser_update_points,ser_update_points_form, ser_showproduct_admin,ser_buyproduct,ser_buyproduct_form,ser_add_balance,ser_add_balance_form,ser_update_product,ser_update_product_page,ser_product_delete,ser_changepass,ser_showt}=require("../servers/service");
 
 
 exports.cont_adduser=async(req,rep)=>{
@@ -65,7 +65,12 @@ exports.cont_tpshowmovie=async(req,rep)=>{
 
 exports.cont_showmovie=async(req,rep)=>{
     let moviedatashown= await ser_showmovie(req,rep);
-    rep.render("viewmovie",{moviedata:moviedatashown.moviedata,data:moviedatashown.newdata.User_Role});
+    rep.render("viewmovie",{moviedata:moviedatashown.moviedata,data:moviedatashown.newdata});
+}
+
+exports.cont_filtermovie=async(req,rep)=>{
+    let filtermoviedatashown= await ser_filtermovie(req,rep);
+    rep.render("filterviewmovie",{filtermoviedata:filtermoviedatashown.filtermoviedata,data:filtermoviedatashown.newdata});
 }
 
 exports.cont_reshowmovie=async(req,rep)=>{
@@ -85,12 +90,12 @@ exports.cont_reseriesshow=async(req,rep)=>{
 
 exports.cont_seriesshow=async(req,rep)=>{
     let seriesdatashown= await ser_seriesshow(req,rep);
-    rep.render("viewseries",{seriesdata:seriesdatashown.seriesdata,data:seriesdatashown.newdata.parentmail});
+    rep.render("viewseries",{seriesdata:seriesdatashown.seriesdata,data:seriesdatashown.newdata});
 }
 
 exports.cont_celebview=async(req,rep)=>{
     let celebdatashown= await ser_celebview(req,rep);
-    rep.render("viewceleb",{celebdata:celebdatashown.celebdata,data:celebdatashown.newdata.parentmail});
+    rep.render("viewceleb",{celebdata:celebdatashown.celebdata,data:celebdatashown.newdata});
 }
 
 exports.cont_pcelebview=async(req,rep)=>{
@@ -131,12 +136,12 @@ exports.cont_view_celeb_details=async(req,rep)=>{
 
 exports.cont_awardac=async(req,rep)=>{
     let awarddatashown= await ser_awardac(req,rep);
-    rep.render("viewaward",{awarddata:awarddatashown.awarddata,data:awarddatashown.newdata.parentmail});
+    rep.render("viewawardac",{awarddata:awarddatashown.awarddata,data:awarddatashown.newdata});
 }
 
 exports.cont_awardem=async(req,rep)=>{
     let awarddatashown= await ser_awardem(req,rep);
-    rep.render("viewaward",{awarddata:awarddatashown.awarddata,data:awarddatashown.newdata.parentmail});
+    rep.render("viewawardem",{awarddata:awarddatashown.awarddata,data:awarddatashown.newdata});
 }
 
 ////////////////////////

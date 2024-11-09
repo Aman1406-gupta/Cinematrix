@@ -37,24 +37,19 @@
   </head>
 
   <body>
-    <%- include("../../utils/header")%> 
-    <% if(data && data!==""){ %>
+    <%- include("../../utils/header") %> 
 
-      <%- include("../../utils/admin_side") %>
+    <% if(data.User_Role=='Admin'){ %>
+
+    <%- include("../../utils/admin_side") %>
   
-      <% } %>
-  
-      <% if(data==""){ %>
-  
-      <%- include("../../utils/admin_side") %>
+    <% } %>
+
+    <% if(data.User_Role=='User'){ %>
+
+    <%- include("../../utils/side") %>
     
-      <% } %>
-  
-      <% if(data==""){ %>
-  
-      <%- include("../../utils/admin_side") %>
-      
-      <% } %>
+    <% } %>
 
     <main id="main" class="main" style="background-color:black">
       <div class="pagetitle">
@@ -74,12 +69,12 @@
             action="/filteruser"
             method="post"
           >
-            <div class="col-md-4">
+            <!-- <div class="col-md-4">
               <label for="validationCustom02" class="form-label">Title</label>
               <input type="text" class="form-control" id="validationCustom02"
               name="filtername" placeholder="Search by Title">
               <div class="valid-feedback">Looks good!</div>
-            </div>
+            </div> -->
 
             <div class="col-md-4">
               <label for="validationCustom02" class="form-label">Category</label>
@@ -118,7 +113,7 @@
                         <th scope="col">Awarded Year</th>
                         <th scope="col">Category</th>
                         <th scope="col"></th>
-                        <th scope="col"></th>
+                        <!-- <th scope="col"></th>   -->
                       </tr>
                     </thead>
   
@@ -145,7 +140,7 @@
                               </form>
                             </td>
     
-                            <td>
+                            <!-- <td>
                               <form
                                 class="filter"
                                 action="/selete_award/<%=dataobj.Movie_ID%>"
@@ -158,7 +153,7 @@
                                   value="Delete"
                                 />
                               </form>
-                            </td>
+                            </td> -->
     
                           </tr>
                           <% i=i+1; }%>

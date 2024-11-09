@@ -78,7 +78,9 @@
                         <th scope="col no-wrap">Rating</th>
                         <th scope="col no-wrap">No. of Ratings</th>
                         <th scope="col"></th>
-                        <th scope="col"></th>
+                        <% if(data.User_Role=='Admin'){ %>
+                          <th scope="col"></th>
+                          <% } %>
                       </tr>
                     </thead>
                     <tbody>
@@ -103,21 +105,22 @@
                                 />
                               </form>
                             </td>
-    
-                            <td>
-                              <form
-                                class="filter"
-                                action="/delete_movie/<%=dataobj.Movie_ID%>"
-                                method="get"
-                                onsubmit="return confirmDelete();"
-                              >
-                                <input
-                                  type="submit"
-                                  class="btn btn-danger"
-                                  value="Delete"
-                                />
-                              </form>
-                            </td>
+                            <% if(data.User_Role=='Admin'){ %>
+                              <td>
+                                <form
+                                  class="filter"
+                                  action="/delete_movie/<%=dataobj.Movie_ID%>"
+                                  method="get"
+                                  onsubmit="return confirmDelete();"
+                                >
+                                  <input
+                                    type="submit"
+                                    class="btn btn-danger"
+                                    value="Delete"
+                                  />
+                                </form>
+                              </td>
+                              <% } %>
     
                           </tr>
                           <% i=i+1; }%>

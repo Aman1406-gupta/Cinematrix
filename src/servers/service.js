@@ -241,16 +241,70 @@ exports.ser_showmovie=async(req,rep)=>{
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
             }
-
-            if (results.length === 0) {
-                console.log("Movies don't exist");
-                return reject(new Error("Movies don't exist"));
-            }
             const moviedata = results;
             resolve( { moviedata, newdata } );
         });
     });
 }
+
+exports.ser_filtermovie=async(req,rep)=>{
+    return new Promise((resolve, reject) => {
+        const title = req.body.filtertitle;
+        const age = req.body.filterage;
+        const genre = req.body.filtergenre;
+        const language = req.body.filterlanguage;
+        const year = req.body.filteryear;
+        let awardcat = req.body.filterawardcat;
+        const minrevenue = req.body.filterminrevenue;
+        const order = req.body.filterorder;
+
+        if (awardcat != 'IS NOT NULL OR AW.Award_Name IS NULL)') {
+            awardcat = "= '" + awardcat + "')";
+        }
+        
+        let query = `   SELECT DISTINCT * FROM
+                            (SELECT 
+                                M.Title AS Movie_Title,
+                                YEAR(M.Release_Date) AS Year_Of_Release,
+                                M.Movie_Rating,
+                                M.Num_Ratings_Movies
+                            FROM 
+                                Movies M
+                                JOIN movieIsOfGenre MG ON M.Movie_ID = MG.Movie_ID
+                                JOIN Genres G ON MG.Genre_ID = G.Genre_ID
+                                JOIN movieAvailableIn MA ON M.Movie_ID = MA.Movie_ID
+                                JOIN Languages L ON MA.Language_ID = L.Language_ID
+                                LEFT JOIN movieAwarded MAW ON M.Movie_ID = MAW.Movie_ID
+                                LEFT JOIN Awards AW ON MAW.Award_ID = AW.Award_ID
+                            WHERE 
+                                TRUE
+                                AND M.Title LIKE ? 
+                                AND G.Genre_Name LIKE ? 
+                                AND L.Language_Name LIKE ?
+                                AND (AW.Award_Category ${awardcat}
+                                AND M.Revenue > ? 
+                                AND YEAR(M.Release_Date) > ? 
+                                AND M.Age_Rating_ID IN (
+                                    SELECT Age_Rating_ID 
+                                    FROM Age_Ratings 
+                                    WHERE Age_Rating_Name LIKE ?
+                                )
+                            ) INTERMEDIATE 
+                            ${order};`;
+        // console.log(query);
+        // console.log(req.body);
+        mysqlConnection.query(query,[title,genre,language,minrevenue,year,age],(err, results) => {
+            if (err) {
+                console.error('Database query failed:', err);
+                return reject(new Error("Database query failed"));  
+            }
+            const filtermoviedata = results;
+            console.log(filtermoviedata);
+            resolve( { filtermoviedata, newdata } );
+        });
+    });
+}
+
 
 exports.ser_tpshowmovie=async(req,rep)=>{
     return new Promise((resolve, reject) => {

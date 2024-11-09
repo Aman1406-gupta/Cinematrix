@@ -37,24 +37,19 @@
   </head>
 
   <body>
-    <%- include("../../utils/header")%> 
-    <% if(data && data!==""){ %>
+    <%- include("../../utils/header") %> 
 
-      <%- include("../../utils/admin_side") %>
+    <% if(data.User_Role=='Admin'){ %>
+
+    <%- include("../../utils/admin_side") %>
   
-      <% } %>
-  
-      <% if(data==""){ %>
-  
-      <%- include("../../utils/admin_side") %>
+    <% } %>
+
+    <% if(data.User_Role=='User'){ %>
+
+    <%- include("../../utils/side") %>
     
-      <% } %>
-  
-      <% if(data==""){ %>
-  
-      <%- include("../../utils/admin_side") %>
-      
-      <% } %>
+    <% } %>
 
     <main id="main" class="main" style="background-color:black">
       <div class="pagetitle">
@@ -140,7 +135,9 @@
                         <th scope="col">Rating</th>
                         <th scope="col">No. of Ratings</th>
                         <th scope="col"></th>
-                        <th scope="col"></th>
+                        <% if(data.User_Role=='Admin'){ %>
+                          <th scope="col"></th>
+                          <% } %>
                       </tr>
                     </thead>
   
@@ -163,29 +160,31 @@
                                 <input
                                   type="submit"
                                   id="<%=dataobj.Movie_ID%> have to change id ----------" 
-                                  name="seriesid "
+                                  name="seriesid"
                                   class="btn btn-info"
                                   value="View Details"
                                 />
                               </form>
                             </td>
-    
-                            <td>
-                              <form
-                                class="filter"
-                                action="/delete_tvshow/<%=dataobj.Movie_ID%>"
-                                method="get"
-                                onsubmit="return confirmDelete();"
-                              >
-                                <input
-                                  type="submit"
-                                  id="<%=dataobj.Movie_ID%>  have to change id ----------"
-                                  name="seriesid"
-                                  class="btn btn-danger"
-                                  value="Delete"
-                                />
-                              </form>
-                            </td>
+                            
+                            <% if(data.User_Role=='Admin'){ %>
+                              <td>
+                                <form
+                                  class="filter"
+                                  action="/delete_tvshow/<%=dataobj.Movie_ID%>"
+                                  method="get"
+                                  onsubmit="return confirmDelete();"
+                                >
+                                  <input
+                                    type="submit"
+                                    id="<%=dataobj.Movie_ID%>  have to change id ----------"
+                                    name="seriesid"
+                                    class="btn btn-danger"
+                                    value="Delete"
+                                  />
+                                </form>
+                              </td>
+                              <% } %>
     
                           </tr>
                           <% i=i+1; }%>
