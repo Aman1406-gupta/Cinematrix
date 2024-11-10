@@ -79,9 +79,6 @@
                         <th scope="col">Rating</th>
                         <th scope="col">No. of Ratings</th>
                         <th scope="col"></th>
-                        <% if(data.User_Role=='Admin'){ %>
-                          <th scope="col"></th>
-                          <% } %>
                       </tr>
                     </thead>
   
@@ -107,25 +104,7 @@
                                   value="View Details"
                                 />
                               </form>
-                            </td>
-                            
-                            <% if(data.User_Role=='Admin'){ %>
-                              <td>
-                                <form
-                                  class="filter"
-                                  action="/delete_tvshow/<%=dataobj.Show_ID%>"
-                                  method="get"
-                                  onsubmit="return confirmDelete();"
-                                >
-                                  <input
-                                    type="submit"
-                                    class="btn btn-danger"
-                                    value="Delete"
-                                  />
-                                </form>
-                              </td>
-                              <% } %>
-    
+                            </td>    
                           </tr>
                           <% i=i+1; }%>
                       </div>

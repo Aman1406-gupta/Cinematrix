@@ -1,18 +1,18 @@
 let bcrypt=require("bcrypt");
-// const nodemailer= require("nodemailer");
-let recu=require("../model/user");
 const { mysqlConnection, mongo } = require('../dbconnection');
-let product=require("../model/product")
-let transactiondata=require("../model/transactiondata")
+// const nodemailer= require("nodemailer");
+// let recu=require("../model/user");
+// let product=require("../model/product")
+// let transactiondata=require("../model/transactiondata")
 let jwt=require("jsonwebtoken");
 require("dotenv").config();
 let rootmail;
 let newdata;
 
-function update_amount(previous_amount,new_amount){
-    let amount=previous_amount+(new_amount*0.25);
-    return (amount);
-}
+// function update_amount(previous_amount,new_amount){
+//     let amount=previous_amount+(new_amount*0.25);
+//     return (amount);
+// }
 
 ////////////////////////////////
 
@@ -233,78 +233,82 @@ exports.ser_deleteac=async(req,rep)=>{
     }
 }
 
-exports.ser_showmovie=async(req,rep)=>{
-    //write queries for filter
-    return new Promise((resolve, reject) => {
-        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies;', (err, results) => {
-            if (err) {
-                console.error('Database query failed:', err);
-                return reject(new Error("Database query failed"));
-            }
-            const moviedata = results;
-            resolve( { moviedata, newdata } );
+exports.ser_showmovie=async(req,rep,flag)=>{
+    let message = "";
+    if (flag == 0) {
+        return new Promise((resolve, reject) => {
+            mysqlConnection.query('SELECT Movie_ID, Title as Movie_Title, YEAR(Release_Date) as Year_Of_Release, Movie_Rating, Num_Ratings_Movies FROM movies;', (err, results) => {
+                if (err) {
+                    console.error('Database query failed:', err);
+                    return reject(new Error("Database query failed"));
+                }
+                if (results.length === 0) {
+                    message = "No movies for the given filter exists!";
+                }
+                const moviedata = results;
+                resolve( { moviedata, newdata, message } );
+            });
         });
-    });
-}
-
-exports.ser_filtermovie=async(req,rep)=>{
-    return new Promise((resolve, reject) => {
-        const title = req.body.filtertitle;
-        const age = req.body.filterage;
-        const genre = req.body.filtergenre;
-        const language = req.body.filterlanguage;
-        const year = req.body.filteryear;
-        let awardcat = req.body.filterawardcat;
-        const minrevenue = req.body.filterminrevenue;
-        const order = req.body.filterorder;
-
-        if (awardcat != 'IS NOT NULL OR AW.Award_Name IS NULL)') {
-            awardcat = "= '" + awardcat + "')";
-        }
-        
-        let query = `   SELECT DISTINCT * FROM
-                            (SELECT 
-                                M.Title AS Movie_Title,
-                                YEAR(M.Release_Date) AS Year_Of_Release,
-                                M.Movie_Rating,
-                                M.Num_Ratings_Movies
-                            FROM 
-                                Movies M
-                                JOIN movieIsOfGenre MG ON M.Movie_ID = MG.Movie_ID
-                                JOIN Genres G ON MG.Genre_ID = G.Genre_ID
-                                JOIN movieAvailableIn MA ON M.Movie_ID = MA.Movie_ID
-                                JOIN Languages L ON MA.Language_ID = L.Language_ID
-                                LEFT JOIN movieAwarded MAW ON M.Movie_ID = MAW.Movie_ID
-                                LEFT JOIN Awards AW ON MAW.Award_ID = AW.Award_ID
-                            WHERE 
-                                TRUE
-                                AND M.Title LIKE ? 
-                                AND G.Genre_Name LIKE ? 
-                                AND L.Language_Name LIKE ?
-                                AND (AW.Award_Category ${awardcat}
-                                AND M.Revenue > ? 
-                                AND YEAR(M.Release_Date) > ? 
-                                AND M.Age_Rating_ID IN (
-                                    SELECT Age_Rating_ID 
-                                    FROM Age_Ratings 
-                                    WHERE Age_Rating_Name LIKE ?
-                                )
-                            ) INTERMEDIATE 
-                            ${order};`;
-        // console.log(query);
-        // console.log(req.body);
-        mysqlConnection.query(query,[title,genre,language,minrevenue,year,age],(err, results) => {
-            if (err) {
-                console.error('Database query failed:', err);
-                return reject(new Error("Database query failed"));  
+    }
+    else {
+        return new Promise((resolve, reject) => {
+            const title = req.body.filtertitle;
+            const age = req.body.filterage;
+            const genre = req.body.filtergenre;
+            const language = req.body.filterlanguage;
+            const year = req.body.filteryear;
+            let awardcat = req.body.filterawardcat;
+            const minrevenue = req.body.filterminrevenue;
+            const order = req.body.filterorder;
+    
+            if (awardcat != 'IS NOT NULL OR AW.Award_Name IS NULL)') {
+                awardcat = "= '" + awardcat + "')";
             }
-            const filtermoviedata = results;
-            console.log(filtermoviedata);
-            resolve( { filtermoviedata, newdata } );
+            
+            let query = `   SELECT DISTINCT * FROM
+                                (SELECT 
+                                    M.Movie_ID,
+                                    M.Title AS Movie_Title,
+                                    YEAR(M.Release_Date) AS Year_Of_Release,
+                                    M.Movie_Rating,
+                                    M.Num_Ratings_Movies
+                                FROM 
+                                    Movies M
+                                    JOIN movieIsOfGenre MG ON M.Movie_ID = MG.Movie_ID
+                                    JOIN Genres G ON MG.Genre_ID = G.Genre_ID
+                                    JOIN movieAvailableIn MA ON M.Movie_ID = MA.Movie_ID
+                                    JOIN Languages L ON MA.Language_ID = L.Language_ID
+                                    LEFT JOIN movieAwarded MAW ON M.Movie_ID = MAW.Movie_ID
+                                    LEFT JOIN Awards AW ON MAW.Award_ID = AW.Award_ID
+                                WHERE 
+                                    TRUE
+                                    AND M.Title LIKE ? 
+                                    AND G.Genre_Name LIKE ? 
+                                    AND L.Language_Name LIKE ?
+                                    AND (AW.Award_Category ${awardcat}
+                                    AND M.Revenue > ? 
+                                    AND YEAR(M.Release_Date) > ? 
+                                    AND M.Age_Rating_ID IN (
+                                        SELECT Age_Rating_ID 
+                                        FROM Age_Ratings 
+                                        WHERE Age_Rating_Name LIKE ?
+                                    )
+                                ) INTERMEDIATE 
+                                ${order};`;
+            mysqlConnection.query(query,[title,genre,language,minrevenue,year,age],(err, results) => {
+                if (err) {
+                    console.error('Database query failed:', err);
+                    return reject(new Error("Database query failed"));  
+                }
+                if (results.length === 0) {
+                    message = "No movie for the given filter exists!";
+                }
+                const moviedata = results;
+                resolve( { moviedata, newdata, message } );
+            });
         });
-    });
+    }
 }
-
 
 exports.ser_tpshowmovie=async(req,rep)=>{
     return new Promise((resolve, reject) => {
@@ -342,23 +346,100 @@ exports.ser_reshowmovie=async(req,rep)=>{
     });
 }
 
-exports.ser_seriesshow=async(req,rep)=>{
-    //write queries for filter
-    return new Promise((resolve, reject) => {
-        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies;', (err, results) => {
-            if (err) {
-                console.error('Database query failed:', err);
-                return reject(new Error("Database query failed"));
+exports.ser_seriesshow=async(req,rep,flag)=>{
+    let message = "";
+    if(flag==0){    
+        return new Promise((resolve, reject) => {
+            let query = `
+                        SELECT 
+                            TS.Show_ID,
+                            TS.Title AS TVShow_Title,
+                            COUNT(DISTINCT E.Season_Number) AS Number_Of_Seasons,
+                            YEAR(TS.Start_Date) AS Start_Year,
+                            TS.TVShow_Rating,
+                            TS.Num_Ratings_TV
+                        FROM 
+                            TV_Shows TS
+                            JOIN showIsOfGenre SG ON TS.Show_ID = SG.Show_ID
+                            JOIN Episodes E ON TS.Show_ID = E.Show_ID
+                        GROUP BY 
+                            TS.Show_ID;
+                        `;
+            mysqlConnection.query(query, (err, results) => {
+                if (err) {
+                    console.error('Database query failed:', err);
+                    return reject(new Error("Database query failed"));
+                }
+    
+                if (results.length === 0) {
+                    message = "No series for the given filter exists!";
+                }
+                const seriesdata = results;
+                resolve( { seriesdata, newdata, message } );
+            });
+        });
+    }
+    else{
+        return new Promise((resolve, reject) => {
+            const title = req.body.filtertitle;
+            const age = req.body.filterage;
+            const genre = req.body.filtergenre;
+            const language = req.body.filterlanguage;
+            const year = req.body.filteryear;
+            let awardcat = req.body.filterawardcat;
+            const order = req.body.filterorder;
+
+            if (awardcat != 'IS NOT NULL OR AW.Award_Name IS NULL)') {
+                awardcat = "= '" + awardcat + "')";
             }
 
-            if (results.length === 0) {
-                console.log("Series don't exist");
-                return reject(new Error("Series don't exist"));
-            }
-            const seriesdata = results;
-            resolve( { seriesdata, newdata } );
+            let query = `SELECT DISTINCT * FROM
+                                    (SELECT 
+                                        TS.Show_ID,
+                                        TS.Title AS TVShow_Title,
+                                        COUNT(DISTINCT E.Season_Number) AS Number_Of_Seasons,
+                                        YEAR(TS.Start_Date) AS Start_Year,
+                                        TS.TVShow_Rating,
+                                        TS.Num_Ratings_TV
+                                    FROM 
+                                        TV_Shows TS
+                                        JOIN showIsOfGenre SG ON TS.Show_ID = SG.Show_ID
+                                        JOIN Genres G ON SG.Genre_ID = G.Genre_ID
+                                        JOIN showAvailableIn SA ON TS.Show_ID = SA.Show_ID
+                                        JOIN Languages L ON SA.Language_ID = L.Language_ID
+                                        LEFT JOIN showAwarded SW ON TS.Show_ID = SW.Show_ID
+                                        LEFT JOIN Awards AW ON SW.Award_ID = AW.Award_ID
+                                        JOIN Episodes E ON TS.Show_ID = E.Show_ID
+                                    WHERE 
+                                        TS.Title LIKE ?
+                                        AND G.Genre_Name LIKE ?
+                                        AND L.Language_Name LIKE ?
+                                        AND (AW.Award_Category ${awardcat}
+                                        AND YEAR(TS.Start_Date) > ?
+                                        AND TS.Age_Rating_ID IN (
+                                            SELECT Age_Rating_ID 
+                                            FROM Age_Ratings 
+                                            WHERE Age_Rating_Name LIKE ?
+                                        )
+                                    GROUP BY 
+                                        TS.Show_ID
+                                    ) INTERMEDIATE 
+                                    ${order};`;
+
+                mysqlConnection.query(query,[title,genre,language,year,age],(err, results) => {
+                if (err) {
+                    console.error('Database query failed:', err);
+                    return reject(new Error("Database query failed"));
+                }
+    
+                if (results.length === 0) {
+                    message = "No series for the given filter exists!";
+                }
+                const seriesdata = results;
+                resolve( { seriesdata, newdata, message } );
+            });
         });
-    });
+    }
 }
 
 exports.ser_tpseriesshow=async(req,rep)=>{
@@ -397,23 +478,69 @@ exports.ser_reseriesshow=async(req,rep)=>{
     });
 }
 
-exports.ser_celebview=async(req,rep)=>{
-    //write queries for filter
-    return new Promise((resolve, reject) => {
-        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies;', (err, results) => {
-            if (err) {
-                console.error('Database query failed:', err);
-                return reject(new Error("Database query failed"));
-            }
-
-            if (results.length === 0) {
-                console.log("Celebs don't exist");
-                return reject(new Error("Celebs don't exist"));
-            }
-            const celebdata = results;
-            resolve( { celebdata, newdata } );
+exports.ser_celebview=async(req,rep,flag)=>{
+    let message = "";
+    if(flag == 0){
+        return new Promise((resolve, reject) => {
+            mysqlConnection.query(`SELECT Person_ID, CONCAT(Person_First_Name," ",Person_Last_Name) Full_Name, Person_Gender, FLOOR(DATEDIFF(CURDATE(), Person_DOB) / 365.25) Age FROM People;
+                SELECT DISTINCT(Person_Nationality) AS Nationality FROM People ORDER BY Nationality ASC;`, (err, results) => {
+                if (err) {
+                    console.error('Database query failed:', err);
+                    return reject(new Error("Database query failed"));
+                }
+                if (results[0].length === 0) {
+                    message = "No Celebrity for the given filter exists!";
+                }
+                const celebdata = results[0];
+                const nationalitydata = results[1];
+                resolve( { celebdata,newdata,message,nationalitydata } );
+            });
         });
-    });
+    }
+    else{
+        return new Promise((resolve, reject) => {
+            const name = req.body.filtername;
+            const gender = req.body.filtergender;
+            const nationality = req.body.filternationality;
+            const profession = req.body.filterprofession;
+
+            let prof2 = profession;
+            if (profession == "People") {
+                prof2 = "Person";
+            }
+            let query = `   SELECT DISTINCT * FROM
+                                (SELECT 
+                                    P.Person_ID,
+                                    CONCAT(P.Person_First_Name, ' ', P.Person_Last_Name) AS Full_Name,
+                                    P.Person_Gender,
+                                    YEAR(CURDATE()) - YEAR(P.Person_DOB) - (DATE_FORMAT(CURDATE(), '%m%d') < DATE_FORMAT(P.Person_DOB, '%m%d')) AS Age
+                                FROM 
+                                    People P
+                                JOIN 
+                                    ${profession} T ON P.Person_ID = T.${prof2}_ID
+                                WHERE 
+                                    (P.Person_First_Name LIKE ? OR P.Person_Last_Name LIKE ?)
+                                    AND P.Person_Gender LIKE ?
+                                    AND P.Person_Nationality LIKE ?
+                                GROUP BY 
+                                    P.Person_ID
+                                ) INTERMEDIATE 
+                                ;
+                                SELECT DISTINCT(Person_Nationality) AS Nationality FROM People ORDER BY Nationality ASC;`;
+            mysqlConnection.query(query,[name,name,gender,nationality],(err, results) => {
+                if (err) {
+                    console.error('Database query failed:', err);
+                    return reject(new Error("Database query failed"));  
+                }
+                if (results[0].length === 0) {
+                    message = "No Celebrity for the given filter exists!";
+                }
+                const celebdata = results[0];
+                const nationalitydata = results[1];
+                resolve( { celebdata,newdata,message,nationalitydata } );
+            });
+        }); 
+    }
 }
 
 exports.ser_pcelebview=async(req,rep)=>{
@@ -464,7 +591,8 @@ exports.ser_view_movie_details=async(movieid,rep)=>{
             SELECT * FROM (SELECT MS.Movie_ID, S.Site_Name, S.Site_URL, S.Subscription_Starting_Price FROM Streaming_Sites S JOIN movieStreamsHere MS ON S.Site_ID = MS.Site_ID) INTERMEDIATE WHERE Movie_ID = ?;
             SELECT M.Movie_ID, M.Title AS Prequel_Title, YEAR(M.Release_Date) Release_Year, M.Movie_Rating, M.Num_Ratings_Movies FROM moviePrequel MP JOIN Movies M ON MP.Prequel_ID = M.Movie_ID WHERE MP.Movie_ID = ?;
             SELECT M.Movie_ID, M.Title AS Sequel_Title, YEAR(M.Release_Date) Release_Year, M.Movie_Rating, M.Num_Ratings_Movies FROM movieSequel MS JOIN Movies M ON MS.Sequel_ID = M.Movie_ID WHERE MS.Movie_ID = ?;
-                `, [movieid, movieid, movieid, movieid, movieid, movieid, movieid, movieid, movieid, movieid], (err, results) => {
+            SELECT U.User_ID, MR.Movie_ID, MR.Review_ID, U.Username, Review_Comment, Media_Rating, Like_Count, Dislike_Count, CONCAT(TIMESTAMPDIFF(DAY, R.Review_Date, NOW()), ' days ago') AS Days_Since_Review FROM movieReviewed MR JOIN Reviews R ON MR.Review_ID = R.Review_ID JOIN Users U ON R.User_ID = U.User_ID WHERE MR.Movie_ID = ?;
+                `, [movieid, movieid, movieid, movieid, movieid, movieid, movieid, movieid, movieid, movieid, movieid], (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
@@ -484,7 +612,8 @@ exports.ser_view_movie_details=async(movieid,rep)=>{
             const streamdetails = results[7];
             const prequeldetails = results[8];
             const sequeldetails = results[9];
-            resolve( { moviedetails,genredetails,languagedetails,awarddetails,actordetails,directordetails,producerdetails,streamdetails,prequeldetails,sequeldetails,newdata } );
+            const reviewdetails = results[10];
+            resolve( { moviedetails,genredetails,languagedetails,awarddetails,actordetails,directordetails,producerdetails,streamdetails,prequeldetails,sequeldetails,reviewdetails,newdata } );
         });
     });    
 }
@@ -501,7 +630,8 @@ exports.ser_view_tvshow_details=async(tvshowid,rep)=>{
                                SELECT A.Award_Name, A.Award_Category, SA.Year_Of_Awarding FROM showAwarded SA JOIN Awards A ON SA.Award_ID = A.Award_ID WHERE SA.Show_ID = ?;
                                SELECT L.Language_Name FROM showAvailableIn SA JOIN Languages L ON SA.Language_ID = L.Language_ID WHERE SA.Show_ID = ?;
                                SELECT * FROM (SELECT SS.Show_ID, S.Site_Name, S.Site_URL, S.Subscription_Starting_Price FROM Streaming_Sites S JOIN showstreamshere SS ON S.Site_ID = SS.Site_ID) INTERMEDIATE WHERE Show_ID = ?;
-                              `,[tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid], (err, results) => {
+                               SELECT U.User_ID, SR.Show_ID, SR.Review_ID, U.Username, Review_Comment, Media_Rating, Like_Count, Dislike_Count, CONCAT(TIMESTAMPDIFF(DAY, R.Review_Date, NOW()), ' days ago') AS Days_Since_Review FROM showReviewed SR JOIN Reviews R ON SR.Review_ID = R.Review_ID JOIN Users U ON R.User_ID = U.User_ID WHERE SR.Show_ID = ?;
+                              `,[tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid], (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
@@ -521,7 +651,8 @@ exports.ser_view_tvshow_details=async(tvshowid,rep)=>{
             const awarddetails=results[7];
             const languagedetails=results[8];
             const streamdetails=results[9];
-            resolve( { tvshowdetails,seaandepdata,episodedetails,genredetails,actordetails,directordetails,producerdetails,awarddetails,languagedetails,streamdetails,newdata } );
+            const reviewdetails = results[10];
+            resolve( { tvshowdetails,seaandepdata,episodedetails,genredetails,actordetails,directordetails,producerdetails,awarddetails,languagedetails,streamdetails,reviewdetails,newdata } );
         });
     });
 }
@@ -532,7 +663,8 @@ exports.ser_view_episode_details=async(tvshowid,sno,eno,rep)=>{
                                SELECT P.Person_ID, CONCAT(P.Person_First_Name, ' ', P.Person_Last_Name) AS Actor_Name, EA.Character_Name, EA.Role_Type FROM episodeActedBy EA JOIN Actor AC ON EA.Actor_ID = AC.Actor_ID JOIN People P ON EA.Actor_ID = P.Person_ID WHERE EA.Show_ID = ? AND EA.Season_Number = ? AND EA.Episode_Number = ?;
                                SELECT P.Person_ID, CONCAT(P.Person_First_Name, ' ', P.Person_Last_Name) AS Director_Name, D.Directorial_Style FROM episodeDirectedBy ED JOIN Director D ON ED.Director_ID = D.Director_ID JOIN People P ON ED.Director_ID = P.Person_ID WHERE ED.Show_ID = ? AND ED.Season_Number = ? AND ED.Episode_Number = ?;
                                SELECT P.Person_ID, CONCAT(P.Person_First_Name, ' ', P.Person_Last_Name) AS Producer_Name, PR.Production_Methodology FROM episodeProducedBy EP JOIN Producer PR ON EP.Producer_ID = PR.Producer_ID JOIN People P ON EP.Producer_ID = P.Person_ID WHERE EP.Show_ID = ? AND EP.Season_Number = ? AND EP.Episode_Number = ?;
-                              `,[tvshowid,sno,eno,tvshowid,sno,eno,tvshowid,sno,eno,tvshowid,sno,eno,], (err, results) => {
+                               SELECT U.User_ID, ER.Show_ID, ER.Episode_Number, ER.Season_Number, ER.Review_ID, U.Username, Review_Comment, Media_Rating, Like_Count, Dislike_Count, CONCAT(TIMESTAMPDIFF(DAY, R.Review_Date, NOW()), ' days ago') AS Days_Since_Review FROM episodeReviewed ER JOIN Reviews R ON ER.Review_ID = R.Review_ID JOIN Users U ON R.User_ID = U.User_ID WHERE ER.Show_ID = ? AND ER.Season_Number = ? AND ER.Episode_Number = ?;
+                              `,[tvshowid,sno,eno,tvshowid,sno,eno,tvshowid,sno,eno,tvshowid,sno,eno,tvshowid,sno,eno], (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
@@ -546,7 +678,8 @@ exports.ser_view_episode_details=async(tvshowid,sno,eno,rep)=>{
             const actordetails=results[1];
             const directordetails=results[2];
             const producerdetails=results[3];
-            resolve( { epdetails,actordetails,directordetails,producerdetails,newdata } );
+            const reviewdetails = results[4];
+            resolve( { epdetails,actordetails,directordetails,producerdetails,reviewdetails,newdata } );
         });
     });
 }
@@ -591,88 +724,266 @@ exports.ser_view_celeb_details=async(celebid,rep)=>{
     });
 }
 
-exports.ser_awardac=async(req,rep)=>{
-    //change query
+exports.ser_awardac=async(req,rep,flag)=>{
+    let message = "";
+    if(flag==0){
+        let awarddata = [];
+        message = "dummy";
+        return {awarddata, newdata, message};
+    }
+    else{
+        return new Promise((resolve, reject) => {
+            const year = req.body.filteryear;
+            let awardcat = req.body.filterawardcat;
+
+            let query = "";
+            let actionpath = "";
+
+            if (awardcat == "Best Animated Feature" || awardcat == "Best Direction" || awardcat == "Best Picture") {
+                query = `SELECT 
+                            M.Movie_ID as Recipient_ID,
+                            CONCAT(M.Title) AS Recipient,
+                            MA.Year_Of_Awarding,
+                            A.Award_Category    
+                        FROM 
+                            movieAwarded MA
+                        JOIN 
+                            Movies M ON MA.Movie_ID = M.Movie_ID
+                        JOIN 
+                            Awards A ON MA.Award_ID = A.Award_ID 
+                        WHERE 
+                            A.Award_Category = '${awardcat}'
+                            AND MA.Year_Of_Awarding LIKE '${year}';
+                        `;
+                actionpath = "/view_movie_details";
+            }
+            else {
+                query = `SELECT 
+                            P.Person_ID as Recipient_ID,
+                            CONCAT(P.Person_First_Name, ' ', P.Person_Last_Name) AS Recipient,
+                            PA.Year_Of_Awarding,
+                            A.Award_Category    
+                        FROM 
+                            personAwarded PA
+                        JOIN 
+                            People P ON PA.Person_ID = P.Person_ID
+                        JOIN 
+                            Awards A ON PA.Award_ID = A.Award_ID 
+                        WHERE 
+                            A.Award_Category = '${awardcat}'
+                            AND PA.Year_Of_Awarding LIKE '${year}';
+                        `;
+                actionpath = "/view_celeb_details";
+            }
+
+            mysqlConnection.query(query,(err, results) => {
+                if (err) {
+                    console.error('Database query failed:', err);
+                    return reject(new Error("Database query failed"));  
+                }
+                if (results.length === 0) {
+                    message = "No data found for this filter.";
+                }
+                const awarddata = results;
+                resolve( { awarddata, newdata, message,actionpath } );
+            });
+        });
+    }
+}
+
+exports.ser_awardem=async(req,rep,flag)=>{
+    let message = "";
+    if(flag==0){
+        let awarddata = [];
+        message = "dummy";
+        return {awarddata, newdata, message};
+    }
+    else{
+        return new Promise((resolve, reject) => {
+            const year = req.body.filteryear;
+            let awardcat = req.body.filterawardcat;
+
+            let query = "";
+            let actionpath = "";
+            if (awardcat == "Outstanding Comedy Series" || awardcat == "Outstanding Drama Series") {
+                query = `SELECT 
+                            T.Show_ID as Recipient_ID,
+                            CONCAT(T.Title) AS Recipient,
+                            SA.Year_Of_Awarding,
+                            A.Award_Category    
+                        FROM 
+                            showAwarded SA
+                        JOIN 
+                            TV_Shows T ON SA.Show_ID = T.Show_ID
+                        JOIN 
+                            Awards A ON SA.Award_ID = A.Award_ID 
+                        WHERE 
+                            A.Award_Category = '${awardcat}'
+                            AND SA.Year_Of_Awarding LIKE '${year}';
+                        `;
+                actionpath = "/view_tvshow_details";
+            }
+            else {
+                query = `SELECT 
+                        P.Person_ID as Recipient_ID,
+                        CONCAT(P.Person_First_Name, ' ', P.Person_Last_Name) AS Recipient,
+                        PA.Year_Of_Awarding,
+                        A.Award_Category    
+                        FROM 
+                        personAwarded PA
+                        JOIN 
+                        People P ON PA.Person_ID = P.Person_ID
+                        JOIN 
+                        Awards A ON PA.Award_ID = A.Award_ID 
+                        WHERE 
+                        A.Award_Category = '${awardcat}'
+                        AND PA.Year_Of_Awarding LIKE '${year}';
+                        `;
+                actionpath = "/view_celeb_details";
+            }
+            mysqlConnection.query(query,(err, results) => {
+                if (err) {
+                    console.error('Database query failed:', err);
+                    return reject(new Error("Database query failed"));  
+                }
+                if (results.length === 0) {
+                    message = "No data found for this filter.";
+                }
+                const awarddata = results;
+                resolve( { awarddata, newdata, message,actionpath } );
+            });
+        });
+    }
+}
+
+exports.ser_deletemovie=async(req,rep,movieid)=>{
     return new Promise((resolve, reject) => {
-        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies limit 20;', (err, results) => {
+        mysqlConnection.query('DELETE FROM Movies WHERE Movie_ID = ?;',[movieid], (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
             }
-
-            if (results.length === 0) {
-                console.log("Awards don't exist");
-                return reject(new Error("Awards don't exist"));
-            }
-            const awarddata = results;
-            resolve( { awarddata, newdata } );
+            console.log(`The movie with ${movieid} has been deleted`);
+            resolve( { newdata } );
         });
     });
 }
 
-exports.ser_awardem=async(req,rep)=>{
-    //change query
+exports.ser_deletetvshow=async(req,rep,tvshowid)=>{
     return new Promise((resolve, reject) => {
-        mysqlConnection.query('SELECT Movie_ID, Title, YEAR(Release_Date) as Release_Year, Movie_Rating, Num_Ratings_Movies FROM movies limit 20;', (err, results) => {
+        mysqlConnection.query('DELETE FROM TV_Shows WHERE Show_ID = ?;',[tvshowid], (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
             }
-
-            if (results.length === 0) {
-                console.log("Awards don't exist");
-                return reject(new Error("Awards don't exist"));
-            }
-            const awarddata = results;
-            resolve( { awarddata, newdata } );
+            console.log(`The TV Show with ${tvshowid} has been deleted`);
+            resolve( { newdata } );
         });
     });
 }
 
+exports.ser_delete_review_movie=async(req,rep,reviewid)=>{
+    let movieid=req.body.movieid;
+    return new Promise((resolve, reject) => {
+        mysqlConnection.query('DELETE FROM Reviews WHERE Review_ID =?',[reviewid], (err, results) => {
+            if (err) {
+                console.error('Database query failed:', err);
+                return reject(new Error("Database query failed"));
+            }
+            console.log(`The Review with ${reviewid} has been deleted`);
+            resolve( {movieid, newdata } );
+        });
+    });
+}
 
+exports.ser_delete_review_show=async(req,rep,reviewid)=>{
+    let showid=req.body.showid;
+    return new Promise((resolve, reject) => {
+        mysqlConnection.query('DELETE FROM Reviews WHERE Review_ID =?',[reviewid], (err, results) => {
+            if (err) {
+                console.error('Database query failed:', err);
+                return reject(new Error("Database query failed"));
+            }
+            console.log(`The Review with ${reviewid} has been deleted`);
+            resolve( {showid, newdata } );
+        });
+    });
+}
+
+exports.ser_delete_review_episode=async(req,rep,reviewid)=>{
+    let showid=req.body.showid;
+    let sno=req.body.sno;
+    let eno=req.body.eno;
+    return new Promise((resolve, reject) => {
+        mysqlConnection.query('DELETE FROM Reviews WHERE Review_ID =?',[reviewid], (err, results) => {
+            if (err) {
+                console.error('Database query failed:', err);
+                return reject(new Error("Database query failed"));
+            }
+            console.log(`The Review with ${reviewid} has been deleted`);
+            resolve( {showid,sno,eno,newdata } );
+        });
+    });
+}
+
+exports.ser_review_user=async(req,rep,userid)=>{
+    return new Promise((resolve, reject) => {
+        mysqlConnection.query('SELECT * FROM Users WHERE User_ID = ?',[userid], (err, results) => {
+            if (err) {
+                console.error('Database query failed:', err);
+                return reject(new Error("Database query failed"));
+            }
+            if (results.length === 0) {
+                message = "No User with given username doesn't exists!";
+            }
+            let userdatarec = results[0];
+            resolve( {userdatarec,newdata} );
+        });
+    });
+}
 
 //////////////////////////////
 
-exports.ser_registeruser=async (req,rep)=>{
-    let name=req.body.name;
-    let email=req.body.email;
-    let mobile=req.body.mobile;
-    let pass=req.body.pass;
-    let hashpass=await bcrypt.hash(pass,10);
-    let terms=req.body.terms;
-    let parentmail=rootmail;
+// exports.ser_registeruser=async (req,rep)=>{
+//     let name=req.body.name;
+//     let email=req.body.email;
+//     let mobile=req.body.mobile;
+//     let pass=req.body.pass;
+//     let hashpass=await bcrypt.hash(pass,10);
+//     let terms=req.body.terms;
+//     let parentmail=rootmail;
 
-    let previousdata=await recu.find({email:email},{email:1})
-    if(previousdata.email){
-        console.log("unable to create account, email already exist as user");
-    }
-    else{
-        let re= new recu({
-            name:name,email:email,mobile:mobile,parentmail:parentmail,pass:hashpass,terms:terms
-        })
-        await re.save();
+//     let previousdata=await recu.find({email:email},{email:1})
+//     if(previousdata.email){
+//         console.log("unable to create account, email already exist as user");
+//     }
+//     else{
+//         let re= new recu({
+//             name:name,email:email,mobile:mobile,parentmail:parentmail,pass:hashpass,terms:terms
+//         })
+//         await re.save();
 
-        //to add user_id=_id generated default by mongodb
-        let userd=await recu.find({email:email},{});
-        let new_id;
-        for (const i of userd) {
-            new_id=i._id;
-        }
-        let user_id= await recu.findOneAndUpdate({email:email},{user_id:new_id})
-        console.log("user account has been created with user id"+" "+ new_id);
+//         //to add user_id=_id generated default by mongodb
+//         let userd=await recu.find({email:email},{});
+//         let new_id;
+//         for (const i of userd) {
+//             new_id=i._id;
+//         }
+//         let user_id= await recu.findOneAndUpdate({email:email},{user_id:new_id})
+//         console.log("user account has been created with user id"+" "+ new_id);
 
-        //for money distribution
-        let parent_wallet=recu.findOne({email:parentmail},{amount_earned:1})
-        console.log(parent_wallet)
-        if(userd.parentmail){
-            let new_parent_wallet=parent_wallet.amount_earned+250
-            let parent=recu.findOneAndUpdate({email:parentmail},{amount_earned:new_parent_wallet})
-        }
-        else{
-            let amount_earned=recu.findOneAndUpdate({email:userd.email},{amount_earned:1000})
-        }
-    }
-}
+//         //for money distribution
+//         let parent_wallet=recu.findOne({email:parentmail},{amount_earned:1})
+//         console.log(parent_wallet)
+//         if(userd.parentmail){
+//             let new_parent_wallet=parent_wallet.amount_earned+250
+//             let parent=recu.findOneAndUpdate({email:parentmail},{amount_earned:new_parent_wallet})
+//         }
+//         else{
+//             let amount_earned=recu.findOneAndUpdate({email:userd.email},{amount_earned:1000})
+//         }
+//     }
+// }
 
 // exports.ser_addproduct=async (req,rep)=>{
 //     let productname=req.body.productname;
@@ -700,345 +1011,339 @@ exports.ser_registeruser=async (req,rep)=>{
 
 // }
 
-exports.ser_showproduct_admin=async(req,rep)=>{
-    let productdata=await product.find({},{})
-    let user_data=await recu.find({email:rootmail},{})
-    user_data=user_data[0];
-    console.log(user_data)
-    let parentdatashown=await recu.find({email:user_data.parentmail},{})
-    parentdatashown=parentdatashown[0];
-    return({productdata:productdata,parentdatashown:parentdatashown});
-}
+// exports.ser_showproduct_admin=async(req,rep)=>{
+//     let productdata=await product.find({},{})
+//     let user_data=await recu.find({email:rootmail},{})
+//     user_data=user_data[0];
+//     console.log(user_data)
+//     let parentdatashown=await recu.find({email:user_data.parentmail},{})
+//     parentdatashown=parentdatashown[0];
+//     return({productdata:productdata,parentdatashown:parentdatashown});
+// }
 
-exports.ser_deleteuser=async(req,rep)=>{
-    let user_id=req.body.id;
-    let tobedeleted=await recu.findOneAndDelete({user_id:user_id},{})
-    return(tobedeleted);
-}
+// exports.ser_viewusercomodity=async(req,rep)=>{
+//     let user_id=req.body.id;
+//     let userdatatobeshownrec=await recu.find({user_id:user_id},{});
+//     let datatobeshown;
+//     console.log(userdatatobeshownrec);
+//     for (const i in userdatatobeshownrec) {
+//         if (Object.hasOwnProperty.call(userdatatobeshownrec, i)) {
+//             const e = userdatatobeshownrec[i];
+//             datatobeshown=e;
+//         }
+//     }
+//     return(datatobeshown);
+// }
 
-exports.ser_viewusercomodity=async(req,rep)=>{
-    let user_id=req.body.id;
-    let userdatatobeshownrec=await recu.find({user_id:user_id},{});
-    let datatobeshown;
-    console.log(userdatatobeshownrec);
-    for (const i in userdatatobeshownrec) {
-        if (Object.hasOwnProperty.call(userdatatobeshownrec, i)) {
-            const e = userdatatobeshownrec[i];
-            datatobeshown=e;
-        }
-    }
-    return(datatobeshown);
-}
+// let user_id_for_update;
+// let rootdata;
+// exports.ser_userupdate=async(req,rep)=>{
+//     let user_id=req.body.id;
+//     let datashown=await recu.findOne({user_id:user_id},{})
+//     user_id_for_update=datashown
+//     console.log(user_id_for_update)
 
-let user_id_for_update;
-let rootdata;
-exports.ser_userupdate=async(req,rep)=>{
-    let user_id=req.body.id;
-    let datashown=await recu.findOne({user_id:user_id},{})
-    user_id_for_update=datashown
-    console.log(user_id_for_update)
+//     rootdata=await recu.findOne({email:rootmail},{})
+//     // console.log(rootdata)
+//     return({datashown:datashown,rootdata:rootdata});
+// }
 
-    rootdata=await recu.findOne({email:rootmail},{})
-    // console.log(rootdata)
-    return({datashown:datashown,rootdata:rootdata});
-}
+// exports.ser_update_points_form=async(req,rep)=>{
+//     let user_id=req.body.id;
+//     let datashown=await recu.find({user_id:user_id},{})
+//     let finaldatashown;
+//     for (const i in datashown) {
+//         if (Object.hasOwnProperty.call(datashown, i)) {
+//             const element = datashown[i];
+//             finaldatashown=element;
+//         }
+//     }
+//     return(finaldatashown)
+// }
 
-exports.ser_update_points_form=async(req,rep)=>{
-    let user_id=req.body.id;
-    let datashown=await recu.find({user_id:user_id},{})
-    let finaldatashown;
-    for (const i in datashown) {
-        if (Object.hasOwnProperty.call(datashown, i)) {
-            const element = datashown[i];
-            finaldatashown=element;
-        }
-    }
-    return(finaldatashown)
-}
-
-exports.ser_update_points=async(req,rep)=>{
-    let user_id=req.body.id;
-    let user_details=await recu.find({user_id:user_id},{_id:0});
-    const element = user_details[0];
-    let finaldatashown=element;
-    let childdatashown=element;
+// exports.ser_update_points=async(req,rep)=>{
+//     let user_id=req.body.id;
+//     let user_details=await recu.find({user_id:user_id},{_id:0});
+//     const element = user_details[0];
+//     let finaldatashown=element;
+//     let childdatashown=element;
     
-    let new_amount=parseInt(req.body.added_amount)
-    let previous_amount=finaldatashown.amount_earned
-    let amount_final=update_amount(previous_amount,new_amount);
+//     let new_amount=parseInt(req.body.added_amount)
+//     let previous_amount=finaldatashown.amount_earned
+//     let amount_final=update_amount(previous_amount,new_amount);
     
-    await recu.findOneAndUpdate(
-        {user_id:user_id},
-        {amount_earned:amount_final,added_amount:new_amount}
-    );
-    let final_user_details_shown=await recu.find({user_id:user_id},{});
-    let parentmail=finaldatashown.parentmail;
+//     await recu.findOneAndUpdate(
+//         {user_id:user_id},
+//         {amount_earned:amount_final,added_amount:new_amount}
+//     );
+//     let final_user_details_shown=await recu.find({user_id:user_id},{});
+//     let parentmail=finaldatashown.parentmail;
     
-    while(parentmail && parentmail!==""){
-        // console.log(childdatashown)
-        // console.log(parentmail)
-        let parentDetails =await recu.find({ email: parentmail }, {});
-        parentDetails=parentDetails[0];
+//     while(parentmail && parentmail!==""){
+//         // console.log(childdatashown)
+//         // console.log(parentmail)
+//         let parentDetails =await recu.find({ email: parentmail }, {});
+//         parentDetails=parentDetails[0];
   
-        if (!parentDetails) {
-            // Handle case where parent is not found (e.g., log error)
-            console.error("Parent not found for email:", parentmail);
-            break;
-        }
-        // console.log(parentDetails)
-        let amount_final;
-        let amount_final_added=parseFloat(childdatashown.added_amount*0.75)
-        if(parentDetails.parentmail && parentDetails.parentmail!=="" ){
-            amount_final=parseFloat(parentDetails.amount_earned+(amount_final_added*0.25))
-            // Inserting transactions history
-            let re =new transactiondata(
-                {
-                    from:childdatashown.user_id,
-                    to:parentmail,
-                    amount_transfered:(amount_final_added*0.25)
-                }
-            )
-            console.log(amount_final_added*0.25)
-            await re.save();
-        }
-        else{
-            amount_final=parseFloat(parentDetails.amount_earned+(amount_final_added))
-            // Inserting transactions history
-            let re =new transactiondata(
-                {
-                    from:childdatashown.user_id,
-                    to:parentmail,
-                    amount_transfered:amount_final_added
-                }
-            )
-            console.log(amount_final_added)
-            await re.save();
-        }
-        // console.log(amount_final_added)
-        // console.log(amount_final)
+//         if (!parentDetails) {
+//             // Handle case where parent is not found (e.g., log error)
+//             console.error("Parent not found for email:", parentmail);
+//             break;
+//         }
+//         // console.log(parentDetails)
+//         let amount_final;
+//         let amount_final_added=parseFloat(childdatashown.added_amount*0.75)
+//         if(parentDetails.parentmail && parentDetails.parentmail!=="" ){
+//             amount_final=parseFloat(parentDetails.amount_earned+(amount_final_added*0.25))
+//             // Inserting transactions history
+//             let re =new transactiondata(
+//                 {
+//                     from:childdatashown.user_id,
+//                     to:parentmail,
+//                     amount_transfered:(amount_final_added*0.25)
+//                 }
+//             )
+//             console.log(amount_final_added*0.25)
+//             await re.save();
+//         }
+//         else{
+//             amount_final=parseFloat(parentDetails.amount_earned+(amount_final_added))
+//             // Inserting transactions history
+//             let re =new transactiondata(
+//                 {
+//                     from:childdatashown.user_id,
+//                     to:parentmail,
+//                     amount_transfered:amount_final_added
+//                 }
+//             )
+//             console.log(amount_final_added)
+//             await re.save();
+//         }
+//         // console.log(amount_final_added)
+//         // console.log(amount_final)
 
-        await recu.findOneAndUpdate(
-            {email:parentmail},
-            {amount_earned:amount_final,added_amount:amount_final_added}
-        );
-        childdatashown=parentDetails;
-        parentmail=parentDetails.parentmail;
+//         await recu.findOneAndUpdate(
+//             {email:parentmail},
+//             {amount_earned:amount_final,added_amount:amount_final_added}
+//         );
+//         childdatashown=parentDetails;
+//         parentmail=parentDetails.parentmail;
 
-    }
-    let rootdata1=await recu.findOne({email:rootmail},{})
-    console.log(rootdata1)
-    return ({final_user_details_shown:final_user_details_shown,data:rootdata1})
-}
+//     }
+//     let rootdata1=await recu.findOne({email:rootmail},{})
+//     console.log(rootdata1)
+//     return ({final_user_details_shown:final_user_details_shown,data:rootdata1})
+// }
 
-let global_product_id;
-exports.ser_buyproduct_form=async(req,rep)=>{
-    let product_id=req.body.buy
-    global_product_id=product_id;
-    let product_details=await product.findOne({_id:product_id},{})
-    return(product_details);
-}
+// let global_product_id;
+// exports.ser_buyproduct_form=async(req,rep)=>{
+//     let product_id=req.body.buy
+//     global_product_id=product_id;
+//     let product_details=await product.findOne({_id:product_id},{})
+//     return(product_details);
+// }
 
 //if we use product_id=req,body.product_id it will show undefined 
 //but if we use read only in js instead of disabledthan it will show that value 
-exports.ser_buyproduct=async(req,rep)=>{
-    let buyer=await recu.findOne({email:rootmail},{})
+// exports.ser_buyproduct=async(req,rep)=>{
+//     let buyer=await recu.findOne({email:rootmail},{})
     
-    let quantity=parseInt(req.body.quantity)
+//     let quantity=parseInt(req.body.quantity)
 
-    let product_id=global_product_id;
-    // console.log(product_id)
-    let product1=await product.findOne({_id:product_id},{})
-    // console.log(product1)
+//     let product_id=global_product_id;
+//     // console.log(product_id)
+//     let product1=await product.findOne({_id:product_id},{})
+//     // console.log(product1)
 
-    if(quantity>product1.quantityleft){
-        console.log("We have not enough stock available")
-    }
-    else{
-        if(product1.price > buyer.amount_earned){
-            console.log("You don't have enough money to buy");
-        }
-        else{
-            let amount_earned=buyer.amount_earned-(product1.price*quantity)
+//     if(quantity>product1.quantityleft){
+//         console.log("We have not enough stock available")
+//     }
+//     else{
+//         if(product1.price > buyer.amount_earned){
+//             console.log("You don't have enough money to buy");
+//         }
+//         else{
+//             let amount_earned=buyer.amount_earned-(product1.price*quantity)
 
-            await recu.findOneAndUpdate(
-                {email:rootmail},
-                {amount_earned:amount_earned}
-            );
+//             await recu.findOneAndUpdate(
+//                 {email:rootmail},
+//                 {amount_earned:amount_earned}
+//             );
 
-            console.log("product will be delivered to you soon.")
-            console.log("your wallet amount is debited by Rs."+(product1.price*quantity))
+//             console.log("product will be delivered to you soon.")
+//             console.log("your wallet amount is debited by Rs."+(product1.price*quantity))
 
-            let new_quantity_left=product1.quantityleft-quantity
-            // console.log(new_quantity_left)
+//             let new_quantity_left=product1.quantityleft-quantity
+//             // console.log(new_quantity_left)
 
-            await product.findOneAndUpdate(
-                {_id:global_product_id},
-                {quantityleft:new_quantity_left}
-            );
+//             await product.findOneAndUpdate(
+//                 {_id:global_product_id},
+//                 {quantityleft:new_quantity_left}
+//             );
 
-            let amount_transfered=product1.price*quantity;
-            let seller=await recu.findOne(
-                {email:"aman1406gupta@gmail.com"},
-                {}
-            );
-            let new_amount=seller.amount_earned+amount_transfered;
-            // console.log(new_amount);
+//             let amount_transfered=product1.price*quantity;
+//             let seller=await recu.findOne(
+//                 {email:"aman1406gupta@gmail.com"},
+//                 {}
+//             );
+//             let new_amount=seller.amount_earned+amount_transfered;
+//             // console.log(new_amount);
 
-            await recu.findOneAndUpdate(
-                {email:"aman1406gupta@gmail.com"},
-                {amount_earned:new_amount}
-            );
+//             await recu.findOneAndUpdate(
+//                 {email:"aman1406gupta@gmail.com"},
+//                 {amount_earned:new_amount}
+//             );
 
-            //inserting transaction history
-            let re =new transactiondata(
-                {
-                    from:buyer.user_id,
-                    to:"aman1406gupta@gmail.com",
-                    amount_transfered:amount_transfered
-                }
-            )
-            await re.save();
-        }
-    }
-}
+//             //inserting transaction history
+//             let re =new transactiondata(
+//                 {
+//                     from:buyer.user_id,
+//                     to:"aman1406gupta@gmail.com",
+//                     amount_transfered:amount_transfered
+//                 }
+//             )
+//             await re.save();
+//         }
+//     }
+// }
 
-let current_balance;
-exports.ser_add_balance_form=async(req,rep)=>{
-    let user_info=await recu.findOne({email:rootmail},{})
-    current_balance=parseInt(user_info.amount_earned);
-    return(user_info);
-}
+// let current_balance;
+// exports.ser_add_balance_form=async(req,rep)=>{
+//     let user_info=await recu.findOne({email:rootmail},{})
+//     current_balance=parseInt(user_info.amount_earned);
+//     return(user_info);
+// }
 
 //if we use balance1=req.body.balance it will show undefined
 //but if we use read only in js instead of disabledthan it will show that value 
-exports.ser_add_balance=async(req,rep)=>{
-    let balance1=current_balance;
-    let password=req.body.password;
-    let account_no=req.body.account_no;
+// exports.ser_add_balance=async(req,rep)=>{
+//     let balance1=current_balance;
+//     let password=req.body.password;
+//     let account_no=req.body.account_no;
 
-    let added_amount=parseInt(req.body.added_amount);
+//     let added_amount=parseInt(req.body.added_amount);
 
-    let user_info=await recu.findOne({email:rootmail},{})
-    let previous_password=user_info.pass
-    let new_amount=parseInt(balance1+added_amount);
+//     let user_info=await recu.findOne({email:rootmail},{})
+//     let previous_password=user_info.pass
+//     let new_amount=parseInt(balance1+added_amount);
 
 
-    let v=await bcrypt.compare(password,previous_password)
-    if(v){
-        await recu.findOneAndUpdate({email:rootmail},{amount_earned:new_amount})
-        console.log("Your wallet has been credited by Rs."+added_amount);
-    }
-    else{
-        console.log("password is incorrect");
-    }
-}
+//     let v=await bcrypt.compare(password,previous_password)
+//     if(v){
+//         await recu.findOneAndUpdate({email:rootmail},{amount_earned:new_amount})
+//         console.log("Your wallet has been credited by Rs."+added_amount);
+//     }
+//     else{
+//         console.log("password is incorrect");
+//     }
+// }
 
-exports.ser_update_product=async(req,rep)=>{
-    let product_name=req.body.productname;
-    let price=parseInt(req.body.price);
-    let quantity_left=parseInt(req.body.quantity_left);
-    let password=req.body.password;
+// exports.ser_update_product=async(req,rep)=>{
+//     let product_name=req.body.productname;
+//     let price=parseInt(req.body.price);
+//     let quantity_left=parseInt(req.body.quantity_left);
+//     let password=req.body.password;
 
-    let rootpass=await recu.findOne({email:rootmail},{});
-    rootpass=rootpass.pass;
-    let v=await bcrypt.compare(password,rootpass)
+//     let rootpass=await recu.findOne({email:rootmail},{});
+//     rootpass=rootpass.pass;
+//     let v=await bcrypt.compare(password,rootpass)
 
-    if(v){
-        await product.findOneAndUpdate(
-            {productid:another_productdata.productid},
-            {productname:product_name,price:price,quantityleft:quantity_left}
-        )
-        console.log("ProductDetails of product id "+another_productdata.productid+" has been updated by "+rootmail)
-    }
-    else{
-       console.log("Password is incorrect")
-    }
-}
+//     if(v){
+//         await product.findOneAndUpdate(
+//             {productid:another_productdata.productid},
+//             {productname:product_name,price:price,quantityleft:quantity_left}
+//         )
+//         console.log("ProductDetails of product id "+another_productdata.productid+" has been updated by "+rootmail)
+//     }
+//     else{
+//        console.log("Password is incorrect")
+//     }
+// }
 
-exports.ser_product_delete=async(req,rep)=>{
-    let productid=req.body.id;
-    await product.findOneAndDelete({productid:productid},{})
-    console.log("product of product id "+productid+" is deleted");
-}
+// exports.ser_product_delete=async(req,rep)=>{
+//     let productid=req.body.id;
+//     await product.findOneAndDelete({productid:productid},{})
+//     console.log("product of product id "+productid+" is deleted");
+// }
 
-exports.ser_changepass=async(req,rep)=>{
-    let password=req.body.oldpass;
-    let new_password=req.body.pass;
-    let con_pass=req.body.conpass
-    let rootdata=await recu.findOne({email:rootmail},{})
-    let new_password_bcrypt=await bcrypt.hash(new_password,10)
-    // console.log(rootdata.pass)
+// exports.ser_changepass=async(req,rep)=>{
+//     let password=req.body.oldpass;
+//     let new_password=req.body.pass;
+//     let con_pass=req.body.conpass
+//     let rootdata=await recu.findOne({email:rootmail},{})
+//     let new_password_bcrypt=await bcrypt.hash(new_password,10)
+//     // console.log(rootdata.pass)
 
-    let v=bcrypt.compare(password,rootdata.pass);
-    if(v  && new_password==con_pass){
-        await recu.findOneAndUpdate({email:rootmail},{pass:new_password_bcrypt})
-    }
-    else if(!v){
-        console.log("Password is incorrect")
-    }
-    else{
-        console.log("Password and Confirm Password are not same")
-    }
-    console.log("Your password is updated now ")
-}
+//     let v=bcrypt.compare(password,rootdata.pass);
+//     if(v  && new_password==con_pass){
+//         await recu.findOneAndUpdate({email:rootmail},{pass:new_password_bcrypt})
+//     }
+//     else if(!v){
+//         console.log("Password is incorrect")
+//     }
+//     else{
+//         console.log("Password and Confirm Password are not same")
+//     }
+//     console.log("Your password is updated now ")
+// }
 
-exports.ser_showt=async(req,rep)=>{
-    let root=await recu.findOne({email:rootmail},{})
-    let rootuser_id=root.user_id;
-    // console.log(rootuser_id)
+// exports.ser_showt=async(req,rep)=>{
+//     let root=await recu.findOne({email:rootmail},{})
+//     let rootuser_id=root.user_id;
+//     // console.log(rootuser_id)
 
-    let showt=await transactiondata.find({$or:[{from:rootuser_id },{to:rootmail}]},{})
-    // console.log(showt);
-    return({data:root.parentmail,tdata:showt})
-}
+//     let showt=await transactiondata.find({$or:[{from:rootuser_id },{to:rootmail}]},{})
+//     // console.log(showt);
+//     return({data:root.parentmail,tdata:showt})
+// }
 
-exports.ser_block_user=async(req,rep)=>{
-    let block_user=req.body.id;
-    let user_status=req.body.access;
+// exports.ser_block_user=async(req,rep)=>{
+//     let block_user=req.body.id;
+//     let user_status=req.body.access;
 
-    if(user_status=="unblock"){
-        await recu.findOneAndUpdate({user_id:block_user},{access:"block"})
-        // let accesstoken =jwt.sign({user_id:block_user},process.env.secret_key);
-        // console.log(accesstoken)
+//     if(user_status=="unblock"){
+//         await recu.findOneAndUpdate({user_id:block_user},{access:"block"})
+//         // let accesstoken =jwt.sign({user_id:block_user},process.env.secret_key);
+//         // console.log(accesstoken)
         
-        // if(!accesstoken){
-        //     throw new Error("Unable to generate token")
-        // }
-        // else{
-        //     rep.cookie("accesstoken",accesstoken)
-        //     let accesskeyinsertion=await recu.findOneAndUpdate({user_id:block_user},{access:"block",accesstoken:accesstoken})
+//         // if(!accesstoken){
+//         //     throw new Error("Unable to generate token")
+//         // }
+//         // else{
+//         //     rep.cookie("accesstoken",accesstoken)
+//         //     let accesskeyinsertion=await recu.findOneAndUpdate({user_id:block_user},{access:"block",accesstoken:accesstoken})
 
-        //     if(!accesskeyinsertion){
-        //         throw new Error("Unable to insert accesskey")
-        //     }
+//         //     if(!accesskeyinsertion){
+//         //         throw new Error("Unable to insert accesskey")
+//         //     }
 
-        //     else{
-        //         console.log("User is blocked")
-        //     }
-        // }
-        console.log("user id "+block_user+" has been blocked by "+rootmail)
-    }
-    else{
-        await recu.findOneAndUpdate({user_id:block_user},{access:"unblock"})
-        // let accesstoken =jwt.sign({user_id:block_user},process.env.secret_key);
-        // console.log(accesstoken)
+//         //     else{
+//         //         console.log("User is blocked")
+//         //     }
+//         // }
+//         console.log("user id "+block_user+" has been blocked by "+rootmail)
+//     }
+//     else{
+//         await recu.findOneAndUpdate({user_id:block_user},{access:"unblock"})
+//         // let accesstoken =jwt.sign({user_id:block_user},process.env.secret_key);
+//         // console.log(accesstoken)
         
-        // if(!accesstoken){
-        //     throw new Error("Unable to generate token")
-        // }
-        // else{
-        //     rep.cookie("accesstoken",accesstoken)
-        //     let accesskeyinsertion=await recu.findOneAndUpdate({user_id:block_user},{access:"unblock",accesstoken:accesstoken})
+//         // if(!accesstoken){
+//         //     throw new Error("Unable to generate token")
+//         // }
+//         // else{
+//         //     rep.cookie("accesstoken",accesstoken)
+//         //     let accesskeyinsertion=await recu.findOneAndUpdate({user_id:block_user},{access:"unblock",accesstoken:accesstoken})
 
-        //     if(!accesskeyinsertion){
-        //         throw new Error("Unable to insert accesskey")
-        //     }
+//         //     if(!accesskeyinsertion){
+//         //         throw new Error("Unable to insert accesskey")
+//         //     }
 
-        //     else{
-        //         console.log("User is Unblocked")
-        //     }
-        // }
-        console.log("user id "+block_user+" has been unblocked by "+rootmail)
-    }
+//         //     else{
+//         //         console.log("User is Unblocked")
+//         //     }
+//         // }
+//         console.log("user id "+block_user+" has been unblocked by "+rootmail)
+//     }
 
-}
+// }

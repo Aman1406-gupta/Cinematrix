@@ -360,9 +360,69 @@
                 </div>
                 <% } %>
 
-<br>
-</div>
-<h5 class="card-title" style="color: white;">Reviews:</h5>
+                  <br>
+                  </div>
+                  <h5 class="card-title" style="color: white;">Reviews:</h5>
+
+                <% if(reviewdetails.length != 0){ %>
+                  <%let p=1; %> <% for (let dataobj of reviewdetails){ %>
+                  <div class="div" style="padding: 2%;margin:2%; background-color:rgb(64, 64, 64); border-radius: 5px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; white-space: nowrap;">
+                      <span style="font-size: 1.2rem; font-weight:600;">
+                        <a href="/delete_reviewuser/<%=dataobj.User_ID%>" class="reviewuser" style="color:white;"><%=dataobj.Username%> </a>
+                        <% if(data.User_Role=='Admin'){ %>
+                          <td>
+                            <form
+                              style="display:inline;padding-left:5%;"
+                              class="filter"
+                              action="/delete_reviewmovie/<%=dataobj.Review_ID%>"
+                              method="post"
+                              onsubmit="return confirmDelete();"
+                            >
+                              <input
+                                type="submit"
+                                style="height: 75%; font-size:0.9rem;"
+                                class="btn btn-danger"
+                                value="Delete"
+                              />
+                              <input
+                                type="hidden"
+                                style="height: 75%; font-size:0.9rem;"
+                                class="btn btn-danger"
+                                name="movieid"
+                                value="<%=dataobj.Movie_ID%>"
+                              />
+                            </form>
+                          </td>
+                          <% } %>
+                      </span>
+                      <span style="font-size: 1rem; font-weight:600;">
+                        <i class="fa-solid fa-star" style="color:white;"></i>&nbsp;<%=dataobj.Media_Rating%>  / 10 <br>
+                      </span>
+                    </div>
+
+                    <span style="font-weight: 300; display:block; padding:1rem 0">
+                      <%=dataobj.Review_Comment%>  <br>
+                    </span>
+                    <div style="display: flex; justify-content: space-between">
+                      <span>
+                        <button onclick="toggleThumb('<%= dataobj.User_ID %>', 'up')" data-userid="<%= dataobj.User_ID %>" style="margin-top: 1%; background-color: rgb(64, 64, 64); border: none; box-shadow: none;">
+                          <i class="fa fa-thumbs-up" style="color: white;"></i>
+                        </button>&nbsp;<%=dataobj.Like_Count%>k
+                        <button onclick="toggleThumb('<%= dataobj.User_ID %>', 'down')" data-userid="<%= dataobj.User_ID %>" style="margin-top: 1%; background-color: rgb(64, 64, 64); border: none; box-shadow: none;">
+                          <i class="fa fa-thumbs-down" style="color: white;"></i>
+                        </button>&nbsp;<%=dataobj.Dislike_Count%>k
+                      </span>
+                      <span style="font-size: 1rem; font-weight:300; padding-left:37rem"><%=dataobj.Days_Since_Review%></span>
+                    </div>
+                  </div>
+                  <% p=p+1; }%>
+                <% } %>
+                <% if(reviewdetails.length == 0){ %>
+                  <h3 class="card-title" style="color: white; font-size: 1.5rem;">No Reviews found</h3>
+                  <% } %>
+
+
             </div>
           </div>
         </div>
@@ -378,8 +438,20 @@
     ></a>
     <script>
       function confirmDelete() {
-        var result = confirm("Are you sure you want to delete this user?");
+        var result = confirm("Are you sure you want to delete this Review?");
         return result;
+      }
+      function toggleThumb(userId, type) {
+        const upButton = document.querySelector(`button[data-userid="${userId}"] .fa-thumbs-up`);
+        const downButton = document.querySelector(`button[data-userid="${userId}"] .fa-thumbs-down`);
+        
+        if (type === 'up') {
+            upButton.style.color = upButton.style.color === 'blue' ? 'white' : 'blue';
+            downButton.style.color = 'white';
+        } else {
+            downButton.style.color = downButton.style.color === 'blue' ? 'white' : 'blue';
+            upButton.style.color = 'white';
+        }
       }
     </script>
     <script src="/assets/vendor/apexcharts/apexcharts.min.js"></script>

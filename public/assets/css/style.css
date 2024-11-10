@@ -1110,3 +1110,7 @@ h1{
   color: lightgray !important;
   text-shadow: 0.051rem 0.051rem darkgray;
 }
+
+.reviewuser:hover{
+  text-decoration: underline;
+}

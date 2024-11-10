@@ -8,8 +8,8 @@
     <meta content="" name="description" />
     <meta content="" name="keywords" />
 
-    <link href="assets/img/favicon.png" rel="icon" />
-    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon" />
+    <link href="/assets/img/favicon.png" rel="icon" />
+    <link href="/assets/img/apple-touch-icon.png" rel="apple-touch-icon" />
     <link href="https://fonts.gstatic.com" rel="preconnect" />
     <link
       href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
@@ -18,22 +18,22 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link
-      href="assets/vendor/bootstrap/css/bootstrap.min.css"
+      href="/assets/vendor/bootstrap/css/bootstrap.min.css"
       rel="stylesheet"
     />
     <script src="https://cdn.jsdelivr.net/npm/swiffy-slider@1.6.0/dist/js/swiffy-slider.min.js" crossorigin="anonymous" defer></script>
     <link href="https://cdn.jsdelivr.net/npm/swiffy-slider@1.6.0/dist/css/swiffy-slider.min.css" rel="stylesheet" crossorigin="anonymous">
     <link
-      href="assets/vendor/bootstrap-icons/bootstrap-icons.css"
+      href="/assets/vendor/bootstrap-icons/bootstrap-icons.css"
       rel="stylesheet"
     />
-    <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet" />
-    <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet" />
-    <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet" />
-    <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet" />
-    <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet" />
+    <link href="/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet" />
+    <link href="/assets/vendor/quill/quill.snow.css" rel="stylesheet" />
+    <link href="/assets/vendor/quill/quill.bubble.css" rel="stylesheet" />
+    <link href="/assets/vendor/remixicon/remixicon.css" rel="stylesheet" />
+    <link href="/assets/vendor/simple-datatables/style.css" rel="stylesheet" />
 
-    <link href="assets/css/style.css" rel="stylesheet" />
+    <link href="/assets/css/style.css" rel="stylesheet" />
   </head>
 
   <body>
@@ -66,132 +66,172 @@
           <form
             class="row g-3 needs-validation"
             novalidate
-            action="/filteruser"
+            id="filterform"
+            action="/seriesshow/1"
             method="post"
+            onsubmit="return setDefaultValues(event)"
           >
-            <div class="col-md-4">
-              <label for="validationCustom02" class="form-label">Tv Show</label>
-              <input type="text" class="form-control" id="validationCustom02"
-              name="filtername" placeholder="Search by Tv Show">
-              <div class="valid-feedback">Looks good!</div>
-            </div>  
+          <div class="col-md-4">
+            <label for="validationCustom02" class="form-label">Title</label>
+            <input type="text" class="form-control"
+            name="filtertitle" id="filtertitle" placeholder="Search by Title">
+          </div>
 
             <div class="col-md-4">
-              <label for="validationCustom02" class="form-label">Age rating</label>
-              <input type="text" class="form-control" id="validationCustom02"
-              name="filterage" placeholder="Search by Age rating">
-              <div class="valid-feedback">Looks good!</div>
+              <label for="validationCustom02" class="form-label">Age Rating</label>
+              <select name="filterage" id="filterage" class="form-control" aria-placeholder="Search By Age Rating">
+                <option value="%%" selected>Select Age Rating</option>
+                <option value="G">G</option>
+                <option value="NC-17">NC-17</option>
+                <option value="PG">PG</option>
+                <option value="PG-13">PG-13</option>
+                <option value="R">R</option>
+              </select>
             </div>
 
             <div class="col-md-4">
               <label for="validationCustom02" class="form-label">Genre</label>
-              <input type="text" class="form-control" id="validationCustom02"
-              name="filtergenre" placeholder="Search by Genre">
-              <div class="valid-feedback">Looks good!</div>
+              <select name="filtergenre" id="filtergenre" class="form-control" aria-placeholder="Search By Genre">
+                <option value="%%" selected>Select Genre</option>
+                <option value="Action">Action</option>
+                <option value="Adventure">Adventure</option>
+                <option value="Animation">Animation</option>
+                <option value="Comedy">Comedy</option>
+                <option value="Documentary">Documentary</option>
+                <option value="Drama">Drama</option>
+                <option value="Fantasy">Fantasy</option>
+                <option value="Horror">Horror</option>
+                <option value="Mystery">Mystery</option>
+                <option value="Romance">Romance</option>
+                <option value="Sci-Fi">Sci-Fi</option>
+                <option value="Thriller">Thriller</option>
+              </select>
             </div>
 
             <div class="col-md-4">
               <label for="validationCustom01" class="form-label">Language</label>
-              <input type="text" class="form-control" id="validationCustom01"
-              name="filterlanguage" placeholder="Search by Language">
-              <div class="valid-feedback">Looks good!</div>
+              <select name="filterlanguage" id="filterlanguage" class="form-control" aria-placeholder="Search By Language">
+                <option value="%%" selected>Select Language</option>
+                <option value="English">English</option>
+                <option value="French">French</option>
+                <option value="German">German</option>
+                <option value="Hindi">Hindi</option>
+                <option value="Japanese">Japanese</option>
+                <option value="Mandarin">Mandarin</option>
+                <option value="Spanish">Spanish</option>
+              </select>
             </div>
 
             <div class="col-md-4">
-              <label for="validationCustom01" class="form-label">Release Date</label>
-              <input type="text" class="form-control" id="validationCustom01"
-              name="filterdate" placeholder="Search by Release Date">
-              <div class="valid-feedback">Looks good!</div>
+              <label for="validationCustom01" class="form-label">Released After</label>
+              <input type="text" class="form-control"
+              name="filteryear" id="filteryear" placeholder="Search by Year">
             </div>
 
             <div class="col-md-4">
-              <label for="validationCustom01" class="form-label">Award</label>
-              <input type="text" class="form-control" id="validationCustom01"
-              name="filteraward" placeholder="Search by Award">
-              <div class="valid-feedback">Looks good!</div>
+              <label for="validationCustom01" class="form-label">Award Category</label>
+              <select name="filterawardcat" id="filterawardcat" class="form-control" aria-placeholder="Search By Award Category">
+                <option value='IS NOT NULL OR AW.Award_Name IS NULL)' selected>Select Award Category</option>
+                <option value="Outstanding Drama Series">Outstanding Drama Series</option>
+                <option value="Outstanding Comy Series">Outstanding Comedy Series</option>
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <label for="validationCustom01" class="form-label">Order By Rating</label>
+              <select name="filterorder" id="filterorder" class="form-control" aria-placeholder="Select Order">
+                <option value=" " selected>Select Order</option>
+                <option value="ORDER BY TVShow_Rating ASC">Ascending</option>
+                <option value="ORDER BY TVShow_Rating DESC">Descending</option>
+              </select>
             </div>
             
             <div class="col-12">
-              <button class="btn btn-primary" type="submit">Filter</button>
+                <button class="btn btn-primary" id="tablefocus" type="submit">Filter</button>
             </div>
           </form>
         </div>
       </div>
-
+      
       <section class="section" style="color: white; background-color:black;">
         <div class="row">
           <div class="col-lg-12">
             <div class="card" style="overflow-x: auto; overflow-y:auto; color: white; background-color:black;">
               <div class="card-body" style="color: white; background-color:black;">
                 <h5 class="card-title" style="color: white;">TV Shows</h5>
-                <div class="scrollbarclass" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
-                  <table class="table table-striped table-dark text-nowrap table-responsive" style="color: white; background-color:black;">
-                    <thead>
-                      <tr>
-                        <th scope="col">S No.</th>
-                        <th scope="col">Title</th>
-                        <th scope="col">No of Seasons</th>
-                        <th scope="col">Release Year</th>
-                        <th scope="col">Rating</th>
-                        <th scope="col">No. of Ratings</th>
-                        <th scope="col"></th>
-                        <% if(data.User_Role=='Admin'){ %>
+                <% if(message == ""){ %>
+                  <div class="scrollbarclass" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
+                    <table class="table table-striped table-dark text-nowrap table-responsive" style="color: white; background-color:black;">
+                      <thead>
+                        <tr>
+                          <th scope="col">S.No.</th>
+                          <th scope="col">Title</th>
+                          <th scope="col">No of Seasons</th>
+                          <th scope="col">Start Year</th>
+                          <th scope="col">Rating</th>
+                          <th scope="col">No. of Ratings</th>
                           <th scope="col"></th>
-                          <% } %>
-                      </tr>
-                    </thead>
-  
-                    <tbody>
-                      <div>
-                        <%let i=1; %> <% for (let dataobj of seriesdata){ %>
-                          <tr>
-                            <th scope="row"><%=i%></th>
-                            <td><%=dataobj.Title%></td>
-                            <td><%=dataobj.Release_Year%></td>
-                            <td><%=dataobj.Release_Year%></td>
-                            <td><%=dataobj.Movie_Rating%></td>
-                            <td><%=dataobj.Num_Ratings_Movies%></td>
-                            <td>
-                              <form
-                                class="filter"
-                                action="/view_tvshow_details/<%=dataobj.Movie_ID%>"
-                                method="get"
-                              >
-                                <input
-                                  type="submit"
-                                  id="<%=dataobj.Movie_ID%> have to change id ----------" 
-                                  name="seriesid"
-                                  class="btn btn-info"
-                                  value="View Details"
-                                />
-                              </form>
-                            </td>
-                            
-                            <% if(data.User_Role=='Admin'){ %>
+                          <% if(data.User_Role=='Admin'){ %>
+                            <th scope="col"></th>
+                            <% } %>
+                        </tr>
+                      </thead>
+    
+                      <tbody>
+                        <div>
+                          <%let i=1; %> <% for (let dataobj of seriesdata){ %>
+                            <tr>
+                              <th scope="row"><%=i%></th>
+                              <td><%=dataobj.TVShow_Title%></td>
+                              <td><%=dataobj.Number_Of_Seasons%></td>
+                              <td><%=dataobj.Start_Year%></td>
+                              <td><%=dataobj.TVShow_Rating%></td>
+                              <td><%=dataobj.Num_Ratings_TV%></td>
                               <td>
                                 <form
                                   class="filter"
-                                  action="/delete_tvshow/<%=dataobj.Movie_ID%>"
+                                  action="/view_tvshow_details/<%=dataobj.Show_ID%>"
                                   method="get"
-                                  onsubmit="return confirmDelete();"
                                 >
                                   <input
                                     type="submit"
-                                    id="<%=dataobj.Movie_ID%>  have to change id ----------"
+                                    id="<%=dataobj.Show_ID%>
                                     name="seriesid"
-                                    class="btn btn-danger"
-                                    value="Delete"
+                                    class="btn btn-info"
+                                    value="View Details"
                                   />
                                 </form>
                               </td>
-                              <% } %>
-    
-                          </tr>
-                          <% i=i+1; }%>
-                      </div>
-                    </tbody>
-                  </table>
-                </div>
+                              
+                              <% if(data.User_Role=='Admin'){ %>
+                                <td>
+                                  <form
+                                    class="filter"
+                                    action="/delete_tvshow/<%=dataobj.Show_ID%>"
+                                    method="post"
+                                    onsubmit="return confirmDelete();"
+                                  >
+                                    <input
+                                      type="submit"
+                                      id="<%=dataobj.Show_ID%>"
+                                      name="seriesid"
+                                      class="btn btn-danger"
+                                      value="Delete"
+                                    />
+                                  </form>
+                                </td>
+                                <% } %>
+      
+                            </tr>
+                            <% i=i+1; }%>
+                        </div>
+                      </tbody>
+                    </table>
+                  </div>
+                  <% } %>
+                  <% if(message) { %>
+                  <h3 class="card-title" style="color: white; font-size: 1.5rem"><%= message %></h3>
+                    <% } %>
               </div>
             </div>
           </div>
@@ -208,21 +248,54 @@
     ></a>
     <script>
       function confirmDelete() {
-        // Display a confirmation dialog
-        var result = confirm("Are you sure you want to delete this user?");
-
-        // If the user clicks OK, the form will be submitted. Otherwise, it won't.
+        var result = confirm("Are you sure you want to delete this TV Show?");
         return result;
       }
+      
+      function setDefaultValues(event){
+        event.preventDefault();
+        const showtitle = document.getElementById("filtertitle");
+        const agerating = document.getElementById("filterage");
+        const genre = document.getElementById("filtergenre");
+        const language = document.getElementById("filterlanguage");
+        const year = document.getElementById("filteryear");
+        const awardcat = document.getElementById("filterawardcat");
+        const order = document.getElementById("filterorder");
+        if (showtitle.value === "") {
+          showtitle.value = "%%%";
+        }
+        else {
+          showtitle.value = "%%" + showtitle.value + "%";
+        } 
+        if (year.value === "") {
+          year.value = "0000";
+        }
+        document.getElementById("filterform").submit();
+
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) { 
+                location.reload(); 
+            }
+        });
+      }
+      if (window.location.pathname === "/seriesshow/1") {
+      document.addEventListener("DOMContentLoaded", function() {
+        const targetTable = document.getElementById("tablefocus");
+        if (targetTable) {
+            targetTable.scrollIntoView({ behavior: "smooth" });
+            targetTable.focus();
+        }
+    }
+    )};
     </script>
-    <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
-    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/vendor/chart.js/chart.min.js"></script>
-    <script src="assets/vendor/echarts/echarts.min.js"></script>
-    <script src="assets/vendor/quill/quill.min.js"></script>
-    <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
-    <script src="assets/vendor/tinymce/tinymce.min.js"></script>
-    <script src="assets/vendor/php-email-form/validate.js"></script>
-    <script src="assets/js/main.js"></script>
+    <script src="/assets/vendor/apexcharts/apexcharts.min.js"></script>
+    <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/vendor/chart.js/chart.min.js"></script>
+    <script src="/assets/vendor/echarts/echarts.min.js"></script>
+    <script src="/assets/vendor/quill/quill.min.js"></script>
+    <script src="/assets/vendor/simple-datatables/simple-datatables.js"></script>
+    <script src="/assets/vendor/tinymce/tinymce.min.js"></script>
+    <script src="/assets/vendor/php-email-form/validate.js"></script>
+    <script src="/assets/js/main.js"></script>
   </body>
 </html>
