@@ -144,7 +144,7 @@ exports.ser_validation = (req, rep) => {
 
 exports.ser_adminprofile=async(req,rep)=>{
     return new Promise((resolve, reject) => {
-        mysqlConnection.query('SELECT * FROM Users WHERE User_Mail = ?', [rootmail], (err, results) => {
+        mysqlConnection.query('SELECT User_ID, Username, User_Mail, User_Password_Encrypted, User_Role, User_Authentication_Key, User_DOB, User_Country, Watchlist_URL, DATE_FORMAT(User_Last_Online, "%H:%i %Y-%m-%d") AS User_Last_Online, DATE_FORMAT(User_Join_Date, "%Y-%m-%d") AS User_Join_Date FROM Users WHERE User_Mail = ?', [rootmail], (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
@@ -154,7 +154,6 @@ exports.ser_adminprofile=async(req,rep)=>{
                 console.log("Admin doesn't exist");
                 return reject(new Error("Admin doesn't exist"));
             }
-
             const admindatarec = results[0];
             resolve( { admindatarec } );
         });
@@ -928,7 +927,7 @@ exports.ser_delete_review_episode=async(req,rep,reviewid)=>{
 
 exports.ser_review_user=async(req,rep,userid)=>{
     return new Promise((resolve, reject) => {
-        mysqlConnection.query('SELECT * FROM Users WHERE User_ID = ?',[userid], (err, results) => {
+        mysqlConnection.query('SELECT User_ID, Username, User_Mail, User_Password_Encrypted, User_Role, User_Authentication_Key, User_DOB, User_Country, Watchlist_URL, DATE_FORMAT(User_Last_Online, "%H:%i %Y-%m-%d") AS User_Last_Online, DATE_FORMAT(User_Join_Date, "%Y-%m-%d") AS User_Join_Date FROM Users WHERE User_ID = ?',[userid], (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
