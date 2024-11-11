@@ -13,20 +13,8 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(Path.join(__dirname, '/public')));
 app.use('/', require('./src/routers/router'));
-app.use('/user', require('./src/routers/user_router.js'));
 
 
 app.listen(process.env.app_port_no, () => {
     console.log('Server is running on port', process.env.app_port_no);
 });
-
-// const queryMySQL = () => {
-//     mysqlConnection.query(`Select * from users;`, (error, results) => {
-//         if (error) {
-//             console.log(error);
-//         }
-//         console.log(results);
-//     });
-// };
-
-// queryMySQL();

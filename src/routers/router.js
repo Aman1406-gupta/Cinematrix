@@ -49,36 +49,4 @@ router.post("/delete_reviewepisode/:reviewid",user_auth,cont_delete_review_episo
 
 router.get("/delete_reviewuser/:userid",user_auth,cont_review_user); 
 
-// // to view profile and add balance and change password
-// router.get("/add_balance_form",user_auth,cont_add_balance_form);
-// router.post("/add_balance",user_auth,cont_add_balance);
-// router.get("/change_pass_page",user_auth,cont_change_pass)
-// router.post("/change_pass",user_auth,cont_changepass)
-
-// //to add user and block user
-// router.get("/register_user",user_auth,cont_adduser);
-// router.post("/register_user_save",user_auth,cont_registeruser);
-// router.post("/user_block",user_auth,cont_block_user);
-
-// //toshow,delete,update_user profile and view user profile 
-// router.post("/user_update_page",user_auth,cont_userupdate); 
-
-// //to add,show,buy product,update,delete product and update product details 
-// router.post("/insertproduct",user_auth,cont_insertproduct); 
-// router.get("/product",user_auth,cont_showproduct); 
-// router.get("/product_admin",user_auth,cont_showproduct_admin); 
-// router.post("/buy_product_form",user_auth,cont_buyproduct_form); 
-// router.post("/buy_product",user_auth,cont_buyproduct);
-// router.post("/user_update_page_product",user_auth,cont_update_product_page);
-// router.post("/product_delete",user_auth,cont_product_delete);
-
-// //to distibute amount earned (giving 25% to user_logined and 75% is distibuted among in parents in same way)
-// router.post("/update_points_form",user_auth,cont_update_points_form); 
-// router.post("/update_points",user_auth,cont_update_points); 
-
-// //To show transactions
-// router.get("/show_t",user_auth,cont_showt);
-
-// // signout and send otp
-
 module.exports=router;
