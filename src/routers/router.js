@@ -2,7 +2,7 @@ let express=require("express");
 let router=express.Router();
 const user_auth=require("../../middelwares/authorisation.js")
 
-let {cont_review_user,cont_delete_review_episode,cont_delete_review_show,cont_delete_review_movie,cont_deletetvshow,cont_deletemovie,cont_view_episode_details,cont_view_celeb_details,cont_view_tvshow_details,cont_view_movie_details,cont_deleteac,cont_tpseriesshow,cont_reseriesshow,cont_seriesshow,cont_tpshowmovie,cont_reshowmovie,cont_showmovie,cont_pcelebview,cont_btcelebview,cont_celebview,cont_awardac,cont_awardem,cont_block_user,cont_signout,cont_home,cont_insert,cont_validation,cont_adduser,cont_registeruser,cont_signup,cont_signin,cont_adminprofile,cont_showproduct,cont_insertproduct,cont_deleteuser,cont_viewusercomodity,cont_userupdate,cont_userprofileupdate,cont_update_points,cont_update_points_form,cont_showproduct_admin,cont_buyproduct,cont_buyproduct_form,cont_add_balance,cont_add_balance_form,cont_update_product,cont_update_product_page,cont_product_delete,cont_changepass,cont_change_pass,cont_showt}=require("../controllers/controller");
+let {cont_review_user,cont_delete_review_episode,cont_delete_review_show,cont_delete_review_movie,cont_deletetvshow,cont_deletemovie,cont_view_episode_details,cont_view_celeb_details,cont_view_tvshow_details,cont_view_movie_details,cont_deleteac,cont_tpseriesshow,cont_reseriesshow,cont_seriesshow,cont_tpshowmovie,cont_reshowmovie,cont_showmovie,cont_pcelebview,cont_btcelebview,cont_celebview,cont_awardac,cont_awardem,cont_signout,cont_home,cont_insert,cont_validation,cont_signup,cont_signin,cont_adminprofile,cont_userprofileupdate}=require("../controllers/controller");
 
 router.get("/home",cont_home);
 router.get("/signin",cont_signin);
