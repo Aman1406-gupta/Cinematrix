@@ -1,4 +1,4 @@
-let {ser_review_user,ser_delete_review_episode,ser_delete_review_show,ser_delete_review_movie,ser_deletetvshow,ser_deletemovie,ser_view_episode_details,ser_view_celeb_details,ser_view_tvshow_details, ser_view_movie_details,ser_deleteac,ser_tpseriesshow,ser_reseriesshow,ser_seriesshow,ser_tpshowmovie,ser_reshowmovie,ser_showmovie,ser_pcelebview,ser_btcelebview,ser_celebview,ser_awardac,ser_awardem,ser_signout,ser_home,ser_insert,ser_validation,ser_adminprofile,ser_userprofileupdate}=require("../servers/service");
+let {ser_episodereview,ser_tvshowreview,ser_moviereview,ser_deletereview,ser_review,ser_review_user,ser_delete_review_episode,ser_delete_review_show,ser_delete_review_movie,ser_deletetvshow,ser_deletemovie,ser_view_episode_details,ser_view_celeb_details,ser_view_tvshow_details, ser_view_movie_details,ser_deleteac,ser_tpseriesshow,ser_reseriesshow,ser_seriesshow,ser_tpshowmovie,ser_reshowmovie,ser_showmovie,ser_pcelebview,ser_btcelebview,ser_celebview,ser_awardac,ser_awardem,ser_signout,ser_home,ser_insert,ser_validation,ser_adminprofile,ser_userprofileupdate}=require("../servers/service");
 
 exports.cont_signin=async(req,rep)=>{
     rep.render("adminlogin");
@@ -44,6 +44,37 @@ exports.cont_userprofileupdate=async(req,rep)=>{
 exports.cont_signout=async(req,rep)=>{
     await ser_signout(req,rep); 
     rep.redirect("/signin");
+}
+
+exports.cont_review=async(req,rep)=>{
+    let reviewdetails = await ser_review(req,rep); 
+    rep.render("userreview",{mreviewdetails:reviewdetails.mreviewdetails,treviewdetails:reviewdetails.treviewdetails,ereviewdetails:reviewdetails.ereviewdetails,data:reviewdetails.newdata});
+}
+
+exports.cont_moviereview=async(req,rep)=>{
+    let movieid = req.params.flag;
+    let reviewdetails = await ser_moviereview(req,rep,movieid); 
+    rep.redirect(`/view_movie_details/${movieid}`);
+}
+
+exports.cont_tvshowreview=async(req,rep)=>{
+    let showid = req.params.flag;
+    let reviewdetails = await ser_tvshowreview(req,rep,showid); 
+    rep.redirect(`/view_tvshow_details/${showid}`);
+}
+
+exports.cont_episodereview=async(req,rep)=>{
+    let showid = req.params.flag1;
+    let sno = req.params.flag2;
+    let eno = req.params.flag3;
+    let reviewdetails = await ser_episodereview(req,rep,showid,sno,eno); 
+    rep.redirect(`/view_episode_details/${showid}/${sno}/${eno}`);
+}
+
+exports.cont_deletereview=async(req,rep)=>{
+    let reviewid = req.params.reviewid;
+    let reviewdetails = await ser_deletereview(req,rep,reviewid); 
+    rep.redirect("/review");
 }
 
 exports.cont_deleteac=async(req,rep)=>{
@@ -102,13 +133,13 @@ exports.cont_btcelebview=async(req,rep)=>{
 exports.cont_view_movie_details=async(req,rep)=>{
     let movieid=req.params.movieid; 
     let moviedetailsshown= await ser_view_movie_details(movieid,rep);
-    rep.render("viewmoviedetails",{moviedetails:moviedetailsshown.moviedetails,genredetails:moviedetailsshown.genredetails,actordetails:moviedetailsshown.actordetails,directordetails:moviedetailsshown.directordetails,producerdetails:moviedetailsshown.producerdetails,streamdetails:moviedetailsshown.streamdetails,prequeldetails:moviedetailsshown.prequeldetails,sequeldetails:moviedetailsshown.sequeldetails,languagedetails:moviedetailsshown.languagedetails,awarddetails:moviedetailsshown.awarddetails,reviewdetails:moviedetailsshown.reviewdetails,data:moviedetailsshown.newdata});
+    rep.render("viewmoviedetails",{movieid:moviedetailsshown.movieid,moviedetails:moviedetailsshown.moviedetails,genredetails:moviedetailsshown.genredetails,actordetails:moviedetailsshown.actordetails,directordetails:moviedetailsshown.directordetails,producerdetails:moviedetailsshown.producerdetails,streamdetails:moviedetailsshown.streamdetails,prequeldetails:moviedetailsshown.prequeldetails,sequeldetails:moviedetailsshown.sequeldetails,languagedetails:moviedetailsshown.languagedetails,awarddetails:moviedetailsshown.awarddetails,reviewdetails:moviedetailsshown.reviewdetails,data:moviedetailsshown.newdata});
 }
 
 exports.cont_view_tvshow_details=async(req,rep)=>{
     let tvshowid=req.params.tvshowid;
     let tvshowdetailsshown= await ser_view_tvshow_details(tvshowid,rep);
-    rep.render("viewtvshowdetails",{tvshowdetails:tvshowdetailsshown.tvshowdetails,seaandepdata:tvshowdetailsshown.seaandepdata,episodedetails:tvshowdetailsshown.episodedetails,genredetails:tvshowdetailsshown.genredetails,actordetails:tvshowdetailsshown.actordetails,directordetails:tvshowdetailsshown.directordetails,producerdetails:tvshowdetailsshown.producerdetails,streamdetails:tvshowdetailsshown.streamdetails,languagedetails:tvshowdetailsshown.languagedetails,awarddetails:tvshowdetailsshown.awarddetails,reviewdetails:tvshowdetailsshown.reviewdetails,data:tvshowdetailsshown.newdata});
+    rep.render("viewtvshowdetails",{tvshowid:tvshowdetailsshown.tvshowid,tvshowdetails:tvshowdetailsshown.tvshowdetails,seaandepdata:tvshowdetailsshown.seaandepdata,episodedetails:tvshowdetailsshown.episodedetails,genredetails:tvshowdetailsshown.genredetails,actordetails:tvshowdetailsshown.actordetails,directordetails:tvshowdetailsshown.directordetails,producerdetails:tvshowdetailsshown.producerdetails,streamdetails:tvshowdetailsshown.streamdetails,languagedetails:tvshowdetailsshown.languagedetails,awarddetails:tvshowdetailsshown.awarddetails,reviewdetails:tvshowdetailsshown.reviewdetails,data:tvshowdetailsshown.newdata});
 }
 
 exports.cont_view_episode_details=async(req,rep)=>{
@@ -116,7 +147,7 @@ exports.cont_view_episode_details=async(req,rep)=>{
     let sno=req.params.sno;
     let eno=req.params.eno;
     let epdetailsshown= await ser_view_episode_details(tvshowid,sno,eno,rep);
-    rep.render("viewepisodedetails",{epdetails:epdetailsshown.epdetails,actordetails:epdetailsshown.actordetails,directordetails:epdetailsshown.directordetails,producerdetails:epdetailsshown.producerdetails,reviewdetails:epdetailsshown.reviewdetails,data:epdetailsshown.newdata});
+    rep.render("viewepisodedetails",{tvshowid:epdetailsshown.tvshowid,sno:epdetailsshown.sno,eno:epdetailsshown.eno,epdetails:epdetailsshown.epdetails,actordetails:epdetailsshown.actordetails,directordetails:epdetailsshown.directordetails,producerdetails:epdetailsshown.producerdetails,reviewdetails:epdetailsshown.reviewdetails,data:epdetailsshown.newdata});
 }
 
 exports.cont_view_celeb_details=async(req,rep)=>{

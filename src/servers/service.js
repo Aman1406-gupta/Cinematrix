@@ -176,6 +176,92 @@ exports.ser_userprofileupdate=async(req,rep)=>{
     });
 }
 
+exports.ser_review=async(req,rep)=>{
+        return new Promise((resolve, reject) => {
+            mysqlConnection.query(`
+                                    SELECT R.User_ID, MR.Movie_ID, M.Title, MR.Review_ID, Review_Comment, Media_Rating, Like_Count, Dislike_Count, CONCAT(TIMESTAMPDIFF(DAY, R.Review_Date, NOW()), ' days ago') AS Days_Since_Review FROM movieReviewed MR JOIN Reviews R ON MR.Review_ID = R.Review_ID JOIN Movies M ON M.Movie_ID = MR.Movie_ID WHERE User_ID = ?;
+                                    SELECT R.User_ID, SR.Show_ID, T.Title, SR.Review_ID, Review_Comment, Media_Rating, Like_Count, Dislike_Count, CONCAT(TIMESTAMPDIFF(DAY, R.Review_Date, NOW()), ' days ago') AS Days_Since_Review FROM showReviewed SR JOIN Reviews R ON SR.Review_ID = R.Review_ID JOIN TV_Shows T ON T.Show_ID = SR.Show_ID WHERE User_ID = ?;
+                                    SELECT R.User_ID, ER.Show_ID, T.Title AS Show_Title, ER.Season_Number, ER.Episode_Number, E.Title, ER.Review_ID, Review_Comment, Media_Rating, Like_Count, Dislike_Count, CONCAT(TIMESTAMPDIFF(DAY, R.Review_Date, NOW()), ' days ago') AS Days_Since_Review FROM episodeReviewed ER JOIN Reviews R ON ER.Review_ID = R.Review_ID JOIN Episodes E ON (E.Show_ID = ER.Show_ID AND E.Episode_Number = ER.Episode_Number AND E.Season_Number = ER.Season_Number) JOIN TV_Shows T ON T.Show_ID = ER.Show_ID WHERE User_ID = ?;
+                                    `, [newdata.User_ID,newdata.User_ID,newdata.User_ID], (err, results) => {
+                if (err) {
+                    console.error('Error in logging out!', err);
+                    return reject(new Error("Database query failed"));
+                }
+
+                mreviewdetails=results[0];
+                treviewdetails=results[1];
+                ereviewdetails=results[2];
+                resolve({mreviewdetails,treviewdetails,ereviewdetails,newdata});
+            });
+        });
+}
+
+exports.ser_moviereview=async(req,rep,movieid)=>{
+    let review=req.body.review;
+    let rating=req.body.rating;
+    
+        return new Promise((resolve, reject) => {
+            mysqlConnection.query(`
+                                    INSERT INTO Reviews(User_ID, Review_Comment, Media_Rating, Review_Date, Like_Count, Dislike_Count) values(?, ?, ?, CURDATE(), 0, 0);
+                                    INSERT INTO moviereviewed(review_id, movie_id) values ((SELECT Review_ID FROM Reviews ORDER BY Review_ID DESC LIMIT 1), ?);
+                                    `, [newdata.User_ID, review, rating, movieid], (err, results) => {
+                if (err) {
+                    console.error('Error in logging out!', err);
+                    return reject(new Error("Database query failed"));
+                }
+                resolve({newdata});
+            });
+        });
+}
+
+exports.ser_tvshowreview=async(req,rep,showid)=>{
+    let review=req.body.review;
+    let rating=req.body.rating;
+    
+        return new Promise((resolve, reject) => {
+            mysqlConnection.query(`
+                                    INSERT INTO Reviews(User_ID, Review_Comment, Media_Rating, Review_Date, Like_Count, Dislike_Count) values(?, ?, ?, CURDATE(), 0, 0);
+                                    INSERT INTO showreviewed(review_id, show_id) values ((SELECT Review_ID FROM Reviews ORDER BY Review_ID DESC LIMIT 1), ?);
+                                    `, [newdata.User_ID, review, rating, showid], (err, results) => {
+                if (err) {
+                    console.error('Error in logging out!', err);
+                    return reject(new Error("Database query failed"));
+                }
+                resolve({newdata});
+            });
+        });
+}
+
+exports.ser_episodereview=async(req,rep,showid,sno,eno)=>{
+    let review=req.body.review;
+    let rating=req.body.rating;
+    
+        return new Promise((resolve, reject) => {
+            mysqlConnection.query(`
+                                    INSERT INTO Reviews(User_ID, Review_Comment, Media_Rating, Review_Date, Like_Count, Dislike_Count) values(?, ?, ?, CURDATE(), 0, 0);
+                                    INSERT INTO episodereviewed(review_id, show_id, season_number, episode_number) values ((SELECT Review_ID FROM Reviews ORDER BY Review_ID DESC LIMIT 1), ?, ?, ?);
+                                    `, [newdata.User_ID, review, rating, showid,sno,eno], (err, results) => {
+                if (err) {
+                    console.error('Error in logging out!', err);
+                    return reject(new Error("Database query failed"));
+                }
+                resolve({newdata});
+            });
+        });
+}
+
+exports.ser_deletereview=async(req,rep,reviewid)=>{
+        return new Promise((resolve, reject) => {
+            mysqlConnection.query(`DELETE FROM Reviews WHERE Review_ID = ?`, [reviewid], (err, results) => {
+                if (err) {
+                    console.error('Error in logging out!', err);
+                    return reject(new Error("Database query failed"));
+                }
+                resolve({newdata});
+            });
+        });
+}
+
 exports.ser_signout=async(req,rep)=>{
     try{
         rep.clearCookie("token");
@@ -602,7 +688,7 @@ exports.ser_view_movie_details=async(movieid,rep)=>{
             const prequeldetails = results[8];
             const sequeldetails = results[9];
             const reviewdetails = results[10];
-            resolve( { moviedetails,genredetails,languagedetails,awarddetails,actordetails,directordetails,producerdetails,streamdetails,prequeldetails,sequeldetails,reviewdetails,newdata } );
+            resolve( { moviedetails,genredetails,languagedetails,awarddetails,actordetails,directordetails,producerdetails,streamdetails,prequeldetails,sequeldetails,reviewdetails,newdata,movieid } );
         });
     });    
 }
@@ -641,7 +727,7 @@ exports.ser_view_tvshow_details=async(tvshowid,rep)=>{
             const languagedetails=results[8];
             const streamdetails=results[9];
             const reviewdetails = results[10];
-            resolve( { tvshowdetails,seaandepdata,episodedetails,genredetails,actordetails,directordetails,producerdetails,awarddetails,languagedetails,streamdetails,reviewdetails,newdata } );
+            resolve( { tvshowdetails,seaandepdata,episodedetails,genredetails,actordetails,directordetails,producerdetails,awarddetails,languagedetails,streamdetails,reviewdetails,newdata,tvshowid } );
         });
     });
 }
@@ -668,7 +754,7 @@ exports.ser_view_episode_details=async(tvshowid,sno,eno,rep)=>{
             const directordetails=results[2];
             const producerdetails=results[3];
             const reviewdetails = results[4];
-            resolve( { epdetails,actordetails,directordetails,producerdetails,reviewdetails,newdata } );
+            resolve( { epdetails,actordetails,directordetails,producerdetails,reviewdetails,newdata,tvshowid,sno,eno } );
         });
     });
 }

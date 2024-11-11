@@ -280,12 +280,12 @@
                       <span>
                         <button onclick="toggleThumb('<%= dataobj.User_ID %>', 'up')" data-userid="<%= dataobj.User_ID %>" style="margin-top: 1%; background-color: rgb(64, 64, 64); border: none; box-shadow: none;">
                           <i class="fa fa-thumbs-up" style="color: white;"></i>
-                        </button>&nbsp;<%=dataobj.Like_Count%>k
+                        </button>&nbsp;<%=dataobj.Like_Count%>
                         <button onclick="toggleThumb('<%= dataobj.User_ID %>', 'down')" data-userid="<%= dataobj.User_ID %>" style="margin-top: 1%; background-color: rgb(64, 64, 64); border: none; box-shadow: none;">
                           <i class="fa fa-thumbs-down" style="color: white;"></i>
-                        </button>&nbsp;<%=dataobj.Dislike_Count%>k
+                        </button>&nbsp;<%=dataobj.Dislike_Count%>
                       </span>
-                      <span style="font-size: 1rem; font-weight:300; padding-left:37rem"><%=dataobj.Days_Since_Review%></span>
+                      <span style="font-size: 1rem; font-weight:300;"><%=dataobj.Days_Since_Review%></span>
                     </div>
                   </div>
                   <% p=p+1; }%>
@@ -293,6 +293,35 @@
                 <% if(reviewdetails.length == 0){ %>
                   <h3 class="card-title" style="color: white; font-size: 1.5rem;">No Reviews found</h3>
                   <% } %>
+
+                  <div class="card mt-5">
+                    <div class="card-header" style="color:white ;background-color:black; border-radius:0px;">
+                      <div class="col-md-4" style="display:flex;"><h2 style="margin-bottom: 1%;">Rate and Review</h2></div>
+                      <form
+                        class="row g-3 needs-validation"
+                        novalidate
+                        id="filterform"
+                        action="/episodereview/<%=tvshowid%>/<%=sno%>/<%=eno%>"
+                        method="post"
+                      >
+                      <div class="col-md-2">
+                        <label for="validationCustom02" class="form-label">Rating</label>
+                        <input type="text" autocomplete="off" class="form-control" pattern="^(?:10(?:\.0)?|[0-9](?:\.[0-9])?)$"
+                         name="rating" id="filtertitle" placeholder="Your Rating" required>
+                      </div>
+  
+                      <div class="col-md-10">
+                        <label for="validationCustom02" class="form-label">Review</label>
+                        <input type="textarea" class="form-control"
+                        name="review" id="filtertitle" placeholder="Your Review" required>
+                      </div>
+                        
+                      <div class="col-12">
+                        <button class="btn btn-primary" id="tablefocus" type="submit">Post Review</button>
+                      </div>
+                      </form>
+                    </div>
+                  </div>
         </div>
       </section>
     </main>
