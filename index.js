@@ -2,7 +2,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 const Path = require('path');
-const { mysqlConnection, mongo } = require('./src/dbconnection');
+const { mysqlConnection} = require('./src/dbconnection');
 dotenv.config();
 const app=express();
 

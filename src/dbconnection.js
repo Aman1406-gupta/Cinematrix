@@ -1,4 +1,3 @@
-const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const mysql = require('mysql2');
 dotenv.config();
@@ -20,18 +19,6 @@ mysqlConnection.connect((err) => {
     console.log('Connected to the MySQL database');
 });
 
-const connectToMongoDB = async () => {
-    try {
-        await mongoose.connect(process.env.dburl,
-    );
-        console.log('Connected to the MongoDB database');
-    } catch (error) {
-        console.error('Error connecting to MongoDB:', error.message);
-    }
-};
-connectToMongoDB();
-
 module.exports = {
-    mysqlConnection,
-    mongoose, 
+    mysqlConnection
 };

@@ -1,6 +1,5 @@
 let bcrypt=require("bcrypt");
-const { mysqlConnection, mongo } = require('../dbconnection');
-// let recu=require("../model/user");
+const { mysqlConnection } = require('../dbconnection');
 let jwt=require("jsonwebtoken");
 require("dotenv").config();
 let rootmail;

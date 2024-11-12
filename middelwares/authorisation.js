@@ -1,7 +1,6 @@
 require("dotenv").config();
 const jwt=require("jsonwebtoken"); 
-const {mysqlConnection,mongodb}  =require("../src/dbconnection");     
-const recu=require("../src/model/user.js");
+const {mysqlConnection} = require("../src/dbconnection");     
 
 async function user_auth(req, rep, next) {
     try {
