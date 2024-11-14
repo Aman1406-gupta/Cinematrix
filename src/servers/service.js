@@ -82,11 +82,10 @@ exports.ser_validation = (req, rep) => {
             }
 
             if (results.length === 0) {
-                console.log("Admin doesn't exist");
-                return reject(new Error("Admin doesn't exist"));
+                console.log("User doesn't exist");
+                return reject({message: "User doesn't exist!"});
             }
 
-            // const newdata = results[0];
             newdata = results[0];   
             rootmail=newdata.User_Mail;
 
@@ -98,7 +97,7 @@ exports.ser_validation = (req, rep) => {
 
                 if (!isPasswordValid) {
                     console.log('Password is incorrect');
-                    return reject(new Error("Incorrect password"));
+                    return reject({message: "Password is Incorrect!"});
                 }
 
                 const token = jwt.sign({ id: newdata.User_ID }, process.env.secret_key);
@@ -130,6 +129,54 @@ exports.ser_validation = (req, rep) => {
         });
     });
 };
+
+exports.ser_watchlistmovie=async(req,rep,movieid)=>{
+        return new Promise((resolve, reject) => {
+            mysqlConnection.query(`INSERT IGNORE INTO movieWatchlisted(User_ID, Movie_ID) VALUES (?, ?);`, [newdata.User_ID, movieid], (err, results) => {
+                if (err) {
+                    console.error('Error in logging out!', err);
+                    return reject(new Error("Database query failed"));
+                }
+                resolve({newdata});
+            });
+        });
+}
+
+exports.ser_watchlistshow=async(req,rep,showid)=>{
+        return new Promise((resolve, reject) => {
+            mysqlConnection.query(`INSERT IGNORE INTO showWatchlisted(User_ID, Show_ID) VALUES (?, ?);`, [newdata.User_ID, showid], (err, results) => {
+                if (err) {
+                    console.error('Error in logging out!', err);
+                    return reject(new Error("Database query failed"));
+                }
+                resolve({newdata});
+            });
+        });
+}
+
+exports.ser_deletewatchlistmovie=async(req,rep,movieid)=>{
+        return new Promise((resolve, reject) => {
+            mysqlConnection.query(`DELETE FROM movieWatchlisted WHERE User_ID = ? AND Movie_ID = ?;`, [newdata.User_ID, movieid], (err, results) => {
+                if (err) {
+                    console.error('Error in logging out!', err);
+                    return reject(new Error("Database query failed"));
+                }
+                resolve({newdata});
+            });
+        });
+}
+
+exports.ser_deletewatchlistshow=async(req,rep,showid)=>{
+        return new Promise((resolve, reject) => {
+            mysqlConnection.query(`DELETE FROM showWatchlisted WHERE User_ID = ? AND Show_ID = ?;`, [newdata.User_ID, showid], (err, results) => {
+                if (err) {
+                    console.error('Error in logging out!', err);
+                    return reject(new Error("Database query failed"));
+                }
+                resolve({newdata});
+            });
+        });
+}
 
 exports.ser_adminprofile=async(req,rep)=>{
     return new Promise((resolve, reject) => {
@@ -173,6 +220,48 @@ exports.ser_userprofileupdate=async(req,rep)=>{
             rep.redirect('/adminprofile');
         });
     });
+}
+
+exports.ser_watchlist=async(req,rep)=>{
+        return new Promise((resolve, reject) => {
+            mysqlConnection.query(`
+                                    SELECT MW.User_ID, M.Movie_ID, M.Title Movie_Title, YEAR(M.Release_Date) Year_Of_Release, M.Movie_Rating, M.Num_Ratings_Movies FROM Movies M JOIN movieWatchlisted MW ON M.Movie_ID = MW.Movie_ID WHERE MW.User_ID = ?;
+                                    SELECT SW.User_ID, S.Show_ID, S.Title, N.Number_Of_Seasons, YEAR(S.Start_Date) Release_Year, S.TVShow_Rating, S.Num_Ratings_TV FROM TV_Shows S JOIN (SELECT  Show_ID, COUNT(DISTINCT(Season_Number)) Number_Of_Seasons FROM Episodes GROUP BY Show_ID) N ON N.Show_ID = S.Show_ID JOIN showWatchlisted SW ON SW.Show_ID = S.Show_ID WHERE SW.User_ID = ?;
+                                    `, [newdata.User_ID,newdata.User_ID], (err, results) => {
+                if (err) {
+                    console.error('Error in logging out!', err);
+                    return reject(new Error("Database query failed"));
+                }
+
+                mwatchlistdetails=results[0];
+                twatchlistdetails=results[1];
+                resolve({mwatchlistdetails,twatchlistdetails,newdata});
+            });
+        });
+}
+
+exports.ser_delwtmovie=async(req,rep,movieid)=>{
+        return new Promise((resolve, reject) => {
+            mysqlConnection.query(`DELETE FROM movieWatchlisted WHERE User_ID = ? AND Movie_ID = ?;`, [newdata.User_ID, movieid], (err, results) => {
+                if (err) {
+                    console.error('Error in logging out!', err);
+                    return reject(new Error("Database query failed"));
+                }
+                resolve({newdata});
+            });
+        });
+}
+
+exports.ser_delwtshow=async(req,rep,showid)=>{
+        return new Promise((resolve, reject) => {
+            mysqlConnection.query(`DELETE FROM showWatchlisted WHERE User_ID = ? AND Show_ID = ?;`, [newdata.User_ID, showid], (err, results) => {
+                if (err) {
+                    console.error('Error in logging out!', err);
+                    return reject(new Error("Database query failed"));
+                }
+                resolve({newdata});
+            });
+        });
 }
 
 exports.ser_review=async(req,rep)=>{
@@ -666,7 +755,8 @@ exports.ser_view_movie_details=async(movieid,rep)=>{
             SELECT M.Movie_ID, M.Title AS Prequel_Title, YEAR(M.Release_Date) Release_Year, M.Movie_Rating, M.Num_Ratings_Movies FROM moviePrequel MP JOIN Movies M ON MP.Prequel_ID = M.Movie_ID WHERE MP.Movie_ID = ?;
             SELECT M.Movie_ID, M.Title AS Sequel_Title, YEAR(M.Release_Date) Release_Year, M.Movie_Rating, M.Num_Ratings_Movies FROM movieSequel MS JOIN Movies M ON MS.Sequel_ID = M.Movie_ID WHERE MS.Movie_ID = ?;
             SELECT U.User_ID, MR.Movie_ID, MR.Review_ID, U.Username, Review_Comment, Media_Rating, Like_Count, Dislike_Count, CONCAT(TIMESTAMPDIFF(DAY, R.Review_Date, NOW()), ' days ago') AS Days_Since_Review FROM movieReviewed MR JOIN Reviews R ON MR.Review_ID = R.Review_ID JOIN Users U ON R.User_ID = U.User_ID WHERE MR.Movie_ID = ?;
-                `, [movieid, movieid, movieid, movieid, movieid, movieid, movieid, movieid, movieid, movieid, movieid], (err, results) => {
+            SELECT * FROM movieWatchlisted WHERE User_ID = ? AND Movie_ID = ?;
+                `, [movieid, movieid, movieid, movieid, movieid, movieid, movieid, movieid, movieid, movieid, movieid, newdata.User_ID, movieid], (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
@@ -687,7 +777,8 @@ exports.ser_view_movie_details=async(movieid,rep)=>{
             const prequeldetails = results[8];
             const sequeldetails = results[9];
             const reviewdetails = results[10];
-            resolve( { moviedetails,genredetails,languagedetails,awarddetails,actordetails,directordetails,producerdetails,streamdetails,prequeldetails,sequeldetails,reviewdetails,newdata,movieid } );
+            const watchlistdetails = results[11];
+            resolve( { moviedetails,genredetails,languagedetails,awarddetails,actordetails,directordetails,producerdetails,streamdetails,prequeldetails,sequeldetails,reviewdetails,newdata,movieid,watchlistdetails } );
         });
     });    
 }
@@ -705,7 +796,8 @@ exports.ser_view_tvshow_details=async(tvshowid,rep)=>{
                                SELECT L.Language_Name FROM showAvailableIn SA JOIN Languages L ON SA.Language_ID = L.Language_ID WHERE SA.Show_ID = ?;
                                SELECT * FROM (SELECT SS.Show_ID, S.Site_Name, S.Site_URL, S.Subscription_Starting_Price FROM Streaming_Sites S JOIN showstreamshere SS ON S.Site_ID = SS.Site_ID) INTERMEDIATE WHERE Show_ID = ?;
                                SELECT U.User_ID, SR.Show_ID, SR.Review_ID, U.Username, Review_Comment, Media_Rating, Like_Count, Dislike_Count, CONCAT(TIMESTAMPDIFF(DAY, R.Review_Date, NOW()), ' days ago') AS Days_Since_Review FROM showReviewed SR JOIN Reviews R ON SR.Review_ID = R.Review_ID JOIN Users U ON R.User_ID = U.User_ID WHERE SR.Show_ID = ?;
-                              `,[tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid], (err, results) => {
+                               SELECT * FROM showWatchlisted WHERE User_ID = ? AND Show_ID = ?;
+                              `,[tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,newdata.User_ID, tvshowid], (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
@@ -726,7 +818,8 @@ exports.ser_view_tvshow_details=async(tvshowid,rep)=>{
             const languagedetails=results[8];
             const streamdetails=results[9];
             const reviewdetails = results[10];
-            resolve( { tvshowdetails,seaandepdata,episodedetails,genredetails,actordetails,directordetails,producerdetails,awarddetails,languagedetails,streamdetails,reviewdetails,newdata,tvshowid } );
+            const watchlistdetails = results[11];
+            resolve( { tvshowdetails,seaandepdata,episodedetails,genredetails,actordetails,directordetails,producerdetails,awarddetails,languagedetails,streamdetails,reviewdetails,newdata,tvshowid,watchlistdetails } );
         });
     });
 }
@@ -766,13 +859,19 @@ exports.ser_view_celeb_details=async(celebid,rep)=>{
                                 SELECT Role_Range FROM Actor WHERE Actor_ID = ?;
                                 SELECT Production_Methodology FROM Producer WHERE Producer_ID = ?;
                                 SELECT a.Award_Name, a.Award_Category, pa.Year_Of_Awarding FROM personAwarded pa JOIN Awards a ON pa.Award_ID = a.Award_ID WHERE pa.Person_ID = ?;
-                                SELECT COUNT(*) Num_Count FROM (SELECT Movie_ID FROM movieDirectedBy WHERE Director_ID = ? UNION ALL SELECT Show_ID FROM showDirectedBy WHERE Director_ID = ?) INTERMEDIATE;
-                                SELECT COUNT(*) Num_Count FROM (SELECT Movie_ID FROM movieActedBy WHERE Actor_ID = ? UNION ALL SELECT Show_ID FROM showActedBy WHERE Actor_ID = ?) INTERMEDIATE;
-                                SELECT COUNT(*) Num_Count FROM (SELECT Movie_ID FROM movieProducedBy WHERE Producer_ID = ? UNION ALL SELECT Show_ID FROM showProducedBy WHERE Producer_ID = ?) INTERMEDIATE;
+                                SELECT COUNT(*) Num_Count FROM (SELECT DISTINCT * FROM (SELECT Movie_ID FROM movieDirectedBy WHERE Director_ID = ? UNION ALL SELECT Show_ID FROM showDirectedBy WHERE Director_ID = ?) TEMP ) INTERMEDIATE;
+                                SELECT COUNT(*) Num_Count FROM (SELECT DISTINCT * FROM (SELECT Movie_ID FROM movieActedBy WHERE Actor_ID = ? UNION ALL SELECT Show_ID FROM showActedBy WHERE Actor_ID = ?) TEMP ) INTERMEDIATE;
+                                SELECT COUNT(*) Num_Count FROM (SELECT DISTINCT * FROM (SELECT Movie_ID FROM movieProducedBy WHERE Producer_ID = ? UNION ALL SELECT Show_ID FROM showProducedBy WHERE Producer_ID = ?) TEMP ) INTERMEDIATE;
                                 SELECT m.Title AS Movie_Title, m.Num_Ratings_Movies AS Number_of_Ratings FROM Movies m JOIN movieActedBy ma ON m.Movie_ID = ma.Movie_ID WHERE ma.Actor_ID = ? ORDER BY m.Num_Ratings_Movies DESC LIMIT 1;
                                 SELECT m.Title AS Movie_Title, m.Num_Ratings_Movies AS Number_of_Ratings FROM Movies m JOIN movieProducedBy mp ON m.Movie_ID = mp.Movie_ID WHERE mp.Producer_ID = ? ORDER BY m.Num_Ratings_Movies DESC LIMIT 1;
                                 SELECT m.Title AS Movie_Title, m.Num_Ratings_Movies AS Number_of_Ratings FROM Movies m JOIN movieDirectedBy md ON m.Movie_ID = md.Movie_ID WHERE md.Director_ID = ? ORDER BY m.Num_Ratings_Movies DESC LIMIT 1;
-                              `,[celebid,celebid,celebid,celebid,celebid,celebid,celebid,celebid,celebid,celebid,celebid,celebid,celebid,celebid], (err, results) => {
+                                SELECT DISTINCT * FROM (SELECT MA.Movie_ID, MA.Actor_ID, M.Title Movie_Title, YEAR(M.Release_Date) Year_Of_Release, M.Movie_Rating, M.Num_Ratings_Movies FROM Movies M JOIN movieactedby MA ON M.Movie_ID = MA.Movie_ID WHERE Actor_ID = ?) INTERMEDIATE;
+                                SELECT DISTINCT * FROM (SELECT MD.Movie_ID, MD.Director_ID, M.Title Movie_Title, YEAR(M.Release_Date) Year_Of_Release, M.Movie_Rating, M.Num_Ratings_Movies FROM Movies M JOIN movieDirectedBy MD ON M.Movie_ID = MD.Movie_ID WHERE Director_ID = ?) INTERMEDIATE;
+                                SELECT DISTINCT * FROM (SELECT MP.Movie_ID, MP.Producer_ID, M.Title Movie_Title, YEAR(M.Release_Date) Year_Of_Release, M.Movie_Rating, M.Num_Ratings_Movies FROM Movies M JOIN movieProducedBy MP ON M.Movie_ID = MP.Movie_ID WHERE Producer_ID = ?) INTERMEDIATE;
+                                SELECT DISTINCT * FROM (SELECT SA.Show_ID, SA.Actor_ID, S.Title, N.Number_Of_Seasons, YEAR(S.Start_Date) Release_Year, S.TVShow_Rating, S.Num_Ratings_TV FROM TV_Shows S JOIN (SELECT  Show_ID, COUNT(DISTINCT(Season_Number)) Number_Of_Seasons FROM Episodes GROUP BY Show_ID) N ON N.Show_ID = S.Show_ID JOIN showActedBy SA ON SA.Show_ID = S.Show_ID WHERE SA.Actor_ID = ?) INTERMEDIATE;
+                                SELECT DISTINCT * FROM (SELECT SD.Show_ID, SD.Director_ID, S.Title, N.Number_Of_Seasons, YEAR(S.Start_Date) Release_Year, S.TVShow_Rating, S.Num_Ratings_TV FROM TV_Shows S JOIN (SELECT  Show_ID, COUNT(DISTINCT(Season_Number)) Number_Of_Seasons FROM Episodes GROUP BY Show_ID) N ON N.Show_ID = S.Show_ID JOIN showDirectedBy SD ON SD.Show_ID = S.Show_ID WHERE SD.Director_ID = ?) INTERMEDIATE; 
+                                SELECT DISTINCT * FROM (SELECT SP.Show_ID, SP.Producer_ID, S.Title, N.Number_Of_Seasons, YEAR(S.Start_Date) Release_Year, S.TVShow_Rating, S.Num_Ratings_TV FROM TV_Shows S JOIN (SELECT  Show_ID, COUNT(DISTINCT(Season_Number)) Number_Of_Seasons FROM Episodes GROUP BY Show_ID) N ON N.Show_ID = S.Show_ID JOIN showProducedBy SP ON SP.Show_ID = S.Show_ID WHERE SP.Producer_ID = ?) INTERMEDIATE;
+                              `,[celebid,celebid,celebid,celebid,celebid,celebid,celebid,celebid,celebid,celebid,celebid,celebid,celebid,celebid,celebid,celebid,celebid,celebid,celebid,celebid], (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
@@ -793,7 +892,13 @@ exports.ser_view_celeb_details=async(celebid,rep)=>{
             const afam = results[8];
             const pfam = results[9];
             const dfam = results[10];
-            resolve( { celebdata,ds,rr,pm,awarddetails,dnum,anum,pnum,afam,pfam,dfam,newdata } );
+            const mda = results[11];
+            const mdd = results[12];
+            const mdp = results[13];
+            const sda = results[14];
+            const sdd = results[15];
+            const sdp = results[16];
+            resolve( { celebdata,ds,rr,pm,awarddetails,dnum,anum,pnum,afam,pfam,dfam,mda,mdd,mdp,sda,sdd,sdp,newdata } );
         });
     });
 }

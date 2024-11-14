@@ -54,8 +54,38 @@
     <main id="main" class="main" style="background-color:black">
       <div class="pagetitle">
         <nav>
-          <ol class="breadcrumb">
+          <ol class="breadcrumb" style="display: flex; justify-content: space-between; margin: 0">
             <li class="breadcrumb-item"><a href="/home">Home</a></li>
+            <% if (watchlistdetails.length == 0) { %>
+              <li>
+                <form
+                  class="filter"
+                  action="/wtshow/<%=tvshowdetails.Show_ID%>"
+                  method="post"
+                >
+                  <input
+                    type="submit"
+                    class="btn btn-success"
+                    value="Add to Watchlist"  
+                  />
+                </form>
+              </li>
+              <% } %>
+              <% if (watchlistdetails.length != 0) { %>
+                <li>
+                  <form
+                    class="filter"
+                    action="/wtdshow/<%=tvshowdetails.Show_ID%>"
+                    method="post"
+                  >
+                    <input
+                      type="submit"
+                      class="btn btn-warning"
+                      value="Remove from Watchlist"  
+                    />
+                  </form>
+                </li>
+                <% } %>
           </ol>
         </nav>
       </div>
@@ -75,13 +105,13 @@
                     <h5 class="card-title" style="color: white;">Rating: &nbsp;&nbsp;&nbsp; <%= tvshowdetails.TVShow_Rating%></h5>
                     <h5 class="card-title" style="color: white;">Number of Ratings: &nbsp;&nbsp;&nbsp; <%= tvshowdetails.Num_Ratings_TV%></h5>
                     <h5 class="card-title" style="color: white;">Start Date: &nbsp;&nbsp;&nbsp; <%= tvshowdetails.Start_Date%></h5>
-                    <h5 class="card-title" style="color: white;">End Date: &nbsp;&nbsp;&nbsp; <%= tvshowdetails.End_Date%></h5>
+                    <h5 class="card-title" style="color: white;">End Date: &nbsp;&nbsp;&nbsp; <% if (tvshowdetails.End_Date) { %> <%= tvshowdetails.End_Date%> <% } %> <% if (!tvshowdetails.End_Date) { %> Currently Airing <% } %></h5>
                     <div style="display: flex; align-items: flex-start; color: white;">
                         <h5 class="card-title" style="color: white;" style="flex: 0 0 auto; margin-right: 10px;">Description:</h5>
                         <div class="ms-4" style="flex: 1;">
                             <h5 class="card-title" style="color: white;"> <%= tvshowdetails.Description%></h5>
                         </div>
-                </div>              
+                    </div>              
                 <h5 class="card-title" style="color: white;">Age rating: &nbsp;&nbsp;&nbsp; <%= tvshowdetails.Age_Rating_Name%></h5>
                 <h5 class="card-title" style="color: white;">TV Show Trailer URL: &nbsp;&nbsp;&nbsp; <a href="<%= tvshowdetails.TVShow_Trailer_URL%>" style="text-decoration: underline; color: white;"><%= tvshowdetails.TVShow_Trailer_URL%></a></h5>
             </div>
@@ -130,19 +160,29 @@
                         </table>
                     </div>
 
-                <h5 class="card-title mb-4 mt-4" style="color: white;">Genres: &nbsp;&nbsp;&nbsp; 
-                    <% let totalGenres = genredetails.length; %>
-                    <% for (let i = 0; i < totalGenres; i++) { %>
-                        <span class="card-title" style="color: white; font-size:1.15rem; font-weight: 450"><%= genredetails[i].Genre_Name %><%= (i < totalGenres - 1) ? ', ' : '' %>&nbsp;</span>
-                    <% } %>
-                </h5>
-                    
-                <h5 class="card-title mb-4 mt-4" style="color: white;">Languages availabe in: &nbsp;&nbsp;&nbsp; 
+                <div style="display: flex; align-items: flex-start; color: white;">
+                      <h5 class="card-title text-nowrap" style="color: white;" style="flex: 0 0 auto; margin-right: 10px;">Genres:</h5>
+                      <div class="ms-4" style="flex: 1;">
+                        <% let totalGenres = genredetails.length; %>
+                        <h5 class="card-title text-wrap" style="color: white;">
+                            <% for (let i = 0; i < totalGenres; i++) { %>
+                              <%= genredetails[i].Genre_Name %><%= (i < totalGenres - 1) ? ', ' : '' %>&nbsp;
+                            <% } %>
+                          </h5>
+                      </div>
+                    </div>
+
+                <div style="display: flex; align-items: flex-start; color: white;">
+                  <h5 class="card-title text-nowrap" style="color: white;" style="flex: 0 0 auto; margin-right: 10px;">Languages availabe in:</h5>
+                  <div class="ms-4" style="flex: 1;">
                     <% let totalLanguages = languagedetails.length; %>
-                    <% for (let i = 0; i < totalLanguages; i++) { %>
-                        <span class="card-title" style="color: white; font-size:1.15rem; font-weight: 450"><%= languagedetails[i].Language_Name %><%= (i < totalLanguages - 1) ? ', ' : '' %>&nbsp;</span>
-                    <% } %>
-                </h5>
+                    <h5 class="card-title text-wrap" style="color: white;">
+                        <% for (let i = 0; i < totalLanguages; i++) { %>
+                          <%= languagedetails[i].Language_Name %><%= (i < totalLanguages - 1) ? ', ' : '' %>&nbsp;
+                          <% } %>
+                      </h5>
+                  </div>
+                </div>
                     
                 <h5 class="card-title mb-4 mt-4" style="color: white;">Awards: &nbsp;&nbsp;&nbsp; 
                     <%if(awarddetails.length == 0) { %>
@@ -318,7 +358,7 @@
                     <div class="div" style="padding: 2%;margin:2%; background-color:rgb(64, 64, 64); border-radius: 5px;">
                       <div style="display: flex; justify-content: space-between; align-items: center; white-space: nowrap;">
                         <span style="font-size: 1.2rem; font-weight:600;">
-                          <a href="/delete_reviewuser/<%=dataobj.User_ID%>" class="reviewuser" style="color:white;"><%=dataobj.Username%> </a>
+                          <a href="/reviewuser/<%=dataobj.User_ID%>" class="reviewuser" style="color:white;"><%=dataobj.Username%> </a>
                           <% if(data.User_Role=='Admin'){ %>
                             <td>
                               <form

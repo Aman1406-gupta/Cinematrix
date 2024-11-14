@@ -133,6 +133,306 @@
                     </div>
                 <% } %>
 
+                <h5 class="card-title mb-4 mt-4" style="color: white;">Movies Acted In: &nbsp;&nbsp;&nbsp; 
+                    <%if(moviedetailsact.length == 0) { %>
+                        <span class="card-title" style="color: white; font-size:1.15rem; font-weight: 450">The Celebrity has not Acted in any movies</span>
+                    <% } %>
+                </h5>
+                <% if(moviedetailsact.length != 0){ %>
+                    <div class="scrollbarclass" id="tablefocus" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
+                        <table class="table table-striped table-dark text-nowrap table-responsive" style="color: white; background-color:black;">
+                          <thead>
+                            <tr>
+                              <th scope="col no-wrap">S.No.</th>
+                              <th scope="col no-wrap">Title</th>
+                              <th scope="col no-wrap">Release Year</th>
+                              <th scope="col no-wrap">Rating</th>
+                              <th scope="col no-wrap">No. of Ratings</th>
+                              <th scope="col"></th>
+                            </tr>
+                          </thead>
+        
+                          <tbody>
+                            <div>
+                              <%let u=1; %> <% for (let dataobj of moviedetailsact){ %>
+                                <tr>
+                                  <th scope="row"><%=u%></th>
+                                  <td><%=dataobj.Movie_Title%></td>
+                                  <td><%=dataobj.Year_Of_Release%></td>
+                                  <td><%=dataobj.Movie_Rating%></td>
+                                  <td><%=dataobj.Num_Ratings_Movies%></td>
+                                  <td>
+                                    <form
+                                      class="filter"
+                                      action="/delwtmovie/<%=dataobj.Movie_ID%>"
+                                      method="post"
+                                    >
+                                    <input
+                                      type="submit"
+                                      class="btn btn-info"
+                                      value="View Details"
+                                    />
+                                    </form>
+                                  </td>
+                                </tr>
+                                <% u=u+1; }%>
+                            </div>
+                          </tbody>
+                        </table>
+                      </div>
+                <% } %>
+
+                <h5 class="card-title mb-4 mt-4" style="color: white;">Movies Directed: &nbsp;&nbsp;&nbsp; 
+                    <%if(moviedetailsdir.length == 0) { %>
+                        <span class="card-title" style="color: white; font-size:1.15rem; font-weight: 450">The Celebrity has not Directed any movies</span>
+                    <% } %>
+                </h5>
+                <% if(moviedetailsdir.length != 0){ %>
+                    <div class="scrollbarclass" id="tablefocus" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
+                        <table class="table table-striped table-dark text-nowrap table-responsive" style="color: white; background-color:black;">
+                          <thead>
+                            <tr>
+                              <th scope="col no-wrap">S.No.</th>
+                              <th scope="col no-wrap">Title</th>
+                              <th scope="col no-wrap">Release Year</th>
+                              <th scope="col no-wrap">Rating</th>
+                              <th scope="col no-wrap">No. of Ratings</th>
+                              <th scope="col"></th>
+                            </tr>
+                          </thead>
+        
+                          <tbody>
+                            <div>
+                              <%let y=1; %> <% for (let dataobj of moviedetailsdir){ %>
+                                <tr>
+                                  <th scope="row"><%=y%></th>
+                                  <td><%=dataobj.Movie_Title%></td>
+                                  <td><%=dataobj.Year_Of_Release%></td>
+                                  <td><%=dataobj.Movie_Rating%></td>
+                                  <td><%=dataobj.Num_Ratings_Movies%></td>
+                                  <td>
+                                    <form
+                                      class="filter"
+                                      action="/view_movie_details/<%=dataobj.Movie_ID%>"
+                                      method="get"
+                                    >
+                                    <input
+                                      type="submit"
+                                      class="btn btn-info"
+                                      value="View Details"
+                                    />
+                                    </form>
+                                  </td>
+                                </tr>
+                                <% y=y+1; }%>
+                            </div>
+                          </tbody>
+                        </table>
+                      </div>
+                <% } %>
+
+                <h5 class="card-title mb-4 mt-4" style="color: white; border-bottom: 2px solid gray;">Movies Produced: &nbsp;&nbsp;&nbsp; 
+                    <%if(moviedetailspro.length == 0) { %>
+                        <span class="card-title" style="color: white; font-size:1.15rem; font-weight: 450">The Celebrity has not Produced any movies</span>
+                    <% } %>
+                </h5>
+                <% if(moviedetailspro.length != 0){ %>
+                    <div class="scrollbarclass" id="tablefocus" style="max-height: 400px; overflow-y: auto; overflow-x: auto; border-bottom: 2px solid gray;">
+                        <table class="table table-striped table-dark text-nowrap table-responsive" style="color: white; background-color:black;">
+                          <thead>
+                            <tr>
+                              <th scope="col no-wrap">S.No.</th>
+                              <th scope="col no-wrap">Title</th>
+                              <th scope="col no-wrap">Release Year</th>
+                              <th scope="col no-wrap">Rating</th>
+                              <th scope="col no-wrap">No. of Ratings</th>
+                              <th scope="col"></th>
+                            </tr>
+                          </thead>
+        
+                          <tbody>
+                            <div>
+                              <%let w=1; %> <% for (let dataobj of moviedetailspro){ %>
+                                <tr>
+                                  <th scope="row"><%=w%></th>
+                                  <td><%=dataobj.Movie_Title%></td>
+                                  <td><%=dataobj.Year_Of_Release%></td>
+                                  <td><%=dataobj.Movie_Rating%></td>
+                                  <td><%=dataobj.Num_Ratings_Movies%></td>
+                                  <td>
+                                    <form
+                                      class="filter"
+                                      action="/view_movie_details/<%=dataobj.Movie_ID%>"
+                                      method="get"
+                                    >
+                                    <input
+                                      type="submit"
+                                      class="btn btn-info"
+                                      value="View Details"
+                                    />
+                                    </form>
+                                  </td>
+                                </tr>
+                                <% w=w+1; }%>
+                            </div>
+                          </tbody>
+                        </table>
+                      </div>
+                <% } %>
+
+                <h5 class="card-title mb-4 mt-4" style="color: white;">TV Shows Acted In: &nbsp;&nbsp;&nbsp; 
+                    <%if(showdetailsact.length == 0) { %>
+                        <span class="card-title" style="color: white; font-size:1.15rem; font-weight: 450">The Celebrity has not Acted in any TV Shows</span>
+                    <% } %>
+                </h5>
+                <% if(showdetailsact.length != 0){ %>
+                    <div class="scrollbarclass" id="tablefocus" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
+                        <table class="table table-striped table-dark text-nowrap table-responsive" style="color: white; background-color:black;">
+                          <thead>
+                            <tr>
+                                <th scope="col">S.No.</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">No of Seasons</th>
+                                <th scope="col">Release Year</th>
+                                <th scope="col">Rating</th>
+                                <th scope="col">No. of Ratings</th>
+                                <th scope="col"></th>
+                            </tr>
+                          </thead>
+        
+                          <tbody>
+                            <div>
+                              <%let v=1; %> <% for (let dataobj of showdetailsact){ %>
+                                <tr>
+                                    <th scope="row"><%=v%></th>
+                                    <td><%=dataobj.Title%></td>
+                                    <td><%=dataobj.Number_Of_Seasons%></td>
+                                    <td><%=dataobj.Release_Year%></td>
+                                    <td><%=dataobj.TVShow_Rating%></td>
+                                    <td><%=dataobj.Num_Ratings_TV%></td>
+                                    <td>
+                                      <form
+                                        class="filter"
+                                        action="/view_tvshow_details/<%=dataobj.Show_ID%>"
+                                        method="get"
+                                      >
+                                        <input
+                                          type="submit"
+                                          class="btn btn-info"
+                                          value="View Details"
+                                        />
+                                      </form>
+                                    </td>    
+                                  </tr>
+                                <% v=v+1; }%>
+                            </div>
+                          </tbody>
+                        </table>
+                      </div>
+                <% } %>
+
+                <h5 class="card-title mb-4 mt-4" style="color: white;">TV Shows Directed: &nbsp;&nbsp;&nbsp; 
+                    <%if(showdetailsdir.length == 0) { %>
+                        <span class="card-title" style="color: white; font-size:1.15rem; font-weight: 450">The Celebrity has not Directed any TV Shows</span>
+                    <% } %>
+                </h5>
+                <% if(showdetailsdir.length != 0){ %>
+                    <div class="scrollbarclass" id="tablefocus" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
+                        <table class="table table-striped table-dark text-nowrap table-responsive" style="color: white; background-color:black;">
+                          <thead>
+                            <tr>
+                                <th scope="col">S.No.</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">No of Seasons</th>
+                                <th scope="col">Release Year</th>
+                                <th scope="col">Rating</th>
+                                <th scope="col">No. of Ratings</th>
+                                <th scope="col"></th>
+                            </tr>
+                          </thead>
+        
+                          <tbody>
+                            <div>
+                              <%let x=1; %> <% for (let dataobj of showdetailsdir){ %>
+                                <tr>
+                                    <th scope="row"><%=x%></th>
+                                    <td><%=dataobj.Title%></td>
+                                    <td><%=dataobj.Number_Of_Seasons%></td>
+                                    <td><%=dataobj.Release_Year%></td>
+                                    <td><%=dataobj.TVShow_Rating%></td>
+                                    <td><%=dataobj.Num_Ratings_TV%></td>
+                                    <td>
+                                      <form
+                                        class="filter"
+                                        action="/view_tvshow_details/<%=dataobj.Show_ID%>"
+                                        method="get"
+                                      >
+                                        <input
+                                          type="submit"
+                                          class="btn btn-info"
+                                          value="View Details"
+                                        />
+                                      </form>
+                                    </td>    
+                                  </tr>
+                                <% x=x+1; }%>
+                            </div>
+                          </tbody>
+                        </table>
+                      </div>
+                <% } %>
+
+                <h5 class="card-title mb-4 mt-4" style="color: white; border-bottom: 2px solid gray;">TV Shows Produced: &nbsp;&nbsp;&nbsp; 
+                    <%if(showdetailspro.length == 0) { %>
+                        <span class="card-title" style="color: white; font-size:1.15rem; font-weight: 450">The Celebrity has not Produced any TV Shows</span>
+                    <% } %>
+                </h5>
+                <% if(showdetailspro.length != 0){ %>
+                    <div class="scrollbarclass" id="tablefocus" style="max-height: 400px; overflow-y: auto; overflow-x: auto; border-bottom: 2px solid gray; ">
+                        <table class="table table-striped table-dark text-nowrap table-responsive" style="color: white; background-color:black;">
+                          <thead>
+                            <tr>
+                                <th scope="col">S.No.</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">No of Seasons</th>
+                                <th scope="col">Release Year</th>
+                                <th scope="col">Rating</th>
+                                <th scope="col">No. of Ratings</th>
+                                <th scope="col"></th>
+                            </tr>
+                          </thead>
+        
+                          <tbody>
+                            <div>
+                              <%let x=1; %> <% for (let dataobj of showdetailspro){ %>
+                                <tr>
+                                    <th scope="row"><%=x%></th>
+                                    <td><%=dataobj.Title%></td>
+                                    <td><%=dataobj.Number_Of_Seasons%></td>
+                                    <td><%=dataobj.Release_Year%></td>
+                                    <td><%=dataobj.TVShow_Rating%></td>
+                                    <td><%=dataobj.Num_Ratings_TV%></td>
+                                    <td>
+                                      <form
+                                        class="filter"
+                                        action="/view_tvshow_details/<%=dataobj.Show_ID%>"
+                                        method="get"
+                                      >
+                                        <input
+                                          type="submit"
+                                          class="btn btn-info"
+                                          value="View Details"
+                                        />
+                                      </form>
+                                    </td>    
+                                  </tr>
+                                <% x=x+1; }%>
+                            </div>
+                          </tbody>
+                        </table>
+                      </div>
+                <% } %>
+
                 <h5 class="card-title mb-4 mt-4" style="color: white;">Number of Works Acted in : &nbsp;&nbsp;&nbsp; 
                     <%if(anum[0].Num_Count == 0) { %>
                         <span class="card-title" style="color: white; font-size:1.15rem; font-weight: 450">None</span>

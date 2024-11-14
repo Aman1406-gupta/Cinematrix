@@ -78,8 +78,13 @@
                         Login to Your Account
                       </h5>
                       <p class="text-center small text-black">
-                        Enter your Email & Password to login
+                        Enter your Email & Password to Login
                       </p>
+                      <% if (message) { %>
+                      <p class="text-center small" style="margin: 0; color:red; font-size: 1.2rem; font-weight:600">
+                         <%= message %> 
+                      </p>
+                      <% }%>
                     </div>
 
                     <form
