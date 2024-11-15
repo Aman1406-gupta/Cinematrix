@@ -72,7 +72,7 @@ exports.ser_insert=async (req,rep)=>{
                             });       
                             
                             const mailOptions={
-                                from:"official.cinematrix.db@gmail.com",
+                                from: '"Cinematrix" <official.cinematrix.db@gmail.com>',
                                 to:email,
                                 subject:`Hello, ${name}! Welcome to Cinematrix!`,
                                 text:"Your Cinematrix account has been created successfully!",
@@ -245,7 +245,7 @@ exports.ser_userprofileupdate=async(req,rep)=>{
                 });       
                 
                 const mailOptions={
-                    from:"official.cinematrix.db@gmail.com",
+                    from: '"Cinematrix" <official.cinematrix.db@gmail.com>',
                     to:rootmail,
                     subject:`Updation of Cinematrix Details`,
                     text:"Your Cinematrix account details have been updated successfully!",
@@ -433,7 +433,7 @@ exports.ser_deleteac=async(req,rep)=>{
                     });       
                     
                     const mailOptions={
-                        from:"official.cinematrix.db@gmail.com",
+                        from: '"Cinematrix" <official.cinematrix.db@gmail.com>',
                         to:rootmail,
                         subject:`Sad to see you go ${newdata.Username}!`,
                         text:"Your Cinematrix account has been deleted successfully!", 
@@ -1135,10 +1135,10 @@ exports.ser_delete_review_movie=async(req,rep,reviewid)=>{
                 });       
                 
                 const mailOptions={
-                    from:"official.cinematrix.db@gmail.com",
+                    from: '"Cinematrix" <official.cinematrix.db@gmail.com>',
                     to:results[0][0].User_Mail,
                     subject:`Review on Cinematrix Deleted`,
-                    text:`Your Review posted on ${results[0][0].Review_Date} with the comment "${results[0][0].Review_Comment}" for the Movie "${results[0][0].Title}" was deleted by an Admin due to violation of the Cinematrix's content policy.`, 
+                    text:`Your Review posted on ${results[0][0].Review_Date} with the comment "${results[0][0].Review_Comment}" for the Movie "${results[0][0].Title}" was deleted by an Admin due to a violation of Cinematrix's content policy.`, 
                 };
                 await transporter.sendMail(mailOptions);
             };
@@ -1168,10 +1168,10 @@ exports.ser_delete_review_show=async(req,rep,reviewid)=>{
                 });       
                 
                 const mailOptions={
-                    from:"official.cinematrix.db@gmail.com",
+                    from: '"Cinematrix" <official.cinematrix.db@gmail.com>',
                     to:results[0][0].User_Mail,
                     subject:`Review on Cinematrix Deleted`,
-                    text:`Your Review posted on ${results[0][0].Review_Date} with the comment "${results[0][0].Review_Comment}" for the TV Show "${results[0][0].Title}" was deleted by an Admin due to violation of the Cinematrix's content policy.`, 
+                    text:`Your Review posted on ${results[0][0].Review_Date} with the comment "${results[0][0].Review_Comment}" for the TV Show "${results[0][0].Title}" was deleted by an Admin due to a violation of Cinematrix's content policy.`, 
                 };
                 await transporter.sendMail(mailOptions);
             };
@@ -1203,10 +1203,10 @@ exports.ser_delete_review_episode=async(req,rep,reviewid)=>{
                 });       
                 
                 const mailOptions={
-                    from:"official.cinematrix.db@gmail.com",
+                    from: '"Cinematrix" <official.cinematrix.db@gmail.com>',
                     to:results[0][0].User_Mail,
                     subject:`Review on Cinematrix Deleted`,
-                    text:`Your Review posted on ${results[0][0].Review_Date} with the comment "${results[0][0].Review_Comment}" for the Episode "${results[0][0].Title}" of the TV Show "${results[0][0].Show_Title}" was deleted by an Admin due to violation of the Cinematrix's content policy.`, 
+                    text:`Your Review posted on ${results[0][0].Review_Date} with the comment "${results[0][0].Review_Comment}" for the Episode "${results[0][0].Title}" of the TV Show "${results[0][0].Show_Title}" was deleted by an Admin due to a violation of Cinematrix's content policy.`, 
                 };
                 await transporter.sendMail(mailOptions);
             };
