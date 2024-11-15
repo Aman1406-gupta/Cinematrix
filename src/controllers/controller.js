@@ -1,11 +1,11 @@
 let {ser_delwtshow,ser_delwtmovie,ser_watchlist,ser_deletewatchlistshow,ser_deletewatchlistmovie,ser_watchlistmovie,ser_watchlistshow,ser_episodereview,ser_tvshowreview,ser_moviereview,ser_deletereview,ser_review,ser_review_user,ser_delete_review_episode,ser_delete_review_show,ser_delete_review_movie,ser_deletetvshow,ser_deletemovie,ser_view_episode_details,ser_view_celeb_details,ser_view_tvshow_details, ser_view_movie_details,ser_deleteac,ser_tpseriesshow,ser_reseriesshow,ser_seriesshow,ser_tpshowmovie,ser_reshowmovie,ser_showmovie,ser_pcelebview,ser_btcelebview,ser_celebview,ser_awardac,ser_awardem,ser_signout,ser_home,ser_insert,ser_validation,ser_adminprofile,ser_userprofileupdate}=require("../servers/service");
 
 exports.cont_signin=async(req,rep)=>{
-    rep.render("adminlogin", {message: ""});
+    rep.render("adminlogin", {message: "",message2: ""});
 }
 
 exports.cont_signup=async(req,rep)=>{
-    rep.render("register");
+    rep.render("register", {message: ""});
 }
 
 exports.cont_home=async(req,rep)=>{
@@ -14,7 +14,13 @@ exports.cont_home=async(req,rep)=>{
 }
 
 exports.cont_insert=async(req,rep)=>{
-    await ser_insert(req,rep);
+    try {
+    let dataobj = await ser_insert(req,rep);
+    rep.render('adminlogin', {message: "",message2: dataobj.message})
+    }
+    catch(err) {
+        rep.render('register', {message:err.message})
+    }
 }
 
 exports.cont_validation=async(req,rep)=>{
@@ -24,11 +30,11 @@ exports.cont_validation=async(req,rep)=>{
             rep.render("dashboard",{data:data.newdata});
         }
         else{
-            rep.render("adminlogin", {message: ""});
+            rep.render("adminlogin", {message: "",message2: ""});
         }
     }
     catch(err) {
-        rep.render('adminlogin', {message:err.message});
+        rep.render('adminlogin', {message:err.message,message2: ""});
     }
 }
 
@@ -119,8 +125,8 @@ exports.cont_deletereview=async(req,rep)=>{
 }
 
 exports.cont_deleteac=async(req,rep)=>{
-    await ser_deleteac(req,rep); 
-    rep.redirect("/signin");
+    let dataobj = await ser_deleteac(req,rep); 
+    rep.render("adminlogin", {message: dataobj.message,message2: ""});
 }
 
 exports.cont_tpshowmovie=async(req,rep)=>{

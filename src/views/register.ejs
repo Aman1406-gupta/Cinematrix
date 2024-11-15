@@ -92,6 +92,11 @@
                       <h5 class="card-title text-center pb-0 fs-4">
                         Create an Account/  <a href="/signin">Log in</a>
                         </p>
+                        <% if (message) { %>
+                          <p class="text-center small" style="margin: 0; color:red; font-size: 1.2rem; font-weight:600">
+                             <%= message %> 
+                          </p>
+                          <% }%>
                       </h5>
                     </div>
 
@@ -120,7 +125,7 @@
                       
                       <div class="col-12">
                         <label for="youremail" class="form-label text-black"
-                        >Email</label
+                        >E-Mail</label
                         >
                         <div class="input-group has-validation">
                           <span class="input-group-text" id="inputGroupPrepend"

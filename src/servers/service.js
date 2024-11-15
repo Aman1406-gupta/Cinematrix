@@ -1,4 +1,5 @@
 let bcrypt=require("bcrypt");
+const nodemailer= require("nodemailer");
 const { mysqlConnection } = require('../dbconnection');
 let jwt=require("jsonwebtoken");
 require("dotenv").config();
@@ -45,7 +46,7 @@ exports.ser_insert=async (req,rep)=>{
 
             if(previousdata){
                 console.log("unable to create account, email already exist as user");
-                rep.redirect("/signup");
+                return reject({message: "This E-Mail is already in use!"});
             }
             else{
                 mysqlConnection.query(
@@ -60,9 +61,26 @@ exports.ser_insert=async (req,rep)=>{
                             console.error('No rows updated');
                             return reject(new Error("No rows updated"));
                         }
-
                         console.log('Your account has been created!');
-                        rep.redirect("/signin")
+                        async function mail(){
+                            const transporter = nodemailer.createTransport({
+                                service:"gmail",
+                                auth:{
+                                        user:"aman1406gupta@gmail.com",
+                                        pass:"mclt sxxb sjom veci",
+                                },
+                            });       
+                            
+                            const mailOptions={
+                                from:"aman1406gupta@gmail.com",
+                                to:email,
+                                subject:`Hello, ${name}! Welcome to Cinematrix!`,
+                                text:"Your Cinematrix account has been created successfully!",
+                            };
+                            await transporter.sendMail(mailOptions);
+                        };
+                        mail();
+                        resolve({message: "Your Account has been created successfully!"});
                     }
                 );
             }
@@ -217,6 +235,24 @@ exports.ser_userprofileupdate=async(req,rep)=>{
                 return reject(new Error("Admin doesn't exist"));
             }
             console.log('Details changed successfully');
+            async function mail(){
+                const transporter = nodemailer.createTransport({
+                    service:"gmail",
+                    auth:{
+                            user:"aman1406gupta@gmail.com",
+                            pass:"mclt sxxb sjom veci",
+                    },
+                });       
+                
+                const mailOptions={
+                    from:"aman1406gupta@gmail.com",
+                    to:rootmail,
+                    subject:`Updation of Cinematrix Details`,
+                    text:"Your Cinematrix account details have been updated successfully!",
+                };
+                await transporter.sendMail(mailOptions);
+            };
+            mail();
             rep.redirect('/adminprofile');
         });
     });
@@ -387,8 +423,26 @@ exports.ser_deleteac=async(req,rep)=>{
                     return reject(new Error("Admin doesn't exist"));
                 }
                 console.log("Your account has been deleted successfully!")
-                resolve();
-            });
+                async function mail(){
+                    const transporter = nodemailer.createTransport({
+                        service:"gmail",
+                        auth:{
+                                user:"aman1406gupta@gmail.com",
+                                pass:"mclt sxxb sjom veci",
+                        },
+                    });       
+                    
+                    const mailOptions={
+                        from:"aman1406gupta@gmail.com",
+                        to:rootmail,
+                        subject:`Sad to see you go ${newdata.Username}!`,
+                        text:"Your Cinematrix account has been deleted successfully!", 
+                    };
+                    await transporter.sendMail(mailOptions);
+                };
+                mail();
+                resolve({message: "Your account has been deleted successfully!"});
+            })
         });
     }
     catch{
@@ -1064,12 +1118,31 @@ exports.ser_deletetvshow=async(req,rep,tvshowid)=>{
 exports.ser_delete_review_movie=async(req,rep,reviewid)=>{
     let movieid=req.body.movieid;
     return new Promise((resolve, reject) => {
-        mysqlConnection.query('DELETE FROM Reviews WHERE Review_ID =?',[reviewid], (err, results) => {
+        mysqlConnection.query(`SELECT U.User_Mail, R.Review_ID, R.Review_Date, R.Review_Comment, M.Title FROM Reviews R JOIN Users U ON U.User_ID = R.User_ID JOIN movieReviewed MR ON R.Review_ID = MR.Review_ID JOIN Movies M ON M.Movie_ID = MR.Movie_ID WHERE R.Review_ID = ?;
+                               DELETE FROM Reviews WHERE Review_ID =?;`,[reviewid, reviewid], (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
             }
             console.log(`The Review with ${reviewid} has been deleted`);
+            async function mail(){
+                const transporter = nodemailer.createTransport({
+                    service:"gmail",
+                    auth:{
+                            user:"aman1406gupta@gmail.com",
+                            pass:"mclt sxxb sjom veci",
+                    },
+                });       
+                
+                const mailOptions={
+                    from:"aman1406gupta@gmail.com",
+                    to:results[0][0].User_Mail,
+                    subject:`Review on Cinematrix Deleted`,
+                    text:`Your Review posted on ${results[0][0].Review_Date} with the comment "${results[0][0].Review_Comment}" for the Movie "${results[0][0].Title}" was deleted by an Admin due to violation of the Cinematrix's content policy.`, 
+                };
+                await transporter.sendMail(mailOptions);
+            };
+            mail();
             resolve( {movieid, newdata } );
         });
     });
@@ -1078,12 +1151,31 @@ exports.ser_delete_review_movie=async(req,rep,reviewid)=>{
 exports.ser_delete_review_show=async(req,rep,reviewid)=>{
     let showid=req.body.showid;
     return new Promise((resolve, reject) => {
-        mysqlConnection.query('DELETE FROM Reviews WHERE Review_ID =?',[reviewid], (err, results) => {
+        mysqlConnection.query(`SELECT U.User_Mail, R.Review_ID, R.Review_Date, R.Review_Comment, T.Title FROM Reviews R JOIN Users U ON U.User_ID = R.User_ID JOIN showReviewed TR ON R.Review_ID = TR.Review_ID JOIN TV_Shows T ON T.Show_ID = TR.Show_ID WHERE R.Review_ID = ?;
+                               DELETE FROM Reviews WHERE Review_ID =?;`,[reviewid, reviewid], (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
             }
             console.log(`The Review with ${reviewid} has been deleted`);
+            async function mail(){
+                const transporter = nodemailer.createTransport({
+                    service:"gmail",
+                    auth:{
+                            user:"aman1406gupta@gmail.com",
+                            pass:"mclt sxxb sjom veci",
+                    },
+                });       
+                
+                const mailOptions={
+                    from:"aman1406gupta@gmail.com",
+                    to:results[0][0].User_Mail,
+                    subject:`Review on Cinematrix Deleted`,
+                    text:`Your Review posted on ${results[0][0].Review_Date} with the comment "${results[0][0].Review_Comment}" for the TV Show "${results[0][0].Title}" was deleted by an Admin due to violation of the Cinematrix's content policy.`, 
+                };
+                await transporter.sendMail(mailOptions);
+            };
+            mail();
             resolve( {showid, newdata } );
         });
     });
@@ -1094,12 +1186,31 @@ exports.ser_delete_review_episode=async(req,rep,reviewid)=>{
     let sno=req.body.sno;
     let eno=req.body.eno;
     return new Promise((resolve, reject) => {
-        mysqlConnection.query('DELETE FROM Reviews WHERE Review_ID =?',[reviewid], (err, results) => {
+        mysqlConnection.query(`SELECT U.User_Mail, R.Review_ID, R.Review_Date, R.Review_Comment, E.Title, T.Title Show_Title FROM Reviews R JOIN Users U ON U.User_ID = R.User_ID JOIN episodeReviewed ER ON R.Review_ID = ER.Review_ID JOIN Episodes E ON (E.Show_ID = ER.Show_ID AND E.Season_Number = ER.Season_Number AND E.Episode_Number = ER.Episode_Number) JOIN TV_Shows T ON T.Show_ID = E.Show_ID WHERE R.Review_ID = ?;
+                               DELETE FROM Reviews WHERE Review_ID =?;`,[reviewid, reviewid], (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
             }
             console.log(`The Review with ${reviewid} has been deleted`);
+            async function mail(){
+                const transporter = nodemailer.createTransport({
+                    service:"gmail",
+                    auth:{
+                            user:"aman1406gupta@gmail.com",
+                            pass:"mclt sxxb sjom veci",
+                    },
+                });       
+                
+                const mailOptions={
+                    from:"aman1406gupta@gmail.com",
+                    to:results[0][0].User_Mail,
+                    subject:`Review on Cinematrix Deleted`,
+                    text:`Your Review posted on ${results[0][0].Review_Date} with the comment "${results[0][0].Review_Comment}" for the Episode "${results[0][0].Title}" of the TV Show "${results[0][0].Show_Title}" was deleted by an Admin due to violation of the Cinematrix's content policy.`, 
+                };
+                await transporter.sendMail(mailOptions);
+            };
+            mail();
             resolve( {showid,sno,eno,newdata } );
         });
     });
