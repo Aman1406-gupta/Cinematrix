@@ -1,5 +1,5 @@
 # Cinematrix
-A course project for CS-207N. Cinematrix is a DBMS that gives a user convenient access to information related to their favourite movies, TV shows, and celebrities.
+A course project for CS 257. Cinematrix is a DBMS that gives a user convenient access to information related to their favourite movies, TV shows, and celebrities.
 
 Made by
 | Name         | Roll No |
