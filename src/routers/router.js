@@ -4,12 +4,12 @@ const user_auth=require("../../middelwares/authorisation.js")
 
 let {cont_delwtshow,cont_delwtmovie,cont_watchlist,cont_deletewatchlistshow,cont_deletewatchlistmovie,cont_watchlistmovie,cont_watchlistshow,cont_episodereview,cont_tvshowreview,cont_moviereview,cont_deletereview,cont_review,cont_review_user,cont_delete_review_episode,cont_delete_review_show,cont_delete_review_movie,cont_deletetvshow,cont_deletemovie,cont_view_episode_details,cont_view_celeb_details,cont_view_tvshow_details,cont_view_movie_details,cont_deleteac,cont_tpseriesshow,cont_reseriesshow,cont_seriesshow,cont_tpshowmovie,cont_reshowmovie,cont_showmovie,cont_pcelebview,cont_btcelebview,cont_celebview,cont_awardac,cont_awardem,cont_signout,cont_home,cont_insert,cont_validation,cont_signup,cont_signin,cont_adminprofile,cont_userprofileupdate}=require("../controllers/controller");
 
-router.get("/home",cont_home);
 router.get("/signin",cont_signin);
 router.post("/login-data-validation",cont_validation);
 router.get("/signup",cont_signup);
 router.post("/register_data_save",cont_insert);
 
+router.get("/home",user_auth,cont_home);
 router.get("/adminprofile",user_auth,cont_adminprofile);
 router.post("/update_profile",user_auth,cont_userprofileupdate); 
 router.get("/signout",user_auth,cont_signout); 

@@ -3,12 +3,10 @@ const nodemailer= require("nodemailer");
 const { mysqlConnection } = require('../dbconnection');
 let jwt=require("jsonwebtoken");
 require("dotenv").config();
-let rootmail;
-let newdata;
 
 exports.ser_home=async(req,rep)=>{
     return new Promise((resolve, reject) => {
-        mysqlConnection.query('SELECT * FROM Users WHERE User_Mail = ?', [rootmail], (err, results) => {
+        mysqlConnection.query('SELECT * FROM Users WHERE User_Mail = ?', [req.user.User_Mail], (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
@@ -104,8 +102,7 @@ exports.ser_validation = (req, rep) => {
                 return reject({message: "User doesn't exist!"});
             }
 
-            newdata = results[0];   
-            rootmail=newdata.User_Mail;
+            const newdata = results[0]; 
 
             bcrypt.compare(pass, newdata.User_Password_Encrypted, (err, isPasswordValid) => {
                 if (err) {
@@ -139,66 +136,70 @@ exports.ser_validation = (req, rep) => {
                         }
 
                         console.log('You are logged in');
-                        rep.cookie("token", token);
+                        rep.cookie("token", token, {
+                            httpOnly: true,
+                            sameSite: "Strict",
+                            secure: true
+                        });
                         resolve( { newdata } );
                     }
                 );
             });
         });
     });
-};
+}
 
 exports.ser_watchlistmovie=async(req,rep,movieid)=>{
         return new Promise((resolve, reject) => {
-            mysqlConnection.query(`INSERT IGNORE INTO movieWatchlisted(User_ID, Movie_ID) VALUES (?, ?);`, [newdata.User_ID, movieid], (err, results) => {
+            mysqlConnection.query(`INSERT IGNORE INTO movieWatchlisted(User_ID, Movie_ID) VALUES (?, ?);`, [req.user.User_ID, movieid], (err, results) => {
                 if (err) {
                     console.error('Error in logging out!', err);
                     return reject(new Error("Database query failed"));
                 }
-                resolve({newdata});
+                resolve({user:req.user});
             });
         });
 }
 
 exports.ser_watchlistshow=async(req,rep,showid)=>{
         return new Promise((resolve, reject) => {
-            mysqlConnection.query(`INSERT IGNORE INTO showWatchlisted(User_ID, Show_ID) VALUES (?, ?);`, [newdata.User_ID, showid], (err, results) => {
+            mysqlConnection.query(`INSERT IGNORE INTO showWatchlisted(User_ID, Show_ID) VALUES (?, ?);`, [req.user.User_ID, showid], (err, results) => {
                 if (err) {
                     console.error('Error in logging out!', err);
                     return reject(new Error("Database query failed"));
                 }
-                resolve({newdata});
+                resolve({user:req.user});
             });
         });
 }
 
 exports.ser_deletewatchlistmovie=async(req,rep,movieid)=>{
         return new Promise((resolve, reject) => {
-            mysqlConnection.query(`DELETE FROM movieWatchlisted WHERE User_ID = ? AND Movie_ID = ?;`, [newdata.User_ID, movieid], (err, results) => {
+            mysqlConnection.query(`DELETE FROM movieWatchlisted WHERE User_ID = ? AND Movie_ID = ?;`, [req.user.User_ID, movieid], (err, results) => {
                 if (err) {
                     console.error('Error in logging out!', err);
                     return reject(new Error("Database query failed"));
                 }
-                resolve({newdata});
+                resolve({user:req.user});
             });
         });
 }
 
 exports.ser_deletewatchlistshow=async(req,rep,showid)=>{
         return new Promise((resolve, reject) => {
-            mysqlConnection.query(`DELETE FROM showWatchlisted WHERE User_ID = ? AND Show_ID = ?;`, [newdata.User_ID, showid], (err, results) => {
+            mysqlConnection.query(`DELETE FROM showWatchlisted WHERE User_ID = ? AND Show_ID = ?;`, [req.user.User_ID, showid], (err, results) => {
                 if (err) {
                     console.error('Error in logging out!', err);
                     return reject(new Error("Database query failed"));
                 }
-                resolve({newdata});
+                resolve({user:req.user});
             });
         });
 }
 
 exports.ser_adminprofile=async(req,rep)=>{
     return new Promise((resolve, reject) => {
-        mysqlConnection.query('SELECT User_ID, Username, User_Mail, User_Password_Encrypted, User_Role, User_Authentication_Key, User_DOB, User_Country, Watchlist_URL, DATE_FORMAT(User_Last_Online, "%H:%i %Y-%m-%d") AS User_Last_Online, DATE_FORMAT(User_Join_Date, "%Y-%m-%d") AS User_Join_Date FROM Users WHERE User_Mail = ?', [rootmail], (err, results) => {
+        mysqlConnection.query('SELECT User_ID, Username, User_Mail, User_Password_Encrypted, User_Role, User_Authentication_Key, User_DOB, User_Country, Watchlist_URL, DATE_FORMAT(User_Last_Online, "%H:%i %Y-%m-%d") AS User_Last_Online, DATE_FORMAT(User_Join_Date, "%Y-%m-%d") AS User_Join_Date FROM Users WHERE User_Mail = ?', [req.user.User_Mail], (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
@@ -224,7 +225,7 @@ exports.ser_userprofileupdate=async(req,rep)=>{
     }
 
     return new Promise((resolve, reject) => {
-        mysqlConnection.query('UPDATE Users set User_Password_Encrypted = ?, Username = ? where User_Mail = ?', [hashpass, user_name, rootmail], (err, results) => {
+        mysqlConnection.query('UPDATE Users set User_Password_Encrypted = ?, Username = ? where User_Mail = ?', [hashpass, user_name, req.user.User_Mail], (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
@@ -246,7 +247,7 @@ exports.ser_userprofileupdate=async(req,rep)=>{
                 
                 const mailOptions={
                     from: '"Cinematrix" <official.cinematrix.db@gmail.com>',
-                    to:rootmail,
+                    to:req.user.User_Mail,
                     subject:`Updation of Cinematrix Details`,
                     text:"Your Cinematrix account details have been updated successfully!",
                 };
@@ -263,7 +264,7 @@ exports.ser_watchlist=async(req,rep)=>{
             mysqlConnection.query(`
                                     SELECT MW.User_ID, M.Movie_ID, M.Title Movie_Title, YEAR(M.Release_Date) Year_Of_Release, M.Movie_Rating, M.Num_Ratings_Movies FROM Movies M JOIN movieWatchlisted MW ON M.Movie_ID = MW.Movie_ID WHERE MW.User_ID = ?;
                                     SELECT SW.User_ID, S.Show_ID, S.Title, N.Number_Of_Seasons, YEAR(S.Start_Date) Release_Year, S.TVShow_Rating, S.Num_Ratings_TV FROM TV_Shows S JOIN (SELECT  Show_ID, COUNT(DISTINCT(Season_Number)) Number_Of_Seasons FROM Episodes GROUP BY Show_ID) N ON N.Show_ID = S.Show_ID JOIN showWatchlisted SW ON SW.Show_ID = S.Show_ID WHERE SW.User_ID = ?;
-                                    `, [newdata.User_ID,newdata.User_ID], (err, results) => {
+                                    `, [req.user.User_ID,req.user.User_ID], (err, results) => {
                 if (err) {
                     console.error('Error in logging out!', err);
                     return reject(new Error("Database query failed"));
@@ -271,31 +272,31 @@ exports.ser_watchlist=async(req,rep)=>{
 
                 mwatchlistdetails=results[0];
                 twatchlistdetails=results[1];
-                resolve({mwatchlistdetails,twatchlistdetails,newdata});
+                resolve({mwatchlistdetails,twatchlistdetails,user:req.user});
             });
         });
 }
 
 exports.ser_delwtmovie=async(req,rep,movieid)=>{
         return new Promise((resolve, reject) => {
-            mysqlConnection.query(`DELETE FROM movieWatchlisted WHERE User_ID = ? AND Movie_ID = ?;`, [newdata.User_ID, movieid], (err, results) => {
+            mysqlConnection.query(`DELETE FROM movieWatchlisted WHERE User_ID = ? AND Movie_ID = ?;`, [req.user.User_ID, movieid], (err, results) => {
                 if (err) {
                     console.error('Error in logging out!', err);
                     return reject(new Error("Database query failed"));
                 }
-                resolve({newdata});
+                resolve({user:req.user});
             });
         });
 }
 
 exports.ser_delwtshow=async(req,rep,showid)=>{
         return new Promise((resolve, reject) => {
-            mysqlConnection.query(`DELETE FROM showWatchlisted WHERE User_ID = ? AND Show_ID = ?;`, [newdata.User_ID, showid], (err, results) => {
+            mysqlConnection.query(`DELETE FROM showWatchlisted WHERE User_ID = ? AND Show_ID = ?;`, [req.user.User_ID, showid], (err, results) => {
                 if (err) {
                     console.error('Error in logging out!', err);
                     return reject(new Error("Database query failed"));
                 }
-                resolve({newdata});
+                resolve({ user: req.user });
             });
         });
 }
@@ -306,7 +307,7 @@ exports.ser_review=async(req,rep)=>{
                                     SELECT R.User_ID, MR.Movie_ID, M.Title, MR.Review_ID, Review_Comment, Media_Rating, Like_Count, Dislike_Count, CONCAT(TIMESTAMPDIFF(DAY, R.Review_Date, NOW()), ' days ago') AS Days_Since_Review FROM movieReviewed MR JOIN Reviews R ON MR.Review_ID = R.Review_ID JOIN Movies M ON M.Movie_ID = MR.Movie_ID WHERE User_ID = ?;
                                     SELECT R.User_ID, SR.Show_ID, T.Title, SR.Review_ID, Review_Comment, Media_Rating, Like_Count, Dislike_Count, CONCAT(TIMESTAMPDIFF(DAY, R.Review_Date, NOW()), ' days ago') AS Days_Since_Review FROM showReviewed SR JOIN Reviews R ON SR.Review_ID = R.Review_ID JOIN TV_Shows T ON T.Show_ID = SR.Show_ID WHERE User_ID = ?;
                                     SELECT R.User_ID, ER.Show_ID, T.Title AS Show_Title, ER.Season_Number, ER.Episode_Number, E.Title, ER.Review_ID, Review_Comment, Media_Rating, Like_Count, Dislike_Count, CONCAT(TIMESTAMPDIFF(DAY, R.Review_Date, NOW()), ' days ago') AS Days_Since_Review FROM episodeReviewed ER JOIN Reviews R ON ER.Review_ID = R.Review_ID JOIN Episodes E ON (E.Show_ID = ER.Show_ID AND E.Episode_Number = ER.Episode_Number AND E.Season_Number = ER.Season_Number) JOIN TV_Shows T ON T.Show_ID = ER.Show_ID WHERE User_ID = ?;
-                                    `, [newdata.User_ID,newdata.User_ID,newdata.User_ID], (err, results) => {
+                                    `, [req.user.User_ID,req.user.User_ID,req.user.User_ID], (err, results) => {
                 if (err) {
                     console.error('Error in logging out!', err);
                     return reject(new Error("Database query failed"));
@@ -315,7 +316,7 @@ exports.ser_review=async(req,rep)=>{
                 mreviewdetails=results[0];
                 treviewdetails=results[1];
                 ereviewdetails=results[2];
-                resolve({mreviewdetails,treviewdetails,ereviewdetails,newdata});
+                resolve({mreviewdetails,treviewdetails,ereviewdetails,user:req.user});
             });
         });
 }
@@ -328,12 +329,12 @@ exports.ser_moviereview=async(req,rep,movieid)=>{
             mysqlConnection.query(`
                                     INSERT INTO Reviews(User_ID, Review_Comment, Media_Rating, Review_Date, Like_Count, Dislike_Count) values(?, ?, ?, CURDATE(), 0, 0);
                                     INSERT INTO moviereviewed(review_id, movie_id) values ((SELECT Review_ID FROM Reviews ORDER BY Review_ID DESC LIMIT 1), ?);
-                                    `, [newdata.User_ID, review, rating, movieid], (err, results) => {
+                                    `, [req.user.User_ID, review, rating, movieid], (err, results) => {
                 if (err) {
                     console.error('Error in logging out!', err);
                     return reject(new Error("Database query failed"));
                 }
-                resolve({newdata});
+                resolve({user:req.user});
             });
         });
 }
@@ -346,12 +347,12 @@ exports.ser_tvshowreview=async(req,rep,showid)=>{
             mysqlConnection.query(`
                                     INSERT INTO Reviews(User_ID, Review_Comment, Media_Rating, Review_Date, Like_Count, Dislike_Count) values(?, ?, ?, CURDATE(), 0, 0);
                                     INSERT INTO showreviewed(review_id, show_id) values ((SELECT Review_ID FROM Reviews ORDER BY Review_ID DESC LIMIT 1), ?);
-                                    `, [newdata.User_ID, review, rating, showid], (err, results) => {
+                                    `, [req.user.User_ID, review, rating, showid], (err, results) => {
                 if (err) {
                     console.error('Error in logging out!', err);
                     return reject(new Error("Database query failed"));
                 }
-                resolve({newdata});
+                resolve({user:req.user});
             });
         });
 }
@@ -364,12 +365,12 @@ exports.ser_episodereview=async(req,rep,showid,sno,eno)=>{
             mysqlConnection.query(`
                                     INSERT INTO Reviews(User_ID, Review_Comment, Media_Rating, Review_Date, Like_Count, Dislike_Count) values(?, ?, ?, CURDATE(), 0, 0);
                                     INSERT INTO episodereviewed(review_id, show_id, season_number, episode_number) values ((SELECT Review_ID FROM Reviews ORDER BY Review_ID DESC LIMIT 1), ?, ?, ?);
-                                    `, [newdata.User_ID, review, rating, showid,sno,eno], (err, results) => {
+                                    `, [req.user.User_ID, review, rating, showid,sno,eno], (err, results) => {
                 if (err) {
                     console.error('Error in logging out!', err);
                     return reject(new Error("Database query failed"));
                 }
-                resolve({newdata});
+                resolve({user:req.user});
             });
         });
 }
@@ -381,7 +382,7 @@ exports.ser_deletereview=async(req,rep,reviewid)=>{
                     console.error('Error in logging out!', err);
                     return reject(new Error("Database query failed"));
                 }
-                resolve({newdata});
+                resolve({user:req.user});
             });
         });
 }
@@ -390,7 +391,7 @@ exports.ser_signout=async(req,rep)=>{
     try{
         rep.clearCookie("token");
         return new Promise((resolve, reject) => {
-            mysqlConnection.query('UPDATE Users set User_Authentication_Key = NULL where User_Mail = ?', [rootmail], (err, results) => {
+            mysqlConnection.query('UPDATE Users set User_Authentication_Key = NULL where User_Mail = ?', [req.user.User_Mail], (err, results) => {
                 if (err) {
                     console.error('Error in logging out!', err);
                     return reject(new Error("Database query failed"));
@@ -413,7 +414,7 @@ exports.ser_deleteac=async(req,rep)=>{
     try{
         rep.clearCookie("token");
         return new Promise((resolve, reject) => {
-            mysqlConnection.query('DELETE from Users where User_Mail = ?', [rootmail], (err, results) => {
+            mysqlConnection.query('DELETE from Users where User_Mail = ?', [req.user.User_Mail], (err, results) => {
                 if (err) {
                     console.error('Error in deleting account!', err);
                     return reject(new Error("Database query failed"));
@@ -434,8 +435,8 @@ exports.ser_deleteac=async(req,rep)=>{
                     
                     const mailOptions={
                         from: '"Cinematrix" <official.cinematrix.db@gmail.com>',
-                        to:rootmail,
-                        subject:`Sad to see you go ${newdata.Username}!`,
+                        to:req.user.User_Mail,
+                        subject:`Sad to see you go ${req.user.Username}!`,
                         text:"Your Cinematrix account has been deleted successfully!", 
                     };
                     await transporter.sendMail(mailOptions);
@@ -463,7 +464,7 @@ exports.ser_showmovie=async(req,rep,flag)=>{
                     message = "No movies for the given filter exists!";
                 }
                 const moviedata = results;
-                resolve( { moviedata, newdata, message } );
+                resolve( { moviedata, user:req.user, message } );
             });
         });
     }
@@ -521,7 +522,7 @@ exports.ser_showmovie=async(req,rep,flag)=>{
                     message = "No movie for the given filter exists!";
                 }
                 const moviedata = results;
-                resolve( { moviedata, newdata, message } );
+                resolve( { moviedata, user:req.user, message } );
             });
         });
     }
@@ -540,7 +541,7 @@ exports.ser_tpshowmovie=async(req,rep)=>{
                 return reject(new Error("Movies don't exist"));
             }
             const moviedata = results;
-            resolve( { moviedata, newdata } );
+            resolve( { moviedata, user:req.user } );
         });
     });
 }
@@ -558,7 +559,7 @@ exports.ser_reshowmovie=async(req,rep)=>{
                 return reject(new Error("Movies don't exist"));
             }
             const moviedata = results;
-            resolve( { moviedata, newdata } );
+            resolve( { moviedata, user:req.user } );
         });
     });
 }
@@ -592,7 +593,7 @@ exports.ser_seriesshow=async(req,rep,flag)=>{
                     message = "No series for the given filter exists!";
                 }
                 const seriesdata = results;
-                resolve( { seriesdata, newdata, message } );
+                resolve( { seriesdata, user:req.user, message } );
             });
         });
     }
@@ -653,7 +654,7 @@ exports.ser_seriesshow=async(req,rep,flag)=>{
                     message = "No series for the given filter exists!";
                 }
                 const seriesdata = results;
-                resolve( { seriesdata, newdata, message } );
+                resolve( { seriesdata, user:req.user, message } );
             });
         });
     }
@@ -672,7 +673,7 @@ exports.ser_tpseriesshow=async(req,rep)=>{
                 return reject(new Error("Series don't exist"));
             }
             const seriesdata = results;
-            resolve( { seriesdata, newdata } );
+            resolve( { seriesdata, user:req.user } );
         });
     });
 }
@@ -690,7 +691,7 @@ exports.ser_reseriesshow=async(req,rep)=>{
                 return reject(new Error("Series don't exist"));
             }
             const seriesdata = results;
-            resolve( { seriesdata, newdata } );
+            resolve( { seriesdata, user:req.user } );
         });
     });
 }
@@ -710,7 +711,7 @@ exports.ser_celebview=async(req,rep,flag)=>{
                 }
                 const celebdata = results[0];
                 const nationalitydata = results[1];
-                resolve( { celebdata,newdata,message,nationalitydata } );
+                resolve( { celebdata,user:req.user,message,nationalitydata } );
             });
         });
     }
@@ -754,7 +755,7 @@ exports.ser_celebview=async(req,rep,flag)=>{
                 }
                 const celebdata = results[0];
                 const nationalitydata = results[1];
-                resolve( { celebdata,newdata,message,nationalitydata } );
+                resolve( { celebdata,user:req.user,message,nationalitydata } );
             });
         }); 
     }
@@ -773,7 +774,7 @@ exports.ser_pcelebview=async(req,rep)=>{
                 return reject(new Error("Celebs don't exist"));
             }
             const celebdata = results;
-            resolve( { celebdata, newdata } );
+            resolve( { celebdata, user:req.user } );
         });
     });
 }
@@ -790,12 +791,12 @@ exports.ser_btcelebview=async(req,rep)=>{
                 message = {message: "No celebrities were born today"};
             }
             const celebdata = results;
-            resolve( { celebdata, message, newdata } );
+            resolve( { celebdata, message, user:req.user } );
         });
     });
 }
 
-exports.ser_view_movie_details=async(movieid,rep)=>{
+exports.ser_view_movie_details=async(movieid,req,rep)=>{
     return new Promise((resolve, reject) => {
         mysqlConnection.query(`
             SELECT Movie_ID, Description, Title, Movie_Rating, DATE_FORMAT(Release_Date, "%Y-%m-%d") Release_Date, Num_Ratings_Movies, Budget, Revenue, Duration, Movie_Trailer_URL, Age_Rating_Name FROM Movies JOIN age_ratings ON Movies.Age_Rating_ID = age_ratings.Age_Rating_ID where Movie_ID=?;
@@ -810,7 +811,7 @@ exports.ser_view_movie_details=async(movieid,rep)=>{
             SELECT M.Movie_ID, M.Title AS Sequel_Title, YEAR(M.Release_Date) Release_Year, M.Movie_Rating, M.Num_Ratings_Movies FROM movieSequel MS JOIN Movies M ON MS.Sequel_ID = M.Movie_ID WHERE MS.Movie_ID = ?;
             SELECT U.User_ID, MR.Movie_ID, MR.Review_ID, U.Username, Review_Comment, Media_Rating, Like_Count, Dislike_Count, CONCAT(TIMESTAMPDIFF(DAY, R.Review_Date, NOW()), ' days ago') AS Days_Since_Review FROM movieReviewed MR JOIN Reviews R ON MR.Review_ID = R.Review_ID JOIN Users U ON R.User_ID = U.User_ID WHERE MR.Movie_ID = ?;
             SELECT * FROM movieWatchlisted WHERE User_ID = ? AND Movie_ID = ?;
-                `, [movieid, movieid, movieid, movieid, movieid, movieid, movieid, movieid, movieid, movieid, movieid, newdata.User_ID, movieid], (err, results) => {
+                `, [movieid, movieid, movieid, movieid, movieid, movieid, movieid, movieid, movieid, movieid, movieid, req.user.User_ID, movieid], (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
@@ -832,12 +833,12 @@ exports.ser_view_movie_details=async(movieid,rep)=>{
             const sequeldetails = results[9];
             const reviewdetails = results[10];
             const watchlistdetails = results[11];
-            resolve( { moviedetails,genredetails,languagedetails,awarddetails,actordetails,directordetails,producerdetails,streamdetails,prequeldetails,sequeldetails,reviewdetails,newdata,movieid,watchlistdetails } );
+            resolve( { moviedetails,genredetails,languagedetails,awarddetails,actordetails,directordetails,producerdetails,streamdetails,prequeldetails,sequeldetails,reviewdetails,user:req.user,movieid,watchlistdetails } );
         });
     });    
 }
 
-exports.ser_view_tvshow_details=async(tvshowid,rep)=>{
+exports.ser_view_tvshow_details=async(tvshowid,req,rep)=>{
     return new Promise((resolve, reject) => {
         mysqlConnection.query(`SELECT Show_ID, Title, DATE_FORMAT(Start_Date, "%Y-%m-%d") Start_Date, DATE_FORMAT(End_Date, "%Y-%m-%d") End_Date, TVShow_Rating, Num_Ratings_TV, Description, TVShow_Trailer_URL, Age_Rating_Name FROM TV_Shows JOIN age_ratings on tv_shows.Age_Rating_ID = age_ratings.Age_Rating_ID where Show_ID = ?;
                                SELECT E.Show_ID, COUNT(DISTINCT E.Season_Number) AS Number_of_Seasons, COUNT(*) AS Number_of_Episodes FROM Episodes E WHERE E.Show_ID = ? GROUP BY E.Show_ID;    
@@ -851,7 +852,7 @@ exports.ser_view_tvshow_details=async(tvshowid,rep)=>{
                                SELECT * FROM (SELECT SS.Show_ID, S.Site_Name, S.Site_URL, S.Subscription_Starting_Price FROM Streaming_Sites S JOIN showstreamshere SS ON S.Site_ID = SS.Site_ID) INTERMEDIATE WHERE Show_ID = ?;
                                SELECT U.User_ID, SR.Show_ID, SR.Review_ID, U.Username, Review_Comment, Media_Rating, Like_Count, Dislike_Count, CONCAT(TIMESTAMPDIFF(DAY, R.Review_Date, NOW()), ' days ago') AS Days_Since_Review FROM showReviewed SR JOIN Reviews R ON SR.Review_ID = R.Review_ID JOIN Users U ON R.User_ID = U.User_ID WHERE SR.Show_ID = ?;
                                SELECT * FROM showWatchlisted WHERE User_ID = ? AND Show_ID = ?;
-                              `,[tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,newdata.User_ID, tvshowid], (err, results) => {
+                              `,[tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,tvshowid,req.user.User_ID, tvshowid], (err, results) => {
             if (err) {
                 console.error('Database query failed:', err);
                 return reject(new Error("Database query failed"));
@@ -873,12 +874,12 @@ exports.ser_view_tvshow_details=async(tvshowid,rep)=>{
             const streamdetails=results[9];
             const reviewdetails = results[10];
             const watchlistdetails = results[11];
-            resolve( { tvshowdetails,seaandepdata,episodedetails,genredetails,actordetails,directordetails,producerdetails,awarddetails,languagedetails,streamdetails,reviewdetails,newdata,tvshowid,watchlistdetails } );
+            resolve( { tvshowdetails,seaandepdata,episodedetails,genredetails,actordetails,directordetails,producerdetails,awarddetails,languagedetails,streamdetails,reviewdetails,user:req.user,tvshowid,watchlistdetails } );
         });
     });
 }
 
-exports.ser_view_episode_details=async(tvshowid,sno,eno,rep)=>{
+exports.ser_view_episode_details=async(tvshowid,sno,eno,req,rep)=>{
     return new Promise((resolve, reject) => {
         mysqlConnection.query(`SELECT E.Show_ID, E.Episode_Number, E.Season_Number, E.Title, E.Duration, DATE_FORMAT(E.Release_Date, "%Y-%m-%d") Release_Date, E.Num_Ratings_Ep, E.Episode_Rating, E.Description, T.Title Show_Title FROM Episodes E JOIN TV_Shows T ON E.Show_ID = T.Show_ID WHERE E.Show_ID = ? AND Season_Number = ? AND Episode_Number = ?;
                                SELECT P.Person_ID, CONCAT(P.Person_First_Name, ' ', P.Person_Last_Name) AS Actor_Name, EA.Character_Name, EA.Role_Type FROM episodeActedBy EA JOIN Actor AC ON EA.Actor_ID = AC.Actor_ID JOIN People P ON EA.Actor_ID = P.Person_ID WHERE EA.Show_ID = ? AND EA.Season_Number = ? AND EA.Episode_Number = ?;
@@ -900,12 +901,12 @@ exports.ser_view_episode_details=async(tvshowid,sno,eno,rep)=>{
             const directordetails=results[2];
             const producerdetails=results[3];
             const reviewdetails = results[4];
-            resolve( { epdetails,actordetails,directordetails,producerdetails,reviewdetails,newdata,tvshowid,sno,eno } );
+            resolve( { epdetails,actordetails,directordetails,producerdetails,reviewdetails,user:req.user,tvshowid,sno,eno } );
         });
     });
 }
 
-exports.ser_view_celeb_details=async(celebid,rep)=>{
+exports.ser_view_celeb_details=async(celebid,req,rep)=>{
     return new Promise((resolve, reject) => {
         mysqlConnection.query(`
                                 SELECT CONCAT(Person_First_Name, ' ', Person_Last_Name) AS Name, DATE_FORMAT(Person_DOB, "%Y-%m-%d") AS DOB, Person_Gender AS Gender, FLOOR(DATEDIFF(CURDATE(), Person_DOB) / 365.25) AS Age, Person_Nationality AS Nationality FROM People P WHERE Person_ID = ?;
@@ -952,7 +953,7 @@ exports.ser_view_celeb_details=async(celebid,rep)=>{
             const sda = results[14];
             const sdd = results[15];
             const sdp = results[16];
-            resolve( { celebdata,ds,rr,pm,awarddetails,dnum,anum,pnum,afam,pfam,dfam,mda,mdd,mdp,sda,sdd,sdp,newdata } );
+            resolve( { celebdata,ds,rr,pm,awarddetails,dnum,anum,pnum,afam,pfam,dfam,mda,mdd,mdp,sda,sdd,sdp,user:req.user } );
         });
     });
 }
@@ -962,7 +963,7 @@ exports.ser_awardac=async(req,rep,flag)=>{
     if(flag==0){
         let awarddata = [];
         message = "dummy";
-        return {awarddata, newdata, message};
+        return {awarddata, user:req.user, message};
     }
     else{
         return new Promise((resolve, reject) => {
@@ -1018,7 +1019,7 @@ exports.ser_awardac=async(req,rep,flag)=>{
                     message = "No data found for this filter.";
                 }
                 const awarddata = results;
-                resolve( { awarddata, newdata, message,actionpath } );
+                resolve( { awarddata, user:req.user, message,actionpath } );
             });
         });
     }
@@ -1029,7 +1030,7 @@ exports.ser_awardem=async(req,rep,flag)=>{
     if(flag==0){
         let awarddata = [];
         message = "dummy";
-        return {awarddata, newdata, message};
+        return {awarddata, user:req.user, message};
     }
     else{
         return new Promise((resolve, reject) => {
@@ -1083,7 +1084,7 @@ exports.ser_awardem=async(req,rep,flag)=>{
                     message = "No data found for this filter.";
                 }
                 const awarddata = results;
-                resolve( { awarddata, newdata, message,actionpath } );
+                resolve( { awarddata, user:req.user, message,actionpath } );
             });
         });
     }
@@ -1097,7 +1098,7 @@ exports.ser_deletemovie=async(req,rep,movieid)=>{
                 return reject(new Error("Database query failed"));
             }
             console.log(`The movie with ${movieid} has been deleted`);
-            resolve( { newdata } );
+            resolve( { user:req.user } );
         });
     });
 }
@@ -1110,7 +1111,7 @@ exports.ser_deletetvshow=async(req,rep,tvshowid)=>{
                 return reject(new Error("Database query failed"));
             }
             console.log(`The TV Show with ${tvshowid} has been deleted`);
-            resolve( { newdata } );
+            resolve( { user:req.user } );
         });
     });
 }
@@ -1143,7 +1144,7 @@ exports.ser_delete_review_movie=async(req,rep,reviewid)=>{
                 await transporter.sendMail(mailOptions);
             };
             mail();
-            resolve( {movieid, newdata } );
+            resolve( {movieid, user:req.user } );
         });
     });
 }
@@ -1176,7 +1177,7 @@ exports.ser_delete_review_show=async(req,rep,reviewid)=>{
                 await transporter.sendMail(mailOptions);
             };
             mail();
-            resolve( {showid, newdata } );
+            resolve( {showid, user:req.user } );
         });
     });
 }
@@ -1211,7 +1212,7 @@ exports.ser_delete_review_episode=async(req,rep,reviewid)=>{
                 await transporter.sendMail(mailOptions);
             };
             mail();
-            resolve( {showid,sno,eno,newdata } );
+            resolve( {showid,sno,eno,user:req.user } );
         });
     });
 }
@@ -1227,7 +1228,7 @@ exports.ser_review_user=async(req,rep,userid)=>{
                 message = "No User with given username doesn't exists!";
             }
             let userdatarec = results[0];
-            resolve( {userdatarec,newdata} );
+            resolve( {userdatarec,user:req.user} );
         });
     });
 }
