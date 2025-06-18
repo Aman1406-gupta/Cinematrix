@@ -22,5 +22,8 @@
     "nodemailer": "^6.9.16",
     "path": "^0.12.7"
   },
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
 }
