@@ -81,7 +81,6 @@ nodemail_pass="abcd efgh ijkl mnop"   # Nodemailer password
 ```
 
 > **Note:** Replace the values above with your actual credentials and configuration.
----
 
 ### 5. Start the Server
 After setting up the environment variables, launch the application using the following command:
